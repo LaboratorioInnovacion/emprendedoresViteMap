@@ -37,7 +37,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
           <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-2">
               <Map className="text-primary-600" />
-              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">VentureMap</h1>
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">EmpreMap</h1>
             </div>
             <button onClick={toggleMobileSidebar} className="p-1">
               <ChevronLeft size={20} className="text-gray-500 dark:text-gray-400" />

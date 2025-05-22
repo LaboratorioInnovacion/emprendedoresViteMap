@@ -3,7 +3,8 @@ import { MapContainer, TileLayer, Marker, Popup, useMapEvent } from 'react-leafl
 import { Business, BusinessType, MapViewport } from '../../types';
 import { businessTypeColors } from '../../data/mockData';
 import { Icon } from 'leaflet';
-import { MapPin, Building2, Search, X } from 'lucide-react';
+import { MapPin, Building2, Search, X, Phone, Mail, Globe, Activity } from 'lucide-react';
+import { useOutletContext } from 'react-router-dom';
 
 interface BusinessMapProps {
   businesses: Business[];
@@ -15,6 +16,8 @@ interface BusinessMapProps {
 
 // Create custom map pins for businesses
 const createBusinessIcon = (type: BusinessType) => {
+    const { isMobileSidebarOpen, isMobile } = useOutletContext() as { isMobileSidebarOpen: boolean, isMobile: boolean };
+  
   const color = businessTypeColors[type];
   const svgIcon = `
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="24" height="24">
@@ -40,6 +43,20 @@ const LocationSelector = ({ onLocationSelect }: { onLocationSelect?: (lat: numbe
     }
   });
   return null;
+};
+
+// Get status badge class (copiado de Dashboard)
+const getStatusBadgeClass = (status: 'active' | 'inactive' | 'pending') => {
+  switch (status) {
+    case 'active':
+      return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500';
+    case 'inactive':
+      return 'bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500';
+    case 'pending':
+      return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500';
+    default:
+      return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+  }
 };
 
 const BusinessMap: React.FC<BusinessMapProps> = ({
@@ -111,12 +128,14 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
       <div className="flex-1 rounded-b-lg overflow-hidden border-x border-b border-gray-200 dark:border-gray-700">
         <div className="map-container">
           <MapContainer
+            // @ts-expect-error center es válido en react-leaflet v4
             center={defaultViewport.center}
             zoom={defaultViewport.zoom}
             style={{ height: '100%', width: '100%' }}
           >
             <TileLayer
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              // @ts-expect-error attribution es válido en react-leaflet v4
+              attribution=''
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
             
@@ -125,24 +144,71 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
               <Marker
                 key={business.id}
                 position={[business.location.lat, business.location.lng]}
-                icon={createBusinessIcon(business.type)}
-                eventHandlers={{
-                  click: () => handleBusinessSelect(business.id)
-                }}
+                {...({ icon: createBusinessIcon(business.type) } as any)}
               >
                 <Popup>
-                  <div className="text-center">
-                    <h3 className="font-medium">{business.name}</h3>
-                    <p className="text-sm text-gray-600 capitalize">{business.type}</p>
-                    <p className="text-xs mt-1">{business.address}</p>
-                    {onBusinessSelect && (
+                  <div className="w-64">
+                    <div className="flex items-start gap-3 mb-3">
+                      {business.imageUrl ? (
+                        <img 
+                          src={business.imageUrl} 
+                          alt={business.name}
+                          className="w-16 h-16 rounded-lg object-cover" 
+                        />
+                      ) : (
+                        <div className="w-16 h-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xl font-bold">
+                          {business.name.charAt(0)}
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium text-base mb-1">{business.name}</h3>
+                        <div className="flex flex-wrap gap-2">
+                          <span className="badge badge-secondary text-xs capitalize">{business.type}</span>
+                          <span className={`badge ${getStatusBadgeClass(business.status)} flex items-center text-xs`}>
+                            <Activity size={12} className="mr-1" />
+                            {business.status.charAt(0).toUpperCase() + business.status.slice(1)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="space-y-2 text-sm">
+                      <p className="text-gray-600 dark:text-gray-400 line-clamp-2">{business.description}</p>
+                      <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <MapPin size={14} className="mr-1 flex-shrink-0" />
+                        <span className="truncate">{business.address}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <Phone size={14} className="mr-1 flex-shrink-0" />
+                        <span>{business.contact.phone}</span>
+                      </div>
+                      <div className="flex items-center text-gray-600 dark:text-gray-400">
+                        <Mail size={14} className="mr-1 flex-shrink-0" />
+                        <span className="truncate">{business.contact.email}</span>
+                      </div>
+                      {business.contact.website && (
+                        <div className="flex items-center text-gray-600 dark:text-gray-400">
+                          <Globe size={14} className="mr-1 flex-shrink-0" />
+                          <a 
+                            href={business.contact.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="truncate text-primary-600 dark:text-primary-400 hover:underline"
+                          >
+                            {business.contact.website.replace(/^https?:\/\//, '')}
+                          </a>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                       <button
                         onClick={() => handleBusinessSelect(business.id)}
-                        className="mt-2 text-xs text-white hover:text-primary-800 hover:underline"
+                        className="btn-primary w-full justify-center text-sm py-1.5"
                       >
                         View Details
                       </button>
-                    )}
+                    </div>
                   </div>
                 </Popup>
               </Marker>

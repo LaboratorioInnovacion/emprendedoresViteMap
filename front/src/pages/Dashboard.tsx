@@ -51,16 +51,16 @@ const Dashboard: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400">Welcome to your business management dashboard</p>
+          <p className="text-gray-600 dark:text-gray-400">Bienvenido al dashboard de Mapa de Emprendedores</p>
         </div>
         <div className="flex gap-2">
           <Link to="/businesses" className="btn-outline">
             <Building2 size={18} className="mr-1" />
-            Manage Businesses
+            Emprendedores
           </Link>
           <Link to="/map" className="btn-primary">
             <Map size={18} className="mr-1" />
-            Explore Map
+            Explorar Mapa
           </Link>
         </div>
       </div>
@@ -76,13 +76,13 @@ const Dashboard: React.FC = () => {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <Map size={20} className="text-primary-600 dark:text-primary-400 mr-2" />
-              <h2 className="text-xl font-semibold">Business Map Overview</h2>
+              <h2 className="text-xl font-semibold">Mapa Negocios</h2>
             </div>
             <Link 
               to="/map"
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center"
             >
-              View Full Map <ArrowRight size={16} className="ml-1" />
+              Vista Mapa <ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
           

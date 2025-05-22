@@ -170,7 +170,7 @@ const getBusinessTypeCount = (type: BusinessType): number => {
 export const dashboardStats: DashboardStat[] = [
   {
     id: 'total-businesses',
-    title: 'Total Businesses',
+    title: 'Total Emprendedores',
     value: businesses.length,
     change: 12.5,
     trend: 'up',
@@ -178,7 +178,7 @@ export const dashboardStats: DashboardStat[] = [
   },
   {
     id: 'active-businesses',
-    title: 'Active Businesses',
+    title: 'Actividad Emprendedores',
     value: businesses.filter(b => b.status === 'active').length,
     change: 8.2,
     trend: 'up',
