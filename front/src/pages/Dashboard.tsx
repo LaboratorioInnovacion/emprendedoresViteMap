@@ -1,9 +1,10 @@
-import React, { use,useEffect } from 'react';
+import React, { use,useEffect,useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import StatCard from '../components/dashboard/StatCard';
 import RecentBusinessCard from '../components/dashboard/RecentBusinessCard';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { businesses, dashboardStats, calculateMapCenter, businessTypeColors } from '../data/mockData';
+// import {businesses } from '../api/api.js'
 import { BarChart3, Building2, Map, ArrowRight, MapPin, Phone, Mail, Globe, Activity } from 'lucide-react';
 import { Icon } from 'leaflet';
 import { BusinessType } from '../types';
@@ -13,6 +14,7 @@ const Dashboard: React.FC = () => {
   const { isMobileSidebarOpen, isMobile } = useOutletContext() as { isMobileSidebarOpen: boolean, isMobile: boolean };
   const recentBusinesses = businesses.slice(0, 3);
   const mapCenter = calculateMapCenter();
+  const [Negocios, setNegocios] = useState([]);	
 
   // Create custom map pins for businesses
   const createBusinessIcon = (type: BusinessType) => {
@@ -39,6 +41,7 @@ const Dashboard: React.FC = () => {
         const data = await fetchBusinessData();
         // Process the data as needed
         console.log("datos excel ",data);
+        setNegocios(data);
       } catch (error) {
         console.error('Error fetching business data:', error);
       }
@@ -116,7 +119,7 @@ const Dashboard: React.FC = () => {
                   attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {businesses.map(business => (
+                {Negocios.map(business => (
                   // Workaround: MarkerProps de react-leaflet no incluye 'icon', pero sí es soportada en tiempo de ejecución por Leaflet.
                   <Marker
                     key={business.id}
