@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 
 function Header({ toggleMobileSidebar }) {
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
