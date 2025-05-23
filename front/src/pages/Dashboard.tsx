@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use,useEffect } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import StatCard from '../components/dashboard/StatCard';
 import RecentBusinessCard from '../components/dashboard/RecentBusinessCard';
@@ -7,6 +7,7 @@ import { businesses, dashboardStats, calculateMapCenter, businessTypeColors } fr
 import { BarChart3, Building2, Map, ArrowRight, MapPin, Phone, Mail, Globe, Activity } from 'lucide-react';
 import { Icon } from 'leaflet';
 import { BusinessType } from '../types';
+import { fetchBusinessData } from "../api/api.js";
 
 const Dashboard: React.FC = () => {
   const { isMobileSidebarOpen, isMobile } = useOutletContext() as { isMobileSidebarOpen: boolean, isMobile: boolean };
@@ -31,6 +32,21 @@ const Dashboard: React.FC = () => {
       popupAnchor: [0, -32],
     });
   };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await fetchBusinessData();
+        // Process the data as needed
+        console.log("datos excel ",data);
+      } catch (error) {
+        console.error('Error fetching business data:', error);
+      }
+    };
+
+    fetchData();
+  
+  }, []);
 
   // Get status badge class
   const getStatusBadgeClass = (status: 'active' | 'inactive' | 'pending') => {
