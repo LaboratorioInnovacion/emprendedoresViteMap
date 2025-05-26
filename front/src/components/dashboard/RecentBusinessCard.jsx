@@ -1,4 +1,5 @@
 import { MapPin, Phone, Mail, Globe, Activity } from 'lucide-react';
+import { useEmprendedores } from "../../context/EmprendedoresContext.jsx";
 
 function RecentBusinessCard({ business }) {
   const getStatusBadgeClass = () => {
@@ -13,11 +14,12 @@ function RecentBusinessCard({ business }) {
         return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
     }
   };
+  const { emprendedores } = useEmprendedores();
 
   return (
     <div className="card hover:shadow-lg transition-shadow">
       <div className="flex flex-col sm:flex-row gap-4">
-        {business.imageUrl && (
+        {useEmprendedores.imageUrl && (
           <div className="flex-shrink-0">
             <img 
               src={business.imageUrl} 

@@ -16,15 +16,17 @@ import {
   Pencil,
   Trash2
 } from 'lucide-react';
+import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
 
 const BusinessDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [business, setBusiness] = useState<Business | null>(null);
+  const {emprendedores} = useEmprendedores();
   
   // Load business details
   useEffect(() => {
-    const foundBusiness = businesses.find(b => b.id === id);
+    const foundBusiness = emprendedores.find(b => b.id === id);
     setBusiness(foundBusiness || null);
   }, [id]);
   

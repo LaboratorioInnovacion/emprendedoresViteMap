@@ -9,12 +9,14 @@ import { BarChart3, Building2, Map, ArrowRight, MapPin, Phone, Mail, Globe, Acti
 import { Icon } from 'leaflet';
 import { BusinessType } from '../types';
 import { fetchBusinessData } from "../api/api.js";
+import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
 
 const Dashboard: React.FC = () => {
   const { isMobileSidebarOpen, isMobile } = useOutletContext() as { isMobileSidebarOpen: boolean, isMobile: boolean };
   const recentBusinesses = businesses.slice(0, 3);
   const mapCenter = calculateMapCenter();
   const [Negocios, setNegocios] = useState([]);	
+  const { emprendedores } = useEmprendedores();
 
   // Create custom map pins for businesses
   const createBusinessIcon = (type: BusinessType) => {
