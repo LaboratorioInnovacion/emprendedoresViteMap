@@ -7,7 +7,7 @@ import { businesses, dashboardStats, calculateMapCenter, businessTypeColors } fr
 // import {businesses } from '../api/api.js'
 import { BarChart3, Building2, Map, ArrowRight, MapPin, Phone, Mail, Globe, Activity } from 'lucide-react';
 import { Icon } from 'leaflet';
-import { BusinessType } from '../types';
+// import { BusinessType } from '../types';
 import { fetchBusinessData } from "../api/api.js";
 import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
 

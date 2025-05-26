@@ -8,6 +8,9 @@ import {
   BadgeDollarSign, 
   Activity 
 } from 'lucide-react';
+import { useEmprendedores } from "../../context/EmprendedoresContext.jsx";
+// const {emprendedores } = useEmprendedores();
+
 
 function StatCard({ stat }) {
   const getIcon = () => {

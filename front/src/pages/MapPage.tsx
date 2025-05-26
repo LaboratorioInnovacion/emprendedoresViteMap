@@ -2,6 +2,7 @@ import React from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
 import BusinessMap from "../components/map/BusinessMap";
 import { businesses, calculateMapCenter } from "../data/mockData";
+import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
 
 const MapPage: React.FC = () => {
   const { isMobileSidebarOpen, isMobile } = useOutletContext() as {
@@ -11,6 +12,7 @@ const MapPage: React.FC = () => {
 
   const navigate = useNavigate();
   const mapCenter = calculateMapCenter();
+  const { emprendedores } = useEmprendedores();
 
   // Handle business selection
   const handleBusinessSelect = (id: string) => {
@@ -21,7 +23,7 @@ const MapPage: React.FC = () => {
     <div className="h-[calc(100vh-180px)]">
       {!(isMobile && isMobileSidebarOpen) && (
       <BusinessMap
-        businesses={businesses}
+        businesses={emprendedores}
         defaultViewport={{
           center: mapCenter,
           zoom: 5,
