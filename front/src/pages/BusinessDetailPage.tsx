@@ -186,12 +186,12 @@ const BusinessDetailPage: React.FC = () => {
           </div>
           
           {/* Additional cards could go here */}
-          <div className="card">
+          {/* <div className="card">
             <h2 className="text-xl font-semibold mb-4">Performance Statistics</h2>
             <div className="h-64 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center">
               <p className="text-gray-500 dark:text-gray-400">Performance statistics would appear here</p>
             </div>
-          </div>
+          </div> */}
         </div>
         
         {/* Right column - Map and actions */}

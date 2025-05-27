@@ -7,70 +7,70 @@ import { MapPin, Building2, Search, X, Phone, Mail, Globe, Activity } from 'luci
 import { useOutletContext } from 'react-router-dom';
 
 interface BusinessMapProps {
-  businesses: Business[];
+  emprendedores: emprendedores[];
   defaultViewport: MapViewport;
   onBusinessSelect?: (id: string) => void;
   onLocationSelect?: (lat: number, lng: number) => void;
   selectionMode?: boolean;
 }
 
-// Create custom map pins for businesses
-const createBusinessIcon = (type: BusinessType) => {
-    const { isMobileSidebarOpen, isMobile } = useOutletContext() as { isMobileSidebarOpen: boolean, isMobile: boolean };
-  
-  const color = businessTypeColors[type];
-  const svgIcon = `
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="24" height="24">
-      <path d="M12 0c-4.4 0-8 3.6-8 8 0 5.4 7 13.4 7.3 13.7.2.2.5.3.7.3s.5-.1.7-.3c.3-.3 7.3-8.3 7.3-13.7 0-4.4-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
-    </svg>
-  `;
-
-  const iconUrl = `data:image/svg+xml;base64,${btoa(svgIcon)}`;
-
-  return new Icon({
-    iconUrl,
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
-  });
-};
-
-// Component to handle map clicks for location selection
-const LocationSelector = ({ onLocationSelect }: { onLocationSelect?: (lat: number, lng: number) => void }) => {
-  useMapEvent('click', (e) => {
-    if (onLocationSelect) {
-      onLocationSelect(e.latlng.lat, e.latlng.lng);
-    }
-  });
-  return null;
-};
-
-// Get status badge class (copiado de Dashboard)
-const getStatusBadgeClass = (status: 'active' | 'inactive' | 'pending') => {
-  switch (status) {
-    case 'active':
-      return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500';
-    case 'inactive':
-      return 'bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500';
-    case 'pending':
-      return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500';
-    default:
-      return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
-  }
-};
-
 const BusinessMap: React.FC<BusinessMapProps> = ({
-  businesses,
+  emprendedores,
   defaultViewport,
   onBusinessSelect,
   onLocationSelect,
   selectionMode = false
 }) => {
+  const { isMobileSidebarOpen, isMobile } = useOutletContext() as { isMobileSidebarOpen: boolean, isMobile: boolean };
+
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
 
+  // Create custom map pins for businesses
+  const createBusinessIcon = (type: BusinessType) => {
+    const color = businessTypeColors[type];
+    const svgIcon = `
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="24" height="24">
+        <path d="M12 0c-4.4 0-8 3.6-8 8 0 5.4 7 13.4 7.3 13.7.2.2.5.3.7.3s.5-.1.7-.3c.3-.3 7.3-8.3 7.3-13.7 0-4.4-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
+      </svg>
+    `;
+
+    const iconUrl = `data:image/svg+xml;base64,${btoa(svgIcon)}`;
+
+    return new Icon({
+      iconUrl,
+      iconSize: [32, 32],
+      iconAnchor: [16, 32],
+      popupAnchor: [0, -32],
+    });
+  };
+
+  // Component to handle map clicks for location selection
+  const LocationSelector = ({ onLocationSelect }: { onLocationSelect?: (lat: number, lng: number) => void }) => {
+    useMapEvent('click', (e) => {
+      if (onLocationSelect) {
+        onLocationSelect(e.latlng.lat, e.latlng.lng);
+      }
+    });
+    return null;
+  };
+
+  // Get status badge class (copiado de Dashboard)
+  const getStatusBadgeClass = (status: 'active' | 'inactive' | 'pending') => {
+    switch (status) {
+      case 'active':
+        return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500';
+      case 'inactive':
+        return 'bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500';
+      case 'pending':
+        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500';
+      default:
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
+    }
+  };
+
   // Handle business search
-  const filteredBusinesses = businesses.filter(business => 
+  const filteredBusinesses = emprendedores.filter(business => 
     business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
     business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
     business.address.toLowerCase().includes(searchTerm.toLowerCase())
@@ -96,7 +96,7 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
       <div className="p-4 bg-white dark:bg-gray-800 rounded-t-lg border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <MapPin size={20} className="text-primary-600 dark:text-primary-400" />
-          <h2 className="text-lg font-medium">Business Map</h2>
+          <h2 className="text-lg font-medium">Mapa Negocios</h2>
         </div>
         
         <div className="relative">
@@ -237,7 +237,7 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
       
       {/* Legend */}
       <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-medium mb-2">Legend</h3>
+        <h3 className="text-sm font-medium mb-2">Rubros</h3>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
           {Object.entries(businessTypeColors).map(([type, color]) => (
             <div key={type} className="flex items-center">

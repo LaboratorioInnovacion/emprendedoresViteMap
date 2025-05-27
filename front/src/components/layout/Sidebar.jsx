@@ -77,7 +77,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <div className={`flex items-center ${collapsed ? 'justify-center w-full' : 'space-x-2'}`}>
             <Map className="text-primary-600" />
-            {!collapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">VentureMap</h1>}
+            {!collapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">EmpreMap</h1>}
           </div>
           <button 
             onClick={toggleCollapse} 
