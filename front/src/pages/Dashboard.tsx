@@ -2,6 +2,7 @@ import React, { use, useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
 import StatCard from "../components/dashboard/StatCard";
 import RecentBusinessCard from "../components/dashboard/RecentBusinessCard";
+import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import {
   businesses,
@@ -35,6 +36,7 @@ const Dashboard: React.FC = () => {
   const mapCenter = calculateMapCenter();
   const [Negocios, setNegocios] = useState([]);
   const { emprendedores } = useEmprendedores() as { emprendedores: Business[] };
+  const navigate = useNavigate();
 
   // Create custom map pins for businesses
   const createBusinessIcon = (type: BusinessType) => {
@@ -134,7 +136,7 @@ const Dashboard: React.FC = () => {
               <MapContainer
                 // @ts-expect-error center is valid for MapContainer in react-leaflet v4
                 center={mapCenter}
-                zoom={5}
+                zoom={12}
                 style={{ height: "100%", width: "100%" }}
                 zoomControl={false}
               >
@@ -222,13 +224,16 @@ const Dashboard: React.FC = () => {
                           )} */}
                         </div>
 
-                        <div className="text-white mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                          <Link
+                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                          <button className="btn-primary text-white w-full justify-center text-sm py-1.5"
+                          onClick={()=>navigate(`/businesses/${business.id}`)}>ver detalles</button>
+                          {/* <Link
                             to={`/businesses/${business.id}`}
+                            
                             className="btn-primary text-white w-full justify-center text-sm py-1.5"
                           >
                             Ver Detalles
-                          </Link>
+                          </Link> */}
                         </div>
                       </div>
                     </Popup>
@@ -251,7 +256,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        {/* <div className="space-y-4">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Building2
@@ -271,7 +276,7 @@ const Dashboard: React.FC = () => {
           {emprendedores.map((business) => (
             <RecentBusinessCard key={business.id} business={business} />
           ))}
-        </div> */}
+        </div>
       </div>
 
       {/* <div className="card">

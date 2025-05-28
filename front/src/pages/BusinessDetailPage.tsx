@@ -238,10 +238,10 @@ const BusinessDetailPage: React.FC = () => {
                 <Pencil size={18} className="mr-2" />
                 Edit Details
               </button>
-              <button className="btn-outline w-full justify-center">
+              {/* <button className="btn-outline w-full justify-center">
                 <Building2 size={18} className="mr-2" />
                 View Similar Businesses
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
