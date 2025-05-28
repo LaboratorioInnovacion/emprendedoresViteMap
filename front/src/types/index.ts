@@ -20,10 +20,10 @@ export interface Business {
 }
 
 export type BusinessType = 
-  | 'restaurant'
-  | 'retail'
+  | 'rotiseria'
+  | 'minorista'
   | 'service'
-  | 'technology'
+  | 'tecnologia'
   | 'manufacturing'
   | 'education'
   | 'healthcare'

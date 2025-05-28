@@ -222,7 +222,7 @@ const Dashboard: React.FC = () => {
                           )} */}
                         </div>
 
-                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                        <div className="text-white mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                           <Link
                             to={`/businesses/${business.id}`}
                             className="btn-primary text-white w-full justify-center text-sm py-1.5"
@@ -251,7 +251,7 @@ const Dashboard: React.FC = () => {
           </div>
         </div>
 
-        <div className="space-y-4">
+        {/* <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Building2
@@ -271,7 +271,7 @@ const Dashboard: React.FC = () => {
           {emprendedores.map((business) => (
             <RecentBusinessCard key={business.id} business={business} />
           ))}
-        </div>
+        </div> */}
       </div>
 
       {/* <div className="card">
