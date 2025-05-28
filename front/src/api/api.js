@@ -1,6 +1,6 @@
 export async function fetchBusinessData() {
   const sheetId = "16Isxw0BG0sU_zqxBV7Tfq1XC2sp_ttwGb7AfWt7j5V0";
-  const range = "A2:I";
+  const range = "A2:V"; // Ampliado para cubrir todas las columnas
   const apiKeySheets = "AIzaSyAyitOMgYMCoRiUU8KltHqaY3tzECyOYTQ";
   const openCageKey = "94054c296cab467981eb945db56677b5";
 
@@ -15,15 +15,29 @@ export async function fetchBusinessData() {
     const businesses = await Promise.all(
       rows.map(async (row, index) => {
         const [
-          marcaTemporal,
-          nombreApellido,
-          dni,
-          email,
-          direccionParticular,
-          nombreEmprendimiento,
-          direccionEmprendimiento,
-          rubro,
-          descripcion,
+          marcaTemporal,               // A
+          nombreApellido,              // B
+          dni,                         // C
+          telefonoPersonal,            // D
+          email,                       // E
+          direccionParticular,        // F
+          nombreEmprendimiento,        // G
+          telefonoEmprendimiento,      // H
+          direccionEmprendimiento,     // I
+          rubro,                       // J
+          descripcion,                 // K
+          tiempoInicio,                // L
+          formaVenta,                  // M
+          plataformasOnline,           // N
+          redesSociales,               // O
+          redesUtilizadas,            // P
+          desafioPrincipal,           // Q
+          tipoApoyo,                  // R
+          personasEmprendimiento,     // S
+          tieneLocal,                 // T
+          estaRegistrado,             // U
+          participoPrograma,          // V
+          puntuacion                  // W (PUNTUACIÓN)
         ] = row;
 
         let location = { lat: -27.0, lng: -65.0 }; // Coordenadas por defecto
@@ -43,19 +57,20 @@ export async function fetchBusinessData() {
           id: (index + 1).toString(),
           name: nombreEmprendimiento || "",
           description: descripcion || "",
-          type: rubro || "other",
+          type: rubro || "otro",
+          score: parseFloat(puntuacion) || 0,
           address: direccionEmprendimiento || "",
           location: {
             lat: location.lat,
             lng: location.lng,
           },
           contact: {
-            phone: "", // Puedes completarlo si agregás esa columna
+            phone: telefonoEmprendimiento || "",
             email: email || "",
-            website: "", // Puedes completarlo si agregás esa columna
+            website: "", // Puedes incluir si agregas una columna
           },
-          status: "active", // Podrías ponerlo como "pending" si lo preferís
-          imageUrl: "", // Podés mapear imágenes si están en la planilla
+          status: "active",
+          imageUrl: "", // Puedes incluir si agregas una columna
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
         };
@@ -68,6 +83,77 @@ export async function fetchBusinessData() {
     return [];
   }
 }
+
+// export async function fetchBusinessData() {
+//   const sheetId = "16Isxw0BG0sU_zqxBV7Tfq1XC2sp_ttwGb7AfWt7j5V0";
+//   const range = "A2:I";
+//   const apiKeySheets = "AIzaSyAyitOMgYMCoRiUU8KltHqaY3tzECyOYTQ";
+//   const openCageKey = "94054c296cab467981eb945db56677b5";
+
+//   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKeySheets}`;
+
+//   try {
+//     const res = await fetch(url);
+//     if (!res.ok) throw new Error("Error al obtener datos del sheet");
+//     const data = await res.json();
+//     const rows = data.values || [];
+
+//     const businesses = await Promise.all(
+//       rows.map(async (row, index) => {
+//         const [
+//           marcaTemporal,
+//           nombreApellido,
+//           dni,
+//           email,
+//           direccionParticular,
+//           nombreEmprendimiento,
+//           direccionEmprendimiento,
+//           rubro,
+//           descripcion,
+//         ] = row;
+
+//         let location = { lat: -27.0, lng: -65.0 }; // Coordenadas por defecto
+//         if (direccionEmprendimiento) {
+//           try {
+//             const encodedAddress = encodeURIComponent(`${direccionEmprendimiento}, Catamarca, Argentina`);
+//             const geoRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodedAddress}&key=${openCageKey}&language=es&countrycode=ar`);
+//             const geoData = await geoRes.json();
+//             const geo = geoData.results?.[0]?.geometry;
+//             if (geo) location = geo;
+//           } catch (e) {
+//             console.warn("No se pudo geocodificar:", direccionEmprendimiento);
+//           }
+//         }
+
+//         return {
+//           id: (index + 1).toString(),
+//           name: nombreEmprendimiento || "",
+//           description: descripcion || "",
+//           type: rubro || "other",
+//           address: direccionEmprendimiento || "",
+//           location: {
+//             lat: location.lat,
+//             lng: location.lng,
+//           },
+//           contact: {
+//             phone: "", // Puedes completarlo si agregás esa columna
+//             email: email || "",
+//             website: "", // Puedes completarlo si agregás esa columna
+//           },
+//           status: "active", // Podrías ponerlo como "pending" si lo preferís
+//           imageUrl: "", // Podés mapear imágenes si están en la planilla
+//           createdAt: new Date().toISOString(),
+//           updatedAt: new Date().toISOString(),
+//         };
+//       })
+//     );
+
+//     return businesses;
+//   } catch (error) {
+//     console.error("Error al obtener negocios:", error);
+//     return [];
+//   }
+// }
 
 // export async function fetchBusinessData() {
 //   const sheetId = "16Isxw0BG0sU_zqxBV7Tfq1XC2sp_ttwGb7AfWt7j5V0";
