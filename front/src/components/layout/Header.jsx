@@ -58,7 +58,7 @@ function Header({ toggleMobileSidebar }) {
           <form onSubmit={handleSearch} className="hidden md:flex items-center relative">
             <input
               type="text"
-              placeholder="Search businesses..."
+              placeholder="Buscar Negocio..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="input pl-10 w-64 lg:w-80"
@@ -120,7 +120,7 @@ function Header({ toggleMobileSidebar }) {
         <div className="relative w-full">
           <input
             type="text"
-            placeholder="Search businesses..."
+            placeholder="Buscar Negocio..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input pl-10 w-full"
