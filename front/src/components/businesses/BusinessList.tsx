@@ -122,13 +122,13 @@ const BusinessList: React.FC<BusinessListProps> = ({
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h2 className="text-2xl font-bold">Businesses</h2>
+          <h2 className="text-2xl font-bold">Emprendedores</h2>
 
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1 sm:flex-none">
               <input
                 type="text"
-                placeholder="Search businesses..."
+                placeholder="Buscar Negocio..."
                 value={filters.searchTerm}
                 onChange={handleSearchChange}
                 className="input pl-9 w-full sm:w-60"
@@ -146,7 +146,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
                 title="Filter"
               >
                 <Filter size={18} />
-                <span className="ml-2 sm:hidden">Filters</span>
+                <span className="ml-2 sm:hidden">Filtros</span>
               </button>
 
               <button
@@ -154,7 +154,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
                 className="btn-primary flex-1 sm:flex-none justify-center"
               >
                 <Plus size={18} className="sm:mr-1" />
-                <span className="ml-2 sm:ml-0">Add Business</span>
+                <span className="ml-2 sm:ml-0">Añadir Emprendedor</span>
               </button>
             </div>
           </div>
@@ -165,7 +165,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
       {showFilters && (
         <div className="card animate-fadeIn">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Filters</h3>
+            <h3 className="text-lg font-medium">Filtros</h3>
             <button
               onClick={resetFilters}
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
@@ -176,7 +176,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
 
           <div className="space-y-6">
             <div>
-              <h4 className="font-medium mb-2">Business Type</h4>
+              <h4 className="font-medium mb-2">Tipo de Rubro</h4>
               <div className="flex flex-wrap gap-2">
                 {businessTypes.map((type) => (
                   <button
@@ -195,7 +195,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
             </div>
 
             <div>
-              <h4 className="font-medium mb-2">Status</h4>
+              <h4 className="font-medium mb-2">Estado</h4>
               <div className="flex flex-wrap gap-2">
                 {statusOptions.map((status) => (
                   <button
@@ -295,37 +295,37 @@ const BusinessList: React.FC<BusinessListProps> = ({
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
-                Name
+                Nombre
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
-                Type
+                Tipo
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
-                Location
+                Ubicacion
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
-                Status
+                Estado
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
-                Last Updated
+                Ultima Actualización
               </th>
               <th
                 scope="col"
                 className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
               >
-                Actions
+                Acciones
               </th>
             </tr>
           </thead>
@@ -404,7 +404,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
                   colSpan={6}
                   className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
                 >
-                  No businesses found matching your criteria.
+                  No hay negocios con estos rubros o estados.
                 </td>
               </tr>
             )}

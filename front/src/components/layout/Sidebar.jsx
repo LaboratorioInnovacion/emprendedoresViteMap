@@ -20,11 +20,11 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-    { path: '/map', label: 'Map', icon: <Map size={20} /> },
-    { path: '/businesses', label: 'Businesses', icon: <Building2 size={20} /> },
-    { path: '/analytics', label: 'Analytics', icon: <PieChart size={20} /> },
-    { path: '/settings', label: 'Settings', icon: <Settings size={20} /> },
-    { path: '/help', label: 'Help & Support', icon: <HelpCircle size={20} /> },
+    { path: '/map', label: 'Mapa', icon: <Map size={20} /> },
+    { path: '/businesses', label: 'Emprendedores', icon: <Building2 size={20} /> },
+    { path: '/analytics', label: 'Analiticas', icon: <PieChart size={20} /> },
+    { path: '/settings', label: 'Ajustes', icon: <Settings size={20} /> },
+    { path: '/help', label: 'Soporte', icon: <HelpCircle size={20} /> },
   ];
 
   if (isMobile) {
