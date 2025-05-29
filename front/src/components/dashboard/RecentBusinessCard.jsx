@@ -58,7 +58,7 @@ function RecentBusinessCard({ business }) {
                 href={`/businesses/${business.id}`}
                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
-                View Details
+                Ver Detalles
               </a>
             </div>
           </div>

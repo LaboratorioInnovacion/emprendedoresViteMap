@@ -173,7 +173,7 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
           <MapContainer
             // @ts-expect-error center es válido en react-leaflet v4
             center={defaultViewport.center}
-            zoom={defaultViewport.zoom}
+            zoom={14}
             style={{ height: "100%", width: "100%" }}
           >
             <TileLayer

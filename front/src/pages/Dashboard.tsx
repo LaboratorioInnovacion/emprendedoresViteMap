@@ -36,6 +36,8 @@ const Dashboard: React.FC = () => {
   const mapCenter = calculateMapCenter();
   const [Negocios, setNegocios] = useState([]);
   const { emprendedores } = useEmprendedores() as { emprendedores: Business[] };
+  const [searchTerm, setSearchTerm] = useState(""); // Filtro de búsqueda
+const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por tipo
   const navigate = useNavigate();
 
   // Create custom map pins for businesses
@@ -56,6 +58,17 @@ const Dashboard: React.FC = () => {
       popupAnchor: [0, -32],
     });
   };
+  const filteredBusinesses = Negocios.filter((business) => {
+  const matchesSearch =
+    business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    business.address.toLowerCase().includes(searchTerm.toLowerCase());
+
+  const matchesType =
+    selectedTypes.length === 0 || selectedTypes.includes(business.type);
+
+  return matchesSearch && matchesType;
+});
 
   useEffect(() => {
     const fetchData = async () => {
@@ -197,10 +210,10 @@ const Dashboard: React.FC = () => {
                             <span className="truncate">{business.address}</span>
                           </div>
 
-                          {/* <div className="flex items-center text-gray-600 dark:text-gray-400">
+                          <div className="flex items-center text-gray-600 dark:text-gray-400">
                             <Phone size={14} className="mr-1 flex-shrink-0" />
                             <span>{business.contact.phone}</span>
-                          </div> */}
+                          </div>
 
                           <div className="flex items-center text-gray-600 dark:text-gray-400">
                             <Mail size={14} className="mr-1 flex-shrink-0" />
@@ -209,7 +222,7 @@ const Dashboard: React.FC = () => {
                             </span>
                           </div>
 
-                          {/* {business.contact.website && (
+                          {business.contact.website && (
                             <div className="flex items-center text-gray-600 dark:text-gray-400">
                               <Globe size={14} className="mr-1 flex-shrink-0" />
                               <a 
@@ -221,7 +234,7 @@ const Dashboard: React.FC = () => {
                                 {business.contact.website.replace(/^https?:\/\//, '')}
                               </a>
                             </div>
-                          )} */}
+                          )}
                         </div>
 
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
@@ -269,7 +282,7 @@ const Dashboard: React.FC = () => {
               to="/businesses"
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center"
             >
-              View All <ArrowRight size={16} className="ml-1" />
+              Ver Todo<ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
 

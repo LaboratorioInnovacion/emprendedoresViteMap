@@ -234,7 +234,7 @@ export const businessTypeColors: Record<BusinessType, string> = {
 // Generate a default map center based on business locations
 export const calculateMapCenter = (): [number, number] => {
   // if (businesses.length === 0) return [-28.46957, -65.78524]; // Default to NYC if no businesses
-  return [-28.4696275,-65.8082875]; // Default to NYC if no businesses
+  return [-28.4689031,-65.7790656]; // Default to NYC if no businesses
 
   const totalLat = businesses.reduce(
     (sum, business) => sum + business.location.lat,

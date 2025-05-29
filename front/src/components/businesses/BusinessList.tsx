@@ -393,7 +393,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
                       onClick={() => onViewDetail(business.id)}
                       className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
                     >
-                      View Details
+                      Ver Detalles
                     </button>
                   </td>
                 </tr>
