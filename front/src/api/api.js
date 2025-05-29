@@ -58,7 +58,7 @@ export async function fetchBusinessData() {
           name: nombreEmprendimiento || "",
           description: descripcion || "",
           type: rubro || "otro",
-          score: parseFloat(puntuacion) || 0,
+          score: parseFloat(puntuacion) || "No Hay Puntuación",
           address: direccionEmprendimiento || "",
           location: {
             lat: location.lat,

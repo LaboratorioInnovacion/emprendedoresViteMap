@@ -59,7 +59,7 @@ const BusinessDetailPage: React.FC = () => {
         return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
     }
   };
-
+console.log(business);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -229,6 +229,20 @@ const BusinessDetailPage: React.FC = () => {
                         </p>
                       </div>
                     </div>
+                                        <div className="flex items-start">
+                      <Clock
+                        size={18}
+                        className="text-gray-500 mt-0.5 mr-2 flex-shrink-0"
+                      />
+                      <div>
+                        <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                          Puntuacion
+                        </p>
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                          {business.score}
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -273,7 +287,7 @@ const BusinessDetailPage: React.FC = () => {
                 rel="noopener noreferrer"
                 className="text-primary-600 dark:text-primary-400 hover:underline text-sm"
               >
-                View on Google Maps
+                Ver en Google Maps
               </a>
             </div>
           </div>
@@ -284,11 +298,11 @@ const BusinessDetailPage: React.FC = () => {
             <div className="space-y-3">
               <button className="btn-primary w-full justify-center">
                 <Mail size={18} className="mr-2" />
-                Contact Business
+                Contacto del Negocio
               </button>
               <button className="btn-outline w-full justify-center">
                 <Pencil size={18} className="mr-2" />
-                Edit Details
+                Editar Detalles
               </button>
               {/* <button className="btn-outline w-full justify-center">
                 <Building2 size={18} className="mr-2" />
