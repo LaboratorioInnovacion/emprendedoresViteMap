@@ -8,8 +8,15 @@ import {
   BadgeDollarSign, 
   Activity 
 } from 'lucide-react';
+import { use, useEffect } from 'react';
+
 
 function StatCard({ cantidad, empre }) {
+  // Log para depuración cuando cambia 'empre'
+  useEffect(() => {
+    console.log(empre);
+  }, [empre]);
+
   // Si recibimos la prop cantidad, mostramos la cantidad total
   if (typeof cantidad === 'number') {
     return (

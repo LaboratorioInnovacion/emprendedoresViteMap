@@ -239,7 +239,7 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
 
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
                           <button className="btn-primary text-white w-full justify-center text-sm py-1.5"
-                          onClick={()=>navigate(`/businesses/${business.id}`)}>ver detalles</button>
+                          onClick={()=>navigate(`/businesses/${business.id}`)}>Ver Detalles</button>
                           {/* <Link
                             to={`/businesses/${business.id}`}
                             

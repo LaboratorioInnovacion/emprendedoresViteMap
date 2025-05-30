@@ -142,7 +142,7 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
         <div className="relative">
           <input
             type="text"
-            placeholder="Search businesses or locations..."
+            placeholder="Buscar negocios o ubicaciones..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input pl-9 w-full"
@@ -265,7 +265,7 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
                         onClick={() => handleBusinessSelect(business.id)}
                         className="btn-primary w-full justify-center text-sm py-1.5"
                       >
-                        View Details
+                        Ver Detalles
                       </button>
                     </div>
                   </div>
