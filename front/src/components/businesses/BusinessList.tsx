@@ -170,7 +170,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
               onClick={resetFilters}
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
-              Reset All
+              Borrar Filtros
             </button>
           </div>
 

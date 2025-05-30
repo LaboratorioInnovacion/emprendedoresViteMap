@@ -16,26 +16,40 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
-import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
+import { useEmprendedores } from "../context/EmprendedoresContext";
 
 const BusinessDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [business, setBusiness] = useState<Business | null>(null);
-  const { emprendedores } = useEmprendedores();
+  const { emprendedores, loading } = useEmprendedores();
 
-  // Load business details
+   // Load business details
   useEffect(() => {
-    const foundBusiness = emprendedores.find((b) => b.id === id);
-    setBusiness(foundBusiness || null);
-  }, [id]);
+    if (!loading) {
+      const foundBusiness = emprendedores.find((b) => b.id === id);
+      setBusiness(foundBusiness || null);
+      console.log("Business found:", foundBusiness);
+      console.log("id:", id);
+    }
+  }, [id, emprendedores, loading]);
+  // Handle not found
+
+  // Show loading state while data is being fetched
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <p>Cargando datos...</p>
+      </div>
+    );
+  }
 
   // Handle not found
   if (!business) {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <Building2 size={48} className="text-gray-400 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">No se encontro Emprendedor</h2>
+        <h2 className="text-2xl font-bold mb-2">No se encontró Emprendedor</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-6">
           El negocio que estás buscando no existe o ha sido eliminado.
         </p>
@@ -45,7 +59,6 @@ const BusinessDetailPage: React.FC = () => {
       </div>
     );
   }
-
   // Get status badge class
   const getStatusBadgeClass = () => {
     switch (business.status) {
@@ -59,7 +72,7 @@ const BusinessDetailPage: React.FC = () => {
         return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
     }
   };
-console.log(business);
+  console.log(business);
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -142,7 +155,6 @@ console.log(business);
                         </p>
                       </div>
                     </div>
-
                     <div className="flex items-start">
                       <Phone
                         size={18}
@@ -157,7 +169,6 @@ console.log(business);
                         </p>
                       </div>
                     </div>
-
                     <div className="flex items-start">
                       <Mail
                         size={18}
@@ -173,7 +184,6 @@ console.log(business);
                       </div>
                     </div>
                   </div>
-
                   <div className="space-y-3">
                     {business.contact.website && (
                       <div className="flex items-start">
@@ -199,7 +209,6 @@ console.log(business);
                         </div>
                       </div>
                     )}
-
                     <div className="flex items-start">
                       <Calendar
                         size={18}
@@ -214,7 +223,6 @@ console.log(business);
                         </p>
                       </div>
                     </div>
-
                     <div className="flex items-start">
                       <Clock
                         size={18}
@@ -229,7 +237,7 @@ console.log(business);
                         </p>
                       </div>
                     </div>
-                                        <div className="flex items-start">
+                    <div className="flex items-start">
                       <Clock
                         size={18}
                         className="text-gray-500 mt-0.5 mr-2 flex-shrink-0"

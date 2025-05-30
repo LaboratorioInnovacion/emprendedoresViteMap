@@ -119,7 +119,8 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4"> */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
         <StatCard cantidad={emprendedores.length} />
         {emprendedores.map((empre) => (
           <StatCard key={empre.id} empre={empre} />
@@ -238,15 +239,15 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
                         </div>
 
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                          <button className="btn-primary text-white w-full justify-center text-sm py-1.5"
-                          onClick={()=>navigate(`/businesses/${business.id}`)}>Ver Detalles</button>
-                          {/* <Link
+                          {/* <button className="btn-primary text-white w-full justify-center text-sm py-1.5"
+                          onClick={()=>navigate(`/businesses/${business.id}`)}>Ver Detalles</button> */}
+                          <Link
                             to={`/businesses/${business.id}`}
                             
                             className="btn-primary text-white w-full justify-center text-sm py-1.5"
                           >
                             Ver Detalles
-                          </Link> */}
+                          </Link>
                         </div>
                       </div>
                     </Popup>
