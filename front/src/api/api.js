@@ -1,6 +1,6 @@
 export async function fetchBusinessData() {
   const sheetId = "16Isxw0BG0sU_zqxBV7Tfq1XC2sp_ttwGb7AfWt7j5V0";
-  const range = "A2:V"; // Ampliado para cubrir todas las columnas
+  const range = "A2:W"; // Ampliado para cubrir todas las columnas
   const apiKeySheets = "AIzaSyAyitOMgYMCoRiUU8KltHqaY3tzECyOYTQ";
   const openCageKey = "94054c296cab467981eb945db56677b5";
 

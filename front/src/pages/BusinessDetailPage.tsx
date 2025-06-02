@@ -15,6 +15,7 @@ import {
   Activity,
   Pencil,
   Trash2,
+  Star 
 } from "lucide-react";
 import { useEmprendedores } from "../context/EmprendedoresContext";
 
@@ -238,7 +239,7 @@ const BusinessDetailPage: React.FC = () => {
                       </div>
                     </div>
                     <div className="flex items-start">
-                      <Clock
+                      <Star 
                         size={18}
                         className="text-gray-500 mt-0.5 mr-2 flex-shrink-0"
                       />

@@ -221,20 +221,29 @@ export const dashboardStats: DashboardStat[] = [
 
 // Business types with corresponding colors for the map markers
 export const businessTypeColors: Record<BusinessType, string> = {
-  rotiseria: "#EF4444", // Red
-  minorista: "#3B82F6", // Blue
-  service: "#8B5CF6", // Purple
-  tecnologia: "#10B981", // Green
-  manufacturing: "#F59E0B", // Amber
-  education: "#6366F1", // Indigo
-  healthcare: "#EC4899", // Pink
-  other: "#6B7280", // Gray
+  // rotiseria: "#EF4444", // Red
+  // minorista: "#3B82F6", // Blue
+  // service: "#8B5CF6", // Purple
+  // tecnologia: "#10B981", // Green
+  // manufacturing: "#F59E0B", // Amber
+  // education: "#6366F1", // Indigo
+  // healthcare: "#EC4899", // Pink
+  // other: "#6B7280", // Gray
+  Gastronomía: "#E11D48", // Rojo vibrante
+  Servicios: "#2563EB", // Azul profundo
+  Indumentaria: "#D97706", // Ámbar intenso
+  Tecnología: "#059669", // Verde fresco
+  Educación: "#4F46E5", // Índigo saturado
+  Artesanía: "#4338CA", // Índigo oscuro
+  Turismo: "#4F46E5", // Índigo profundo
+  Salud: "#DB2777", // Rosa profundo
+  other: "#4B5563", // Gris oscuro
 };
 
 // Generate a default map center based on business locations
 export const calculateMapCenter = (): [number, number] => {
   // if (businesses.length === 0) return [-28.46957, -65.78524]; // Default to NYC if no businesses
-  return [-28.4689031,-65.7790656]; // Default to NYC if no businesses
+  return [-28.4689031, -65.7790656]; // Default to NYC if no businesses
 
   const totalLat = businesses.reduce(
     (sum, business) => sum + business.location.lat,

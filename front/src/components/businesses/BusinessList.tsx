@@ -24,14 +24,15 @@ const BusinessList: React.FC<BusinessListProps> = ({
   console.log("Emprendedores:", emprendedores);
 
   const businessTypes: BusinessType[] = [
-    "restaurant",
-    "retail",
-    "service",
-    "technology",
-    "manufacturing",
-    "education",
-    "healthcare",
-    "other",
+    "Gastronomía", // Rojo vibrante
+    "Servicios", // Azul profundo
+    "Indumentaria", // Ámbar intenso
+    "Tecnología", // Verde fresco
+    "Educación", // Índigo saturado
+    "Artesanía", // Índigo oscuro
+    "Turismo", // Índigo profundo
+    "Salud", // Rosa profundo
+    "other", // Gris oscuro
   ];
 
   const statusOptions = ["active", "inactive", "pending"];

@@ -145,7 +145,7 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
             </Link>
           </div>
 
-          <div className="h-80 rounded-lg overflow-hidden">
+          <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden">
             {!(isMobile && isMobileSidebarOpen) && (
               <MapContainer
                 // @ts-expect-error center is valid for MapContainer in react-leaflet v4

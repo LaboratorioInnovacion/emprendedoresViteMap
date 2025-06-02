@@ -20,14 +20,15 @@ export interface Business {
 }
 
 export type BusinessType = 
-  | 'rotiseria'
-  | 'minorista'
-  | 'service'
-  | 'tecnologia'
-  | 'manufacturing'
-  | 'education'
-  | 'healthcare'
-  | 'other';
+ | "Gastronomía" // Rojo vibrante
+ | "Servicios" // Azul profundo
+ | "Indumentaria" // Ámbar intenso
+ | "Tecnología" // Verde fresco
+ | "Educación" // Índigo saturado
+ | "Artesanía" // Índigo oscuro
+ | "Turismo" // Índigo profundo
+ | "Salud" // Rosa profundo
+ | "other" // Gris oscuro
 
 export interface DashboardStat {
   id: string;
