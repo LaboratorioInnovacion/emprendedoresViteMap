@@ -37,7 +37,7 @@ function AppLayout() {
           <Outlet context={{ isMobileSidebarOpen, isMobile }} />
         </main>
         <footer className="py-4 px-6 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
-          &copy; {new Date().getFullYear()} Augusto Del Campo - All rights reserved.
+          &copy;{new Date().getFullYear()} Augusto Del Campo-Nodo Tecnologico Catamarca.
         </footer>
       </div>
     </div>

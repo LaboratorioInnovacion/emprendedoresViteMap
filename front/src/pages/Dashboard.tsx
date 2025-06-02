@@ -216,14 +216,14 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
                             <span>{business.contact.phone}</span>
                           </div>
 
-                          <div className="flex items-center text-gray-600 dark:text-gray-400">
+                          {/* <div className="flex items-center text-gray-600 dark:text-gray-400">
                             <Mail size={14} className="mr-1 flex-shrink-0" />
                             <span className="truncate">
                               {business.contact.email}
                             </span>
-                          </div>
+                          </div> */}
 
-                          {business.contact.website && (
+                          {/* {business.contact.website && (
                             <div className="flex items-center text-gray-600 dark:text-gray-400">
                               <Globe size={14} className="mr-1 flex-shrink-0" />
                               <a 
@@ -235,16 +235,14 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
                                 {business.contact.website.replace(/^https?:\/\//, '')}
                               </a>
                             </div>
-                          )}
+                          )} */}
                         </div>
 
                         <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                          {/* <button className="btn-primary text-white w-full justify-center text-sm py-1.5"
-                          onClick={()=>navigate(`/businesses/${business.id}`)}>Ver Detalles</button> */}
                           <Link
                             to={`/businesses/${business.id}`}
-                            
-                            className="btn-primary text-white w-full justify-center text-sm py-1.5"
+                            className="btn-primary w-full justify-center text-sm py-1.5"
+                            style={{ color: '#fff' }}
                           >
                             Ver Detalles
                           </Link>

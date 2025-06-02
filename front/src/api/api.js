@@ -1,11 +1,12 @@
 export async function fetchBusinessData() {
-  const sheetId = "16Isxw0BG0sU_zqxBV7Tfq1XC2sp_ttwGb7AfWt7j5V0";
+  // const sheetId = "1kfvYYJuZpwsy8oFvBWy4GL4QbwV6J00cLaE-XYY_8F4"; // excel
+  // const apiKeySheets = "AlzaSyDv-DGehKKs1SrdpzrGFUpv1jAdSQMY7TQ"; //excel
+  const sheetId = "16Isxw0BG0sU_zqxBV7Tfq1XC2sp_ttwGb7AfWt7j5V0"; //prueba
+  const apiKeySheets = "AIzaSyAyitOMgYMCoRiUU8KltHqaY3tzECyOYTQ"; //prueba
+
   const range = "A2:W"; // Ampliado para cubrir todas las columnas
-  const apiKeySheets = "AIzaSyAyitOMgYMCoRiUU8KltHqaY3tzECyOYTQ";
   const openCageKey = "94054c296cab467981eb945db56677b5";
-
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKeySheets}`;
-
   try {
     const res = await fetch(url);
     if (!res.ok) throw new Error("Error al obtener datos del sheet");

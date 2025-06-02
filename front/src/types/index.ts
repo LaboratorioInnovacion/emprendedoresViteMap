@@ -28,7 +28,7 @@ export type BusinessType =
  | "Artesanía" // Índigo oscuro
  | "Turismo" // Índigo profundo
  | "Salud" // Rosa profundo
- | "other" // Gris oscuro
+ | "Otro" // Gris oscuro
 
 export interface DashboardStat {
   id: string;

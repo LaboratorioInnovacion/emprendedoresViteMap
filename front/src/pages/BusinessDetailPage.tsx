@@ -271,7 +271,7 @@ const BusinessDetailPage: React.FC = () => {
         <div className="space-y-6">
           {/* Map card */}
           <div className="card">
-            <h2 className="text-xl font-semibold mb-4">Location</h2>
+            <h2 className="text-xl font-semibold mb-4">Ubicacion</h2>
             <div className="h-64 rounded-lg overflow-hidden">
               <MapContainer
                 center={[business.location.lat, business.location.lng]}
@@ -303,7 +303,7 @@ const BusinessDetailPage: React.FC = () => {
 
           {/* Quick actions card */}
           <div className="card">
-            <h2 className="text-xl font-semibold mb-4">Quick Actions</h2>
+            <h2 className="text-xl font-semibold mb-4">Acciones Rapidas</h2>
             <div className="space-y-3">
               <button className="btn-primary w-full justify-center">
                 <Mail size={18} className="mr-2" />
