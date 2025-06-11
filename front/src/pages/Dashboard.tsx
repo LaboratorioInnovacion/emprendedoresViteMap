@@ -34,7 +34,7 @@ const Dashboard: React.FC = () => {
   };
   const recentBusinesses = businesses.slice(0, 3);
   const mapCenter = calculateMapCenter();
-  const [Negocios, setNegocios] = useState([]);
+  const [Negocios, setNegocios] = useState<Business[]>([]);
   const { emprendedores } = useEmprendedores() as { emprendedores: Business[] };
   const [searchTerm, setSearchTerm] = useState(""); // Filtro de búsqueda
 const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por tipo
@@ -43,19 +43,15 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
   // Create custom map pins for businesses
   const createBusinessIcon = (type: BusinessType) => {
     const color = businessTypeColors[type];
-    const svgIcon = `
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${color}" width="24" height="24">
-        <path d="M12 0c-4.4 0-8 3.6-8 8 0 5.4 7 13.4 7.3 13.7.2.2.5.3.7.3s.5-.1.7-.3c.3-.3 7.3-8.3 7.3-13.7 0-4.4-3.6-8-8-8zm0 12c-2.2 0-4-1.8-4-4s1.8-4 4-4 4 1.8 4 4-1.8 4-4 4z"/>
-      </svg>
-    `;
-
-    const iconUrl = `data:image/svg+xml;base64,${btoa(svgIcon)}`;
+    // SVG circular simple, como el de la posición actual de Google Maps
+    const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='${color}' stroke='white' stroke-width='2'/></svg>`;
+    const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
 
     return new Icon({
       iconUrl,
-      iconSize: [32, 32],
-      iconAnchor: [16, 32],
-      popupAnchor: [0, -32],
+      iconSize: [28, 28],
+      iconAnchor: [16, 16],
+      popupAnchor: [0, -16],
     });
   };
   const filteredBusinesses = Negocios.filter((business) => {
@@ -160,7 +156,7 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {Negocios.map((business) => (
-                  // Workaround: MarkerProps de react-leaflet no incluye 'icon', pero sí es soportada en tiempo de ejecución por Leaflet.
+                  // Workaround: MarkerProps de react-leaflet no incluye 'icon', pero sí es soportada in tiempo de ejecución por Leaflet.
                   <Marker
                     key={business.id}
                     position={[business.location.lat, business.location.lng]}
