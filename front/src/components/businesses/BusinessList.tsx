@@ -32,7 +32,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
     "Artesanía", // Índigo oscuro
     "Turismo", // Índigo profundo
     "Salud", // Rosa profundo
-    "other", // Gris oscuro
+    "Otro", // Gris oscuro
   ];
 
   const statusOptions = ["active", "inactive", "pending"];
