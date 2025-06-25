@@ -5,8 +5,9 @@ export async function fetchBusinessData() {
   const apiKeySheets = "AIzaSyAyitOMgYMCoRiUU8KltHqaY3tzECyOYTQ"; //prueba
 
   const range = "A2:W"; // Ampliado para cubrir todas las columnas
-  // const openCageKey = "94054c296cab467981eb945db56677b5";
-  const openCageKey = "f23fc56e95044c16babf28abad06ca2c";
+      // const openCageKey = "94054c296cab467981eb945db56677b5";
+      const openCageKey = "5eb16af3ff1e4f4b98cebec9e882397b";
+  // const openCageKey = "f23fc56e95044c16babf28abad06ca2c";
   const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetId}/values/${range}?key=${apiKeySheets}`;
   try {
     const res = await fetch(url);
