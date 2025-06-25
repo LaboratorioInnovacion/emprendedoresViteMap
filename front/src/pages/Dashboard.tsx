@@ -281,7 +281,7 @@ const [selectedTypes, setSelectedTypes] = useState<string[]>([]); // Filtro por 
             </Link>
           </div>
 
-          {emprendedores.map((business) => (
+          {emprendedores.slice(-3).map((business) => (
             <RecentBusinessCard key={business.id} business={business} />
           ))}
         </div>
