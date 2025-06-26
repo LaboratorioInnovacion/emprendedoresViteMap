@@ -1,3 +1,20 @@
+import { createClient } from '@turso/client';
+
+// Configurar cliente Turso
+const tursoClient = createClient({
+  url: process.env.TURSO_DATABASE_URL,
+  authToken: process.env.TURSO_AUTH_TOKEN,
+});
+
+// Inicializar la tabla si no existe
+(async () => {
+  await tursoClient.execute(`CREATE TABLE IF NOT EXISTS locations (
+    address TEXT PRIMARY KEY,
+    lat REAL,
+    lng REAL
+  )`);
+})();
+
 export async function fetchBusinessData() {
   // const sheetId = "1kfvYYJuZpwsy8oFvBWy4GL4QbwV6J00cLaE-XYY_8F4"; // excel
   // const apiKeySheets = "AlzaSyDv-DGehKKs1SrdpzrGFUpv1jAdSQMY7TQ"; //excel
@@ -14,6 +31,15 @@ export async function fetchBusinessData() {
     if (!res.ok) throw new Error("Error al obtener datos del sheet");
     const data = await res.json();
     const rows = data.values || [];
+
+    const getCoordinatesFromDB = async (address) => {
+      const result = await tursoClient.query('SELECT lat, lng FROM locations WHERE address = ?', [address]);
+      return result.rows[0] || null;
+    };
+
+    const saveCoordinatesToDB = async (address, lat, lng) => {
+      await tursoClient.execute('INSERT INTO locations (address, lat, lng) VALUES (?, ?, ?)', [address, lat, lng]);
+    };
 
     const businesses = await Promise.all(
       rows.map(async (row, index) => {
@@ -46,11 +72,19 @@ export async function fetchBusinessData() {
         let location = { lat: -27.0, lng: -65.0 }; // Coordenadas por defecto
         if (direccionEmprendimiento) {
           try {
-            const encodedAddress = encodeURIComponent(`${direccionEmprendimiento}, Catamarca, Argentina`);
-            const geoRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodedAddress}&key=${openCageKey}&language=es&countrycode=ar`);
-            const geoData = await geoRes.json();
-            const geo = geoData.results?.[0]?.geometry;
-            if (geo) location = geo;
+            const existingLocation = await getCoordinatesFromDB(direccionEmprendimiento);
+            if (existingLocation) {
+              location = existingLocation;
+            } else {
+              const encodedAddress = encodeURIComponent(`${direccionEmprendimiento}, Catamarca, Argentina`);
+              const geoRes = await fetch(`https://api.opencagedata.com/geocode/v1/json?q=${encodedAddress}&key=${openCageKey}&language=es&countrycode=ar`);
+              const geoData = await geoRes.json();
+              const geo = geoData.results?.[0]?.geometry;
+              if (geo) {
+                location = geo;
+                await saveCoordinatesToDB(direccionEmprendimiento, geo.lat, geo.lng);
+              }
+            }
           } catch (e) {
             console.warn("No se pudo geocodificar:", direccionEmprendimiento);
           }
