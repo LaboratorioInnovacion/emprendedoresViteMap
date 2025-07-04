@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import BusinessList from '../components/businesses/BusinessList';
+import BusinessList from '../../../nexttt/src/components/businesses/BusinessList.js';
 import { businesses } from '../data/mockData';
 import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
 

@@ -1,5 +1,5 @@
 import { MapPin, Phone, Mail, Globe, Activity } from 'lucide-react';
-import { useEmprendedores } from "../../context/EmprendedoresContext.jsx";
+import { useEmprendedores } from "../../../../front/src/context/EmprendedoresContext.jsx";
 
 function RecentBusinessCard({ business }) {
   const getStatusBadgeClass = () => {

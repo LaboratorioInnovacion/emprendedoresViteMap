@@ -1,7 +1,7 @@
 import React, { use, useEffect, useState } from "react";
 import { Link, useOutletContext } from "react-router-dom";
-import StatCard from "../components/dashboard/StatCard";
-import RecentBusinessCard from "../components/dashboard/RecentBusinessCard";
+import StatCard from "../../../nexttt/src/components/dashboard/StatCard.js";
+import RecentBusinessCard from "../../../nexttt/src/components/dashboard/RecentBusinessCard.js";
 import { useNavigate } from "react-router-dom";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import {

@@ -6,8 +6,8 @@ import {
   Popup,
   useMapEvent,
 } from "react-leaflet";
-import { Business, BusinessType, MapViewport } from "../../types";
-import { businessTypeColors } from "../../data/mockData";
+import { Business, BusinessType, MapViewport } from "../../../../front/src/types";
+import { businessTypeColors } from "../../../../front/src/data/mockData";
 import { Icon } from "leaflet";
 import {
   MapPin,

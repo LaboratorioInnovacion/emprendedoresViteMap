@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Business, BusinessType, FilterOptions } from "../../types";
+import { Business, BusinessType, FilterOptions } from "../../../../front/src/types";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
-import { useEmprendedores } from "../../context/EmprendedoresContext";
+import { useEmprendedores } from "../../../../front/src/context/EmprendedoresContext";
 
 interface BusinessListProps {
   businesses: Business[];

@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate, useOutletContext } from "react-router-dom";
-import BusinessMap from "../components/map/BusinessMap";
+import BusinessMap from "../../../nexttt/src/components/map/BusinessMap.js";
 import { calculateMapCenter } from "../data/mockData";
 import { useEmprendedores } from "../context/EmprendedoresContext.jsx";
 import { PieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
