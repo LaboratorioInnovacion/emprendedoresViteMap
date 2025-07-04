@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from "react";
 import { Business, BusinessType, FilterOptions } from "../../../../front/src/types";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";

@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+'use client'
+import React from "react";
+
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
 import {
   MapContainer,
   TileLayer,
@@ -19,7 +23,6 @@ import {
   Globe,
   Activity,
 } from "lucide-react";
-import { useOutletContext } from "react-router-dom";
 
 interface BusinessMapProps {
   emprendedores: emprendedores[];
