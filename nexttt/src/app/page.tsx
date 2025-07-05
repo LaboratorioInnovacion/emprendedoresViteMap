@@ -117,9 +117,9 @@ const Page: React.FC = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
-        <StatCard cantidad={emprendedores.length} />
+        <StatCard cantidad={emprendedores.length} empre={undefined} />
         {emprendedores.map((empre: any) => (
-          <StatCard key={empre.id} empre={empre} />
+          <StatCard key={empre.id} empre={empre} cantidad={undefined} />
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
