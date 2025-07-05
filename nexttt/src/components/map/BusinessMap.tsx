@@ -19,10 +19,10 @@ import {
   Globe,
   Activity,
 } from "lucide-react";
-import { useOutletContext } from "react-router-dom";
+// import { useOutletContext } from "react-router-dom";
 
 interface BusinessMapProps {
-  emprendedores: emprendedores[];
+  emprendedores: Business[];
   defaultViewport: MapViewport;
   onBusinessSelect?: (id: string) => void;
   onLocationSelect?: (lat: number, lng: number) => void;
@@ -36,10 +36,10 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
   onLocationSelect,
   selectionMode = false,
 }) => {
-  const { isMobileSidebarOpen, isMobile } = useOutletContext() as {
-    isMobileSidebarOpen: boolean;
-    isMobile: boolean;
-  };
+  // const { isMobileSidebarOpen, isMobile } = useOutletContext() as {
+  //   isMobileSidebarOpen: boolean;
+  //   isMobile: boolean;
+  // };
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
