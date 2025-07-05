@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Map, 
@@ -12,9 +11,12 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 function Sidebar({ isMobile, toggleMobileSidebar }) {
   const [collapsed, setCollapsed] = useState(false);
+  const pathname = usePathname();
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
@@ -46,23 +48,21 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
             </button>
           </div>
           <nav className="p-2">
-            {navItems.map((item) => (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                onClick={toggleMobileSidebar}
-                className={({ isActive }) =>
-                  `flex items-center space-x-2 px-4 py-3 rounded-md transition-colors ${
+            {navItems.map((item) => {
+              const isActive = pathname === item.path;
+              return (
+                <Link key={item.path} href={item.path} onClick={toggleMobileSidebar}
+                  className={`flex items-center space-x-2 px-4 py-3 rounded-md transition-colors ${
                     isActive
                       ? 'bg-primary-50 text-primary-600 dark:bg-primary-900 dark:text-primary-300'
                       : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                  }`
-                }
-              >
-                {item.icon}
-                <span>{item.label}</span>
-              </NavLink>
-            ))}
+                  }`}
+                >
+                  {item.icon}
+                  <span>{item.label}</span>
+                </Link>
+              );
+            })}
           </nav>
         </div>
       </div>
@@ -89,25 +89,22 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
           </button>
         </div>
         <nav className="flex-1 p-2">
-          {navItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center ${
-                  collapsed ? 'justify-center' : 'space-x-2'
-                } px-4 py-3 rounded-md transition-colors ${
+          {navItems.map((item) => {
+            const isActive = pathname === item.path;
+            return (
+              <Link key={item.path} href={item.path}
+                className={`flex items-center ${collapsed ? 'justify-center' : 'space-x-2'} px-4 py-3 rounded-md transition-colors ${
                   isActive
                     ? 'bg-primary-50 text-primary-600 dark:bg-primary-900 dark:text-primary-300'
                     : 'text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700'
-                }`
-              }
-              title={collapsed ? item.label : undefined}
-            >
-              {item.icon}
-              {!collapsed && <span>{item.label}</span>}
-            </NavLink>
-          ))}
+                }`}
+                title={collapsed ? item.label : undefined}
+              >
+                {item.icon}
+                {!collapsed && <span>{item.label}</span>}
+              </Link>
+            );
+          })}
         </nav>
       </div>
     </div>
