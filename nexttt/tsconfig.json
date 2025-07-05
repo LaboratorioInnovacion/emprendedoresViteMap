@@ -30,7 +30,7 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx"
-, "tailwind.config.js", "tailwind.config.mjs", "src/app/page.tsx"  ],
+, "tailwind.config.js", "tailwind.config.mjs", "src/app/page.jsx"  ],
   "exclude": [
     "node_modules"
   ]
