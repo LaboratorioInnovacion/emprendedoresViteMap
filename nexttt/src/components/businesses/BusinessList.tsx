@@ -1,9 +1,9 @@
 'use client';
 
 import React, { useState } from "react";
-import { Business, BusinessType, FilterOptions } from "../../../../front/src/types";
+import { Business, BusinessType, FilterOptions } from "../../types";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
-import { useEmprendedores } from "../../../../front/src/context/EmprendedoresContext";
+import { useEmprendedores } from "../../context/EmprendedoresContext";
 
 interface BusinessListProps {
   businesses: Business[];

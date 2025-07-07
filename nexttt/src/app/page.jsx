@@ -8,7 +8,6 @@ import {
   businessTypeColors,
   calculateMapCenter,
 } from '../data/mockData';
-import { fetchBusinessData } from '../lib/api';
 import { useEmprendedores } from '../context/EmprendedoresContext';
 import Link from 'next/link';
 import {
@@ -21,7 +20,6 @@ import {
 } from 'lucide-react';
 
 const Page = () => {
-  const [Negocios, setNegocios] = useState([]);
   const { emprendedores } = useEmprendedores();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -43,21 +41,8 @@ const Page = () => {
     loadLeaflet();
   }, []);
 
-  // Cargar datos de negocios
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await fetchBusinessData();
-        setNegocios(data);
-      } catch (error) {
-        console.error('Error fetching business data:', error);
-      }
-    };
-    fetchData();
-  }, []);
-
-  // Filtro de negocios
-  const filteredBusinesses = Negocios.filter((business) => {
+  // Filtro de negocios (usar solo emprendedores del contexto)
+  const filteredBusinesses = emprendedores.filter((business) => {
     const matchesSearch =
       business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -245,7 +230,6 @@ export default Page;
 //   businessTypeColors,
 //   calculateMapCenter,
 // } from '../data/mockData';
-// import { fetchBusinessData } from '../lib/api';
 // import { useEmprendedores } from '../context/EmprendedoresContext';
 // import Link from 'next/link';
 // import {
@@ -259,7 +243,6 @@ export default Page;
 // } from 'lucide-react';
 
 // const Page: React.FC = () => {
-//   const [Negocios, setNegocios] = useState([]);
 //   const { emprendedores } = useEmprendedores();
 //   const [searchTerm, setSearchTerm] = useState('');
 //   const [selectedTypes, setSelectedTypes] = useState([]);
@@ -281,21 +264,8 @@ export default Page;
 //     loadLeaflet();
 //   }, []);
 
-//   // Cargar datos de negocios
-//   useEffect(() => {
-//     const fetchData = async () => {
-//       try {
-//         const data = await fetchBusinessData();
-//         setNegocios(data);
-//       } catch (error) {
-//         console.error('Error fetching business data:', error);
-//       }
-//     };
-//     fetchData();
-//   }, []);
-
-//   // Filtro de negocios
-//   const filteredBusinesses = Negocios.filter((business: any) => {
+//   // Filtro de negocios (usar solo emprendedores del contexto)
+//   const filteredBusinesses = emprendedores.filter((business: any) => {
 //     const matchesSearch =
 //       business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
 //       business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
