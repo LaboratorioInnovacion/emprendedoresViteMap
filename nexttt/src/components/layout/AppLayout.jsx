@@ -7,23 +7,27 @@ import Sidebar from './Sidebar';
 
 function AppLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isMobile, setIsMobile] = useState(false); // No usar window.innerWidth aquí
+  const [mounted, setMounted] = useState(false);
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen(!isMobileSidebarOpen);
   };
 
   useEffect(() => {
+    setMounted(true);
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
       if (window.innerWidth >= 768) {
         setIsMobileSidebarOpen(false);
       }
     };
-
+    handleResize(); // Ejecutar al montar
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  if (!mounted) return null; // Evita el render hasta que esté montado en el cliente
 
   return (
     <div className="flex h-screen bg-gray-50 dark:bg-gray-900">

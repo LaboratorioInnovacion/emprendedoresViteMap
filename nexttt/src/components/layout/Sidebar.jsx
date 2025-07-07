@@ -24,7 +24,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
 
   const navItems = [
     { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
-    { path: '/map', label: 'Mapa', icon: <Map size={20} /> },
+    { path: '/MapPage', label: 'Mapa', icon: <Map size={20} /> },
     { path: '/businesses', label: 'Emprendedores', icon: <Building2 size={20} /> },
     { path: '/analytics', label: 'Analiticas', icon: <PieChart size={20} /> },
     { path: '/settings', label: 'Ajustes', icon: <Settings size={20} /> },
