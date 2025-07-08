@@ -25,11 +25,11 @@ const Page = () => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const mapCenter = calculateMapCenter();
 
-  // Carga dinámica de react-leaflet
-  const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-  const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-  const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-  const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
+  // Carga dinámica de react-leaflet (memoizada para evitar recreación)
+  const MapContainer = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false }), []);
+  const TileLayer = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false }), []);
+  const Marker = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false }), []);
+  const Popup = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false }), []);
 
   // Carga dinámica de leaflet para evitar problemas de SSR
   const [L, setL] = useState(null);
@@ -94,7 +94,7 @@ const Page = () => {
             <Building2 size={18} className="mr-1" />
             Emprendedores
           </Link>
-          <Link href="/map" className="btn-primary">
+          <Link href="/MapPage" className="btn-primary">
             <Map size={18} className="mr-1" />
             Explorar Mapa
           </Link>

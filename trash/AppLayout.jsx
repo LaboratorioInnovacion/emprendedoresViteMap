@@ -2,8 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from './Header';
-import Sidebar from './Sidebar';
+import Header from '../nexttt/src/components/layout/Header';
+import Sidebar from '../nexttt/src/components/layout/Sidebar';
 
 function AppLayout() {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);

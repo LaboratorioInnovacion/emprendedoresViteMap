@@ -181,19 +181,22 @@ const BusinessList: React.FC<BusinessListProps> = ({
             <div>
               <h4 className="font-medium mb-2">Tipo de Rubro</h4>
               <div className="flex flex-wrap gap-2">
-                {businessTypes.map((type) => (
-                  <button
-                    key={type}
-                    onClick={() => toggleBusinessTypeFilter(type)}
-                    className={`badge text-xs py-1.5 px-3 capitalize ${
-                      filters.businessTypes.includes(type)
-                        ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                    }`}
-                  >
-                    {type}
-                  </button>
-                ))}
+                {businessTypes.map((type) => {
+                  const count = emprendedores.filter((b) => b.type === type).length;
+                  return (
+                    <button
+                      key={type}
+                      onClick={() => toggleBusinessTypeFilter(type)}
+                      className={`badge text-xs py-1.5 px-3 capitalize ${
+                        filters.businessTypes.includes(type)
+                          ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                      }`}
+                    >
+                      {type} <span className="ml-1 text-xs text-gray-500">({count})</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
@@ -233,7 +236,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
           filteredBusinesses.map((business) => (
             <div
               key={business.id}
-              className="card hover:shadow-lg transition-shadow cursor-pointer"
+              className="cardempre hover:shadow-lg transition-shadow cursor-pointer"
               onClick={() => onViewDetail(business.id)}
             >
               <div className="flex items-start gap-4">

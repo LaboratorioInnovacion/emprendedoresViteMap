@@ -23,24 +23,31 @@ const geistMono = Geist_Mono({
 
 export default function RootLayout({ children }) {
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(
-    typeof window !== "undefined" ? window.innerWidth < 768 : false
-  );
+  const [isMobile, setIsMobile] = useState(false);
+  const [isMounted, setIsMounted] = useState(false);
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen((prev) => !prev);
   };
 
   useEffect(() => {
+    setIsMounted(true);
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
       if (window.innerWidth >= 768) {
         setIsMobileSidebarOpen(false);
       }
     };
+    handleResize(); // Inicializa correctamente en cliente
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  if (!isMounted) return (
+    <html lang="es">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}></body>
+    </html>
+  );
 
   return (
     <html lang="es">
@@ -58,9 +65,9 @@ export default function RootLayout({ children }) {
               <main className="flex-1 p-4 md:p-6 overflow-y-auto">
                 {children}
               </main>
-              <footer className="py-4 px-6 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
+              {/* <footer className="py-4 px-6 text-center text-sm text-gray-500 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
                 &copy;{new Date().getFullYear()} Augusto Del Campo-Nodo Tecnologico Catamarca.
-              </footer>
+              </footer> */}
             </div>
           </div>
         </EmprendedoresProvider>

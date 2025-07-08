@@ -88,7 +88,7 @@ const MapPage: React.FC = () => {
           //handle id
           onBusinessSelect={handleBusinessSelect}
         />
-        <div>
+        <div className="pb-5">
           {/* Add the pie chart below the map */}
           <EmprendedoresPieChart emprendedores={emprendedores} />
         </div>

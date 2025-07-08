@@ -38,7 +38,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
           className="w-64 max-w-[80%] bg-white dark:bg-gray-800 shadow-lg animate-fadeIn"
           onClick={(e) => e.stopPropagation()}
         >
-          <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+          <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700" style={{ padding: '18px' }}>
             <div className="flex items-center space-x-2">
               <Map className="text-primary-600" />
               <h1 className="text-lg font-semibold text-gray-900 dark:text-white">EmpreMap</h1>
@@ -76,17 +76,17 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
       }`}
     >
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700" style={{ padding: '18px' }}>
           <div className={`flex items-center ${collapsed ? 'justify-center w-full' : 'space-x-2'}`}>
             <Map className="text-primary-600" />
             {!collapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">EmpreMap</h1>}
           </div>
-          <button 
+          {/* <button 
             onClick={toggleCollapse} 
             className={`p-1 ${collapsed ? 'absolute right-3' : ''}`}
           >
             {collapsed ? <ChevronRight size={16} className="text-gray-500" /> : <ChevronLeft size={16} className="text-gray-500" />}
-          </button>
+          </button> */}
         </div>
         <nav className="flex-1 p-2">
           {navItems.map((item) => {
