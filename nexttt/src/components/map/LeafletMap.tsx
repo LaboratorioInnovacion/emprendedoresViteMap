@@ -1,5 +1,5 @@
-import 'leaflet/dist/leaflet.css';
 'use client'
+import 'leaflet/dist/leaflet.css';
 import React, { useState, useEffect } from "react";
 import dynamic from 'next/dynamic';
 import { Business, BusinessType, MapViewport } from "../../types";
