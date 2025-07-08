@@ -3,7 +3,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { useEmprendedores } from '../../../context/EmprendedoresContext';
 import { Building2, MapPin, Phone, Mail, Globe, Calendar, Clock, ChevronLeft, Activity, Pencil, Trash2, Star } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import React, { useMemo } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
@@ -18,6 +18,26 @@ const BusinessDetailPage = () => {
   const id = params.id;
 
   const business = useMemo(() => emprendedores.find((b) => b.id === id), [emprendedores, id]);
+  const [L, setL] = useState(null);
+  const [markerIcon, setMarkerIcon] = useState(null);
+
+  useEffect(() => {
+    const loadLeaflet = async () => {
+      const leaflet = await import('leaflet');
+      setL(leaflet);
+      // Crear icono personalizado (círculo azul, puedes personalizar el color)
+      const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='#2563eb' stroke='white' stroke-width='2'/></svg>`;
+      const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
+      const icon = new leaflet.Icon({
+        iconUrl,
+        iconSize: [28, 28],
+        iconAnchor: [16, 16],
+        popupAnchor: [0, -16],
+      });
+      setMarkerIcon(icon);
+    };
+    loadLeaflet();
+  }, []);
 
   if (loading) {
     return (
@@ -61,7 +81,8 @@ const BusinessDetailPage = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center">
           <button
-            onClick={() => router.push('/businesses')}
+            // onClick={() => router.push('/businesses')}
+            onClick={() => router.push('/BusinessesPage')}
             className="mr-3 p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
           >
             <ChevronLeft size={20} className="text-gray-600 dark:text-gray-400" />
@@ -183,19 +204,21 @@ const BusinessDetailPage = () => {
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Ubicacion</h2>
             <div className="h-64 rounded-lg overflow-hidden">
-              <MapContainer
-                center={[business.location.lat, business.location.lng]}
-                zoom={14}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TileLayer
-                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                />
-                <Marker position={[business.location.lat, business.location.lng]}>
-                  <Popup>{business.name}</Popup>
-                </Marker>
-              </MapContainer>
+              {L && markerIcon && (
+                <MapContainer
+                  center={[business.location.lat, business.location.lng]}
+                  zoom={14}
+                  style={{ height: "100%", width: "100%" }}
+                >
+                  <TileLayer
+                    attribution='&copy; <a>OpenStreetMap</a>'
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                  />
+                  <Marker position={[business.location.lat, business.location.lng]} icon={markerIcon}>
+                    <Popup>{business.name}</Popup>
+                  </Marker>
+                </MapContainer>
+              )}
             </div>
             <div className="mt-4">
               <a
