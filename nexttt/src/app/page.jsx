@@ -86,7 +86,7 @@ const Page = () => {
         <div>
           <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Bienvenido al Sistema de Emprendedores
+            Bienvenido al Sistema de Emprendedoress
           </p>
         </div>
         <div className="flex gap-2">
