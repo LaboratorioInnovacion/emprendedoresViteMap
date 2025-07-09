@@ -27,7 +27,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
     { path: '/MapPage', label: 'Mapa', icon: <Map size={20} /> },
     { path: '/BusinessesPage', label: 'Emprendedores', icon: <Building2 size={20} /> },
     { path: '/analytics', label: 'Analiticas', icon: <PieChart size={20} /> },
-    { path: '/settings', label: 'Ajustes', icon: <Settings size={20} /> },
+    { path: '/ajustes', label: 'Ajustes', icon: <Settings size={20} /> },
     { path: '/help', label: 'Soporte', icon: <HelpCircle size={20} /> },
   ];
 
