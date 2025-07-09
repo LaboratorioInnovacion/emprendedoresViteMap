@@ -90,7 +90,7 @@ const Page = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/businesses" className="btn-outline">
+          <Link href="/BusinessesPage" className="btn-outline">
             <Building2 size={18} className="mr-1" />
             Emprendedores
           </Link>
