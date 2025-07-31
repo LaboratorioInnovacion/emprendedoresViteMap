@@ -226,8 +226,8 @@ model Herramienta {
   origenOrganismo             String
   tipoBeneficiario            TipoBeneficiario
 
-  tipoHerramientaEmprendimiento String[]?
-  tipoHerramientaEmprendedor   String[]?
+  tipoHerramientaEmprendimiento String[]
+  tipoHerramientaEmprendedor   String[]
 
   montoTotal                 Float?
   montoPorBeneficiario       Float?
