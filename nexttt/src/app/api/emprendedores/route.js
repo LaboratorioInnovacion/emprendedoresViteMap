@@ -31,6 +31,27 @@ export async function POST(req) {
   }
 }
 
+// export async function POST(req) {
+//   const token = req.headers.get('authorization')?.split(' ')[1];
+//   if (!token) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+
+//   try {
+//     const payload = jwt.verify(token, process.env.JWT_SECRET);
+//     const body = await req.json();
+
+//     const nuevo = await prisma.emprendedor.create({
+//       data: {
+//         ...body,
+//         usuario: { connect: { id: payload.id } }
+//       }
+//     });
+
+//     return NextResponse.json(nuevo);
+//   } catch (e) {
+//     return NextResponse.json({ error: 'Token inválido' }, { status: 403 });
+//   }
+// }
+
 // import { NextResponse } from 'next/server';
 // import prisma from '@/lib/prisma';
 
