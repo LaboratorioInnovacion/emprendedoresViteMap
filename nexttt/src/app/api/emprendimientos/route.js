@@ -2,16 +2,16 @@ import { NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 
 export async function GET() {
-  const emprendedores = await prisma.emprendedor.findMany({
-    include: { emprendimientos: true, asignaciones: true }
+  const lista = await prisma.emprendimiento.findMany({
+    include: { emprendedor: true, asignaciones: true }
   });
-  return NextResponse.json(emprendedores);
+  return NextResponse.json(lista);
 }
 
 export async function POST(req) {
   const body = await req.json();
 
-  const nuevo = await prisma.emprendedor.create({
+  const nuevo = await prisma.emprendimiento.create({
     data: {
       ...body,
       ubicacion: body.ubicacion
