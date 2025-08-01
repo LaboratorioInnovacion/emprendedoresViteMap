@@ -1,6 +1,6 @@
-import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
-import bcrypt from 'bcryptjs';
+import { NextResponse } from "next/server";
+import { prisma } from "../../../lib/prisma";
+import bcrypt from "bcryptjs";
 
 export async function POST(req) {
   try {
@@ -9,7 +9,10 @@ export async function POST(req) {
 
     const existe = await prisma.usuario.findUnique({ where: { email } });
     if (existe) {
-      return NextResponse.json({ error: 'Email ya registrado' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Email ya registrado" },
+        { status: 400 }
+      );
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -18,12 +21,15 @@ export async function POST(req) {
       data: {
         email,
         password: hashedPassword,
-        rol: 'EMPRENDEDOR'
-      }
+        rol: "EMPRENDEDOR",
+      },
     });
 
     return NextResponse.json({ ok: true, usuarioId: nuevo.id });
   } catch (error) {
-    return NextResponse.json({ error: 'Error al registrar usuario' }, { status: 500 });
+    return NextResponse.json(
+      { error: "Error al registrar usuario" },
+      { status: 500 }
+    );
   }
 }
