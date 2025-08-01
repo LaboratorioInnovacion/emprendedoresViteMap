@@ -2,13 +2,13 @@
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'leaflet/dist/leaflet.css';
-import StatCard from '../components/dashboard/StatCard';
-import RecentBusinessCard from '../components/dashboard/RecentBusinessCard';
+import StatCard from '../../../components/dashboard/StatCard';
+import RecentBusinessCard from '../../../components/dashboard/RecentBusinessCard';
 import {
   businessTypeColors,
   calculateMapCenter,
-} from '../data/mockData';
-import { useEmprendedores } from '../context/EmprendedoresContext';
+} from '../../../data/mockData';
+import { useEmprendedores } from '../../../context/EmprendedoresContext';
 import Link from 'next/link';
 import {
   Building2,
