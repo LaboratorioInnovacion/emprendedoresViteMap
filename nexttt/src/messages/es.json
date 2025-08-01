@@ -1,0 +1,27 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "entrepreneurs": "Emprendedores",
+    "ventures": "Emprendimientos",
+    "tools": "Herramientas",
+    "admin": "Admin",
+    "personal": "Personal"
+  },
+  "auth": {
+    "login": "Iniciar Sesión",
+    "register": "Registrarse",
+    "email": "Email",
+    "password": "Contraseña",
+    "name": "Nombre",
+    "role": "Rol"
+  },
+  "common": {
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "loading": "Cargando...",
+    "actions": "Acciones"
+  }
+}
