@@ -1,4 +1,5 @@
 // API de prueba para Next.js App Router (handler para GET y POST)
+import  {prisma } from "../../../lib/prisma";
 
 export async function GET(request) {
   return new Response(JSON.stringify({ message: '¡Hola desde la API de Next.js!' }), {

@@ -1,9 +1,3 @@
-// // This is your Prisma schema file,
-// // learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// // Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// // Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 // generator client {
 //   provider = "prisma-client-js"
 //   output   = "../src/generated/prisma"
@@ -124,111 +118,136 @@ enum ActividadSectorial {
   Servicio_Gastronomicos
   Servicio_Otro
 }
+
 model Emprendedor {
-  id                           Int      @id @default(autoincrement())
-  nombre                       String
-  apellido                     String
-  genero                       Genero
-  dni                          String   @unique
-  cuil                         String   @unique
-  fotoDni                      String?
-  fechaNacimiento              DateTime
-  paisOrigen                   String?
-  ciudadOrigen                 String?
-  departamento                 String
-  direccion                    String
-  ubicacion                    Bytes?   // geometry(Point, 4326)
-  nivelEstudios                NivelEstudios
-  motivacionEmprender          MotivacionEmprender
-  cantidadEmprendimientos      Int?
-  poseeOtrosSustentos          Boolean?
-  tiposSustento                String[]
+  id                          Int                 @id @default(autoincrement())
+  nombre                      String
+  apellido                    String
+  genero                      Genero
+  dni                         String              @unique
+  cuil                        String              @unique
+  fotoDni                     String?
+  fechaNacimiento             DateTime
+  paisOrigen                  String?
+  ciudadOrigen                String?
+  departamento                String
+  direccion                   String
+  ubicacion                   Bytes?
+  nivelEstudios               NivelEstudios
+  motivacionEmprender         MotivacionEmprender
+  cantidadEmprendimientos     Int?
+  poseeOtrosSustentos         Boolean?
+  tiposSustento               String[]
   tieneDependientesEconomicos Boolean?
-  telefono                     String
-  email                        String   @unique
-  password                     String
-  createdAt                    DateTime @default(now())
-  updatedAt                    DateTime @updatedAt
-  emprendimientos              Emprendimiento[]
+  telefono                    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  usuario Usuario? @relation("UsuarioEmprendedor")
+
+  emprendimientos Emprendimiento[]
+  asignaciones    Asignacion[]
+}
+
+model Emprendimiento {
+  id                           Int                 @id @default(autoincrement())
+  emprendedorId                Int
+  emprendedor                  Emprendedor         @relation(fields: [emprendedorId], references: [id])
+  etapa                        EtapaEmprendimiento
+  denominacion                 String
+  fechaInicio                  DateTime?
+  inscripcionArca              Boolean
+  cuit                         String?
+  sector                       Sector
+  actividadPrincipal           ActividadSectorial
+  tipoEmprendimiento           TipoEmprendimiento
+  direccion                    String
+  ubicacion                    Bytes?
+  telefono                     String?
+  email                        String?
+  web                          String?
+  redSocial1                   String?
+  redSocial2                   String?
+  tienePersonal                Boolean
+  cantidadPersonal             Int?
+  modoIncorporacionPersonal    String[]
+  planeaIncorporarPersonal     PlaneaIncorporar?
+  percepcionPlantaPersonal     PercepcionPlanta?
+  requiereCapacitacion         Boolean
+  tiposCapacitacion            String[]
+  otrosTiposCapacitacion       String?
+  requiereConsultoria          Boolean
+  tiposConsultoria             String[]
+  otrosTiposConsultoria        String?
+  requiereHerramientasTecno    Boolean
+  tiposHerramientasTecno       String[]
+  otrasHerramientasTecno       String?
+  usaRedesSociales             Boolean
+  tiposRedesSociales           String[]
+  usaMediosPagoElectronicos    Boolean
+  canalesComercializacion      String[]
+  otrosCanalesComercializacion String?
+  poseeSucursales              Boolean
+  cantidadSucursales           Int?
+  ubicacionSucursales          String[]
+  planeaAbrirSucursal          Boolean?
+  createdAt                    DateTime            @default(now())
+  updatedAt                    DateTime            @updatedAt
   asignaciones                 Asignacion[]
 }
-model Emprendimiento {
-  id                            Int      @id @default(autoincrement())
-  emprendedorId                 Int
-  emprendedor                   Emprendedor @relation(fields: [emprendedorId], references: [id])
-  etapa                         EtapaEmprendimiento
-  denominacion                  String
-  fechaInicio                   DateTime?
-  inscripcionArca               Boolean
-  cuit                          String?
-  sector                        Sector
-  actividadPrincipal            ActividadSectorial
-  tipoEmprendimiento            TipoEmprendimiento
-  direccion                     String
-  ubicacion                     Bytes?
-  telefono                      String?
-  email                         String?
-  web                           String?
-  redSocial1                    String?
-  redSocial2                    String?
-  tienePersonal                 Boolean
-  cantidadPersonal              Int?
-  modoIncorporacionPersonal     String[]
-  planeaIncorporarPersonal      PlaneaIncorporar?
-  percepcionPlantaPersonal      PercepcionPlanta?
-  requiereCapacitacion          Boolean
-  tiposCapacitacion             String[]
-  otrosTiposCapacitacion        String?
-  requiereConsultoria           Boolean
-  tiposConsultoria              String[]
-  otrosTiposConsultoria         String?
-  requiereHerramientasTecno     Boolean
-  tiposHerramientasTecno        String[]
-  otrasHerramientasTecno        String?
-  usaRedesSociales              Boolean
-  tiposRedesSociales            String[]
-  usaMediosPagoElectronicos     Boolean
-  canalesComercializacion       String[]
-  otrosCanalesComercializacion  String?
-  poseeSucursales               Boolean
-  cantidadSucursales            Int?
-  ubicacionSucursales           String[]
-  planeaAbrirSucursal           Boolean?
-  createdAt                     DateTime @default(now())
-  updatedAt                     DateTime @updatedAt
+
+model Herramienta {
+  id                            Int              @id @default(autoincrement())
+  nombre                        String
+  origenTipo                    String[]
+  origenOrganismo               String
+  tipoBeneficiario              TipoBeneficiario
+  tipoHerramientaEmprendimiento String[]
+  tipoHerramientaEmprendedor    String[]
+  montoTotal                    Float?
+  montoPorBeneficiario          Float?
+  poseeVencimiento              Boolean          @default(false)
+  fechaInicioVigencia           DateTime?
+  fechaFinVigencia              DateTime?
+  cupo                          Int
+  observaciones                 String?
+  createdAt                     DateTime         @default(now())
+  updatedAt                     DateTime         @updatedAt
   asignaciones                  Asignacion[]
 }
-model Herramienta {
-  id                          Int      @id @default(autoincrement())
-  nombre                      String
-  origenTipo                  String[]
-  origenOrganismo             String
-  tipoBeneficiario            TipoBeneficiario
-  tipoHerramientaEmprendimiento String[]
-  tipoHerramientaEmprendedor   String[]
-  montoTotal                 Float?
-  montoPorBeneficiario       Float?
-  poseeVencimiento           Boolean   @default(false)
-  fechaInicioVigencia        DateTime?
-  fechaFinVigencia           DateTime?
-  cupo                       Int
-  observaciones              String?
-  createdAt                  DateTime @default(now())
-  updatedAt                  DateTime @updatedAt
-  asignaciones               Asignacion[]
-}
+
 model Asignacion {
-  id                Int              @id @default(autoincrement())
-  herramientaId     Int
-  herramienta       Herramienta      @relation(fields: [herramientaId], references: [id])
-  beneficiarioTipo  TipoBeneficiario
-  emprendedorId     Int?
-  emprendedor       Emprendedor?     @relation(fields: [emprendedorId], references: [id])
-  emprendimientoId  Int?
-  emprendimiento    Emprendimiento?  @relation(fields: [emprendimientoId], references: [id])
-  fechaAsignacion   DateTime
-  estado            EstadoAsignacion?
-  observaciones     String?
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
+  id               Int               @id @default(autoincrement())
+  herramientaId    Int
+  herramienta      Herramienta       @relation(fields: [herramientaId], references: [id])
+  beneficiarioTipo TipoBeneficiario
+  emprendedorId    Int?
+  emprendedor      Emprendedor?      @relation(fields: [emprendedorId], references: [id])
+  emprendimientoId Int?
+  emprendimiento   Emprendimiento?   @relation(fields: [emprendimientoId], references: [id])
+  fechaAsignacion  DateTime
+  estado           EstadoAsignacion?
+  observaciones    String?
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+}
+
+enum Rol {
+  SUPERUSUARIO
+  ADMIN
+  EMPRENDEDOR
+}
+
+model Usuario {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  rol       Rol      @default(EMPRENDEDOR)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  emprendedorId Int?         @unique
+  emprendedor   Emprendedor? @relation("UsuarioEmprendedor", fields: [emprendedorId], references: [id])
 }
