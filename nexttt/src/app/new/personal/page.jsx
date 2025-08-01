@@ -1,3 +1,25 @@
+// Usuario Personal/admin del instituto
+// Operaciones diarias de administración de datos
+// Funcionalidades del Personal:
+// A. Gestión de Emprendedores:
+// - Ver listado completo con filtros y búsquedas
+// - Editar cualquier emprendedor (datos personales, contacto, ubicación)
+// - Consultar historial de herramientas recibidas por emprendedor
+// - Generar reportes
+// B. Gestión de Emprendimientos:
+// - Ver todos los emprendimientos con información detallada
+// - Editar cualquier emprendimiento (etapa, sector, necesidades)
+// - Crear emprendimientos en nombre de emprendedores (casos especiales)
+// - Análisis sectorial y geográfico
+// C. Gestión de Herramientas
+// D. Asignación de Herramientas:
+// Proceso de Asignación:
+// 1. Personal busca emprendedor/emprendimiento objetivo
+// 2. Selecciona herramienta disponible del catálogo
+// 3. Verifica elegibilidad según criterios de la herramienta
+// 4. Ejecuta asignación con observaciones si es necesario
+// 5. Sistema registra automáticamente la asignación y auditoría
+// 6. Genera notificación al emprendedor (opcional)
 'use client';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';

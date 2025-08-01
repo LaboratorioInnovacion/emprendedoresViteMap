@@ -1,3 +1,16 @@
+// Usuario superusuario del sistema
+// - Acceso a todas las funcionalidades del sistema
+// Control completo del sistema y usuarios
+// A. Gestión de Usuarios:
+// - Crear usuarios de personal del instituto
+// - Asignar roles (Personal o Administrador adicional)
+// - Modificar permisos específicos si es necesario
+// - Activar/Desactivar usuarios según necesidad
+// - Restablecer contraseñas cuando sea solicitado
+// - Ver historial de accesos y actividad de cada usuario
+// B. Monitoreo y Auditoría
+// C. Exportación de Datos
+// D. Visualización de dashboard
 'use client';
 import React, { useEffect, useState } from 'react';
 import dynamic from 'next/dynamic';
