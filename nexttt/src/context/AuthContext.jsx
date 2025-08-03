@@ -1,52 +1,27 @@
 'use client';
-import { createContext, useContext, useEffect, useState } from 'react';
-import { jwtDecode } from "jwt-decode";
-import { useRouter } from 'next/navigation';
+import { createContext, useContext } from 'react';
+import { useSession, signOut } from 'next-auth/react';
+
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
-  const router = useRouter();
+  const { data: session, status } = useSession();
+  const user = session?.user;
 
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const decoded = jwt_decode(token);
-      setUser(decoded);
-    } catch {
-      localStorage.removeItem('token');
-    }
-  }, []);
-
-  const logout = () => {
-    localStorage.removeItem('token');
-    setUser(null);
-    router.push('/login');
-  };
-
-  const refreshUser = () => {
-    const token = localStorage.getItem('token');
-    if (!token) return;
-    try {
-      const decoded = jwtDecode(token);
-      setUser(decoded);
-    } catch {
-      logout();
-    }
-  };
+    const isLoading = status === 'loading';
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        isLoggedIn: !!user,
+        isLoggedIn: status === 'authenticated',
         isAdmin: user?.rol === 'ADMIN',
         isSuper: user?.rol === 'SUPERUSUARIO',
         isEmprendedor: user?.rol === 'EMPRENDEDOR',
-        logout,
-        refreshUser
+        logout: () => signOut({ callbackUrl: '/auth/login' }),
+        isLoading,
+        refreshUser: () => {}, // (opcional, lo podemos implementar luego)
       }}
     >
       {children}
@@ -58,30 +33,33 @@ export function useAuth() {
   return useContext(AuthContext);
 }
 
+// 'use client';
+// import { createContext, useContext } from 'react';
+// import { useSession, signOut } from 'next-auth/react';
+
+// const AuthContext = createContext();
+
+// export function AuthProvider({ children }) {
+//   const { data: session, status } = useSession();
+//   const user = session?.user;
+
+//   return (
+//     <AuthContext.Provider
+//       value={{
+//         user,
+//         isLoggedIn: status === 'authenticated',
+//         isAdmin: user?.rol === 'ADMIN',
+//         isSuper: user?.rol === 'SUPERUSUARIO',
+//         isEmprendedor: user?.rol === 'EMPRENDEDOR',
+//         logout: () => signOut({ callbackUrl: '/auth/login' }),
+//         refreshUser: () => {}, // NextAuth actualiza automáticamente la sesión
+//       }}
+//     >
+//       {children}
+//     </AuthContext.Provider>
+//   );
+// }
+
 // export function useAuth() {
-//   const [user, setUser] = useState(null);
-
-//   useEffect(() => {
-//     const token = localStorage.getItem('token');
-//     if (!token) return;
-//     try {
-//       const decoded = jwt_decode(token);
-//       setUser(decoded);
-//     } catch {
-//       localStorage.removeItem('token');
-//     }
-//   }, []);
-
-//   return {
-//     user,
-//     isLoggedIn: !!user,
-//     isEmprendedor: user?.rol === 'EMPRENDEDOR',
-//     isAdmin: user?.rol === 'ADMIN',
-//     isSuper: user?.rol === 'SUPERUSUARIO',
-//     logout: () => {
-//       localStorage.removeItem('token');
-//       setUser(null);
-//       window.location.href = '/login';
-//     }
-//   };
+//   return useContext(AuthContext);
 // }

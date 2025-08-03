@@ -12,7 +12,8 @@ export default function LoginForm() {
     e.preventDefault();
     setError('');
 
-    const res = await fetch('/api/auth/login', {
+    // const res = await fetch('/api/auth/login', {
+    const res = await fetch('/api/auth/sigin', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(form),
@@ -26,7 +27,7 @@ export default function LoginForm() {
     }
 
     localStorage.setItem('token', data.token);
-    router.push('/dashboard'); // Redirigir al panel privado
+    router.push('/'); // Redirigir al panel privado
   }
 
   return (

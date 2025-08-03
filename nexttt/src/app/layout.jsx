@@ -6,6 +6,7 @@ import { AuthProvider } from "../context/AuthContext";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import React, { useState, useEffect } from "react";
+import { SessionProvider } from "next-auth/react"; // 🔥 ¡ESTO FALTABA!
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -55,6 +56,7 @@ export default function RootLayout({ children }) {
 
   return (
     <html lang="es">
+      <SessionProvider>
       <AuthProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
@@ -86,6 +88,7 @@ export default function RootLayout({ children }) {
           </EmprendedoresProvider>
         </body>
       </AuthProvider>
+      </SessionProvider>
     </html>
   );
 }
