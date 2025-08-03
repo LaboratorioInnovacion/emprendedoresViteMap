@@ -2,10 +2,10 @@
 
 import { useState } from "react"
 import { useForm } from "react-hook-form"
-import { useHerramienta } from "@/hooks/useHerramientas"
-import { useEmprendedores } from "@/hooks/useEmprendedores"
-import { useEmprendimientos } from "@/hooks/useEmprendimientos"
-import Card from "@/components/Card"
+import { useHerramienta } from "../../../hooks/useHerramientas"
+import { useEmprendedores } from "../../../hooks/useEmprendedores"
+import { useEmprendimientos } from "../../../hooks/useEmprendimientos"
+import  Card  from "../../../components/Card";
 
 export default function AsignarHerramientaPage({ params }) {
   const { id } = params

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 // import prisma from '@/lib/prisma';
-import { prisma } from "../../../lib/prisma";
-import { getUserFromRequest, requireRole } from '@/lib/auth';
+import  prisma  from "../../../lib/prisma";
+import { getUserFromRequest, requireRole } from '../../../lib/auth';
 
 import jwt from "jsonwebtoken";
 
