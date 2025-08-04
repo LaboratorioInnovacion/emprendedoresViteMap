@@ -1,148 +1,265 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useAuth } from '@/context/AuthContext'; // o desde la ruta correcta
-import { useRouter } from 'next/navigation';
+import { useSession } from "next-auth/react";
+import { useState } from "react";
 
-export default function PerfilPage() {
-  const { user, isLoggedIn, isEmprendedor } = useAuth();
-  const router = useRouter();
-
+export default function Perfil() {
+  const { data: session, status } = useSession();
   const [form, setForm] = useState({
-    nombre: '',
-    apellido: '',
-    dni: '',
-    cuil: '',
-    direccion: '',
-    telefono: '',
-    genero: '',
+    nombre: "",
+    apellido: "",
+    dni: "",
+    cuil: "",
+    fechaNacimiento: "",
+    direccion: "",
+    departamento: "",
+    telefono: "",
+    genero: "Masculino", // ejemplo
+    nivelEstudios: "SinEscolarizar",
+    motivacionEmprender: "Pasion",
+    tiposSustento: [],
+    poseeOtrosSustentos: false,
+    tieneDependientesEconomicos: false,
   });
 
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!isLoggedIn) return router.push('/auth/login');
-    if (!isEmprendedor) return router.push('/403');
-    if (user?.emprendedorId) return router.push('/');
-  }, [isLoggedIn, isEmprendedor, user]);
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    const res = await fetch("/api/emprendedores", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(form),
+    });
 
-    try {
-      const res = await fetch('/api/emprendedores', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(form),
-      });
-
-      if (!res.ok) throw new Error('Error al crear el perfil');
-
-      router.push('/');
-    } catch (err) {
-      alert(err.message);
-    } finally {
-      setLoading(false);
+    const data = await res.json();
+    if (res.ok) {
+      alert("Perfil de emprendedor creado");
+    } else {
+      alert("Error: " + data.error);
     }
   };
 
-  if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
+  if (status === "loading") return <p>Cargando...</p>;
+  if (!session) return <p>No estás logueado</p>;
 
   return (
-    <div className="max-w-xl mx-auto p-6">
-      <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
+    <div>
+      <h2>Perfil de usuario</h2>
+      <p>Email: {session.user.email}</p>
+      <p>ID: {session.user.id}</p>
+      <p>Rol: {session.user.rol}</p>
 
-      <p><strong>Email:</strong> {user?.email}</p>
-      <p><strong>Rol:</strong> {user?.rol}</p>
-
-      <hr className="my-6" />
-
-      <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
-
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <input
-          type="text"
-          name="nombre"
-          placeholder="Nombre"
-          value={form.nombre}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          name="apellido"
-          placeholder="Apellido"
-          value={form.apellido}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          name="dni"
-          placeholder="DNI"
-          value={form.dni}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          name="cuil"
-          placeholder="CUIL"
-          value={form.cuil}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          name="telefono"
-          placeholder="Teléfono"
-          value={form.telefono}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <input
-          type="text"
-          name="direccion"
-          placeholder="Dirección"
-          value={form.direccion}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-          required
-        />
-        <select
-          name="genero"
-          value={form.genero}
-          onChange={handleChange}
-          className="w-full p-2 border rounded"
-        >
-          <option value="Masculino">Masculino</option>
-          <option value="Femenino">Femenino</option>
-          <option value="PrefieroNoDecir">Prefiero no decir</option>
-        </select>
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
-          disabled={loading}
-        >
-          {loading ? 'Guardando...' : 'Guardar perfil'}
-        </button>
-      </form>
+      {session.user.rol === "EMPRENDEDOR" && (
+        <form onSubmit={handleSubmit}>
+          <h3>Crear perfil de emprendedor</h3>
+          <input name="nombre" placeholder="Nombre" value={form.nombre} onChange={handleChange} />
+          <input name="apellido" placeholder="Apellido" value={form.apellido} onChange={handleChange} />
+          <input name="dni" placeholder="DNI" value={form.dni} onChange={handleChange} />
+          <input name="cuil" placeholder="CUIL" value={form.cuil} onChange={handleChange} />
+            <input name="fechaNacimiento" type="date" value={form.fechaNacimiento} onChange={handleChange} />
+          <input name="direccion" placeholder="Dirección" value={form.direccion} onChange={handleChange} />
+          <input name="departamento" placeholder="Departamento" value={form.departamento} onChange={handleChange} />
+          <input name="telefono" placeholder="Teléfono" value={form.telefono} onChange={handleChange} />
+          {/* Agregá más campos según tu modelo */}
+          <button type="submit">Guardar</button>
+        </form>
+      )}
     </div>
   );
 }
+
+// 'use client';
+// import { useSession } from "next-auth/react";
+
+// export default function Perfil() {
+//   const { data: session, status } = useSession();
+
+//   if (status === "loading") return <p>Cargando...</p>;
+//   if (!session) return <p>No estás logueado</p>;
+
+//   return (
+//     <div>
+//       <h2>Perfil de usuario</h2>
+//       <p>Email: {session.user.email}</p>
+//       <p>ID: {session.user.id}</p>
+//       <p>Rol: {session.user.rol}</p> {/* Asegurate de tener esto */}
+//     </div>
+//   );
+// }
+
+
+
+// 'use client';
+// import { useAuth } from "../../context/AuthContext";
+// export default function Dashboard() {
+//   const { isAuthenticated, role, user, status } = useAuth();
+
+//   if (status === "loading") return <p>Cargando...</p>;
+//   if (!isAuthenticated) return <p>No estás logueado</p>;
+
+//   return (
+//     <div>
+//       <h2>Hola {user.name}</h2>
+//       <h2>{user.role}</h2>
+//       {role === "ADMIN" && <p>Bienvenido al panel de administración</p>}
+//       {role === "EMPRENDEDOR" && <p>Panel exclusivo para emprendedores</p>}
+//       {role === "SUPERUSUARIO" && <p>Panel exclusivo para superusuario</p>}
+//     </div>
+//   );
+// }
+
+// 'use client';
+// import { useEffect, useState } from 'react';
+// import { useAuth } from '@/context/AuthContext'; // o desde la ruta correcta
+// import { useRouter } from 'next/navigation';
+
+// export default function PerfilPage() {
+//   const { user, isLoggedIn, isEmprendedor } = useAuth();
+//   const router = useRouter();
+
+//   const [form, setForm] = useState({
+//     nombre: '',
+//     apellido: '',
+//     dni: '',
+//     cuil: '',
+//     direccion: '',
+//     telefono: '',
+//     genero: '',
+//   });
+
+//   const [loading, setLoading] = useState(false);
+
+//   useEffect(() => {
+//     if (!isLoggedIn) return router.push('/auth/login');
+//     if (!isEmprendedor) return router.push('/403');
+//     if (user?.emprendedorId) return router.push('/');
+//   }, [isLoggedIn, isEmprendedor, user]);
+
+//   const handleChange = (e) => {
+//     const { name, value } = e.target;
+//     setForm((prev) => ({ ...prev, [name]: value }));
+//   };
+
+//   const handleSubmit = async (e) => {
+//     e.preventDefault();
+//     setLoading(true);
+
+//     try {
+//       const res = await fetch('/api/emprendedores', {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify(form),
+//       });
+
+//       if (!res.ok) throw new Error('Error al crear el perfil');
+
+//       router.push('/');
+//     } catch (err) {
+//       alert(err.message);
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
+
+//   return (
+//     <div className="max-w-xl mx-auto p-6">
+//       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
+
+//       <p><strong>Email:</strong> {user?.email}</p>
+//       <p><strong>Rol:</strong> {user?.rol}</p>
+
+//       <hr className="my-6" />
+
+//       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
+
+//       <form onSubmit={handleSubmit} className="space-y-4">
+//         <input
+//           type="text"
+//           name="nombre"
+//           placeholder="Nombre"
+//           value={form.nombre}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//           required
+//         />
+//         <input
+//           type="text"
+//           name="apellido"
+//           placeholder="Apellido"
+//           value={form.apellido}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//           required
+//         />
+//         <input
+//           type="text"
+//           name="dni"
+//           placeholder="DNI"
+//           value={form.dni}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//           required
+//         />
+//         <input
+//           type="text"
+//           name="cuil"
+//           placeholder="CUIL"
+//           value={form.cuil}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//           required
+//         />
+//         <input
+//           type="text"
+//           name="telefono"
+//           placeholder="Teléfono"
+//           value={form.telefono}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//           required
+//         />
+//         <input
+//           type="text"
+//           name="direccion"
+//           placeholder="Dirección"
+//           value={form.direccion}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//           required
+//         />
+//         <select
+//           name="genero"
+//           value={form.genero}
+//           onChange={handleChange}
+//           className="w-full p-2 border rounded"
+//         >
+//           <option value="Masculino">Masculino</option>
+//           <option value="Femenino">Femenino</option>
+//           <option value="PrefieroNoDecir">Prefiero no decir</option>
+//         </select>
+
+//         <button
+//           type="submit"
+//           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
+//           disabled={loading}
+//         >
+//           {loading ? 'Guardando...' : 'Guardar perfil'}
+//         </button>
+//       </form>
+//     </div>
+//   );
+// }
 
 // 'use client';
 // import { useSession } from 'next-auth/react';

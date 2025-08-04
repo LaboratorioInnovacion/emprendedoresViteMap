@@ -1,29 +1,60 @@
-// middleware.ts
-
-import { getToken } from "next-auth/jwt";
+//middleware.js
 import { NextResponse } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 export async function middleware(req) {
-  const token = await getToken({ req });
-  
+  const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+
   const url = req.nextUrl;
 
+  // Si no está logueado
   if (!token) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
-  const isAdminPage = url.pathname.startsWith("/admin");
-
-  if (isAdminPage && token.rol !== "ADMIN") {
-    return NextResponse.redirect(new URL("/no-autorizado", req.url));
+  // Si intenta acceder a /admin y no es ADMIN
+  if (url.pathname.startsWith("/admin") && token.rol !== "ADMIN") {
+    return NextResponse.redirect(new URL("/unauthorized", req.url));
   }
+
+  // // Si intenta acceder a /emprendedor y no es EMPRENDEDOR
+  // if (url.pathname.startsWith("/emprendedor") && token.rol !== "EMPRENDEDOR") {
+  //   return NextResponse.redirect(new URL("/unauthorized", req.url));
+  // }
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/dashboard/:path*"], // rutas protegidas
+  matcher: ["/admin/:path*", "/emprendedor/:path*"],  // matcher: ["/admin/:path*", "/emprendedor/:path*"],
 };
+
+// // middleware.ts
+
+// import { getToken } from "next-auth/jwt";
+// import { NextResponse } from "next/server";
+
+// export async function middleware(req) {
+//   const token = await getToken({ req });
+  
+//   const url = req.nextUrl;
+
+//   if (!token) {
+//     return NextResponse.redirect(new URL("/auth/login", req.url));
+//   }
+
+//   const isAdminPage = url.pathname.startsWith("/admin");
+
+//   if (isAdminPage && token.rol !== "ADMIN") {
+//     return NextResponse.redirect(new URL("/no-autorizado", req.url));
+//   }
+
+//   return NextResponse.next();
+// }
+
+// export const config = {
+//   matcher: ["/admin/:path*", "/dashboard/:path*"], // rutas protegidas
+// };
 
 // //MIDLEWARE PARA EL BACKEND DE NEXT.JS
 // // Este middleware verifica el JWT y protege las rutas según el rol del usuario

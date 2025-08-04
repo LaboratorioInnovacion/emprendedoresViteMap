@@ -123,29 +123,26 @@ model Emprendedor {
   id                          Int                 @id @default(autoincrement())
   nombre                      String
   apellido                    String
-  genero                      Genero
+  genero                      Genero?
   dni                         String              @unique
   cuil                        String              @unique
   fotoDni                     String?
   fechaNacimiento             DateTime
   paisOrigen                  String?
   ciudadOrigen                String?
-  departamento                String
-  direccion                   String
+  departamento                String?
+  direccion                   String?
   ubicacion                   Bytes?
-  nivelEstudios               NivelEstudios
-  motivacionEmprender         MotivacionEmprender
+  nivelEstudios               NivelEstudios?
+  motivacionEmprender         MotivacionEmprender?
   cantidadEmprendimientos     Int?
   poseeOtrosSustentos         Boolean?
   tiposSustento               String[]
   tieneDependientesEconomicos Boolean?
-  telefono                    String
-
+  telefono                    String?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   usuario Usuario? @relation("UsuarioEmprendedor")
-
   emprendimientos Emprendimiento[]
   asignaciones    Asignacion[]
 }
@@ -247,7 +244,6 @@ model Usuario {
   activo    Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
   emprendedorId Int?         @unique
   emprendedor   Emprendedor? @relation("UsuarioEmprendedor", fields: [emprendedorId], references: [id])
 }
