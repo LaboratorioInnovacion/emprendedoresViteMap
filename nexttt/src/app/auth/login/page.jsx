@@ -1,7 +1,9 @@
 // componente login para Next.js con autenticación
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { redirect, useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
+
 
 export default function LoginForm() {
   const [form, setForm] = useState({ email: '', password: '' });
@@ -9,8 +11,23 @@ export default function LoginForm() {
   const router = useRouter();
 
   async function handleSubmit(e) {
+
+
+
     e.preventDefault();
     setError('');
+
+        signIn('credentials', {
+      email: form.email,
+      password: form.password,
+      redirect: false,
+
+      })
+      if (error) {
+        setError('Credenciales incorrectas');
+        console.error('Error de autenticación:', error);
+        return;
+      }
 
     // const res = await fetch('/api/auth/login', {
     const res = await fetch('/api/auth/sigin', {
