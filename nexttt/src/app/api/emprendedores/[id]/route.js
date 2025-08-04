@@ -1,11 +1,29 @@
 import { NextResponse } from 'next/server';
-import  {prisma } from "../../../lib/prisma";
+import  prisma  from "../../../../lib/prisma";
 
-export async function GET(_, { params }) {
+// export async function GET(_, { params }) {
+//   const emprendedor = await prisma.emprendedor.findUnique({
+//     where: { id: Number(params.id) },
+//     include: { emprendimientos: true, asignaciones: true }
+//   });
+//   return NextResponse.json(emprendedor);
+// }
+export async function GET(req, context) {
+  const { params } = context; // 👈 así evitás el warning
+  const id = Number(params.id);
+
   const emprendedor = await prisma.emprendedor.findUnique({
-    where: { id: Number(params.id) },
-    include: { emprendimientos: true, asignaciones: true }
+    where: { id }, // o `id` si estás usando el ID del emprendedor
+    include: {
+      emprendimientos: true,
+      asignaciones: true,
+    },
   });
+
+  if (!emprendedor) {
+    return NextResponse.json({ error: "Emprendedor no encontrado" }, { status: 404 });
+  }
+
   return NextResponse.json(emprendedor);
 }
 
@@ -14,7 +32,8 @@ export async function PUT(req, { params }) {
 
   const updated = await prisma.emprendedor.update({
     where: { id: Number(params.id) },
-    data
+    data,
+   fechaNacimiento: new Date(data.fechaNacimiento),
   });
 
   return NextResponse.json(updated);
