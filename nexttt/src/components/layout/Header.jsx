@@ -113,23 +113,23 @@ function Header({ toggleMobileSidebar }) {
             {isAuthenticated && dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn">
                 <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-                  <p className="text-sm font-medium">Admin User</p>
+                  <p className="text-sm font-medium">rol {session.user.rol}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    admin@example.com
+                    {session.user.name || session.user.email}
                   </p>
                 </div>
                 <a
                   href="profile"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  Your Profile
+                  Perfil
                 </a>
-                <a
+                {/* <a
                   href="#settings"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
-                  Settings
-                </a>
+                  Ajustes
+                </a> */}
                 {/* <a
                   href="#logout"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -138,7 +138,7 @@ function Header({ toggleMobileSidebar }) {
                 </a> */}
                 <button
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={() => signOut({ callbackUrl: "/login" })}
+                  onClick={() => signOut({ callbackUrl: "/auth/login" })}
                 >
                   Cerrar sesión
                 </button>

@@ -88,6 +88,11 @@ const Page = () => {
           <p className="text-gray-600 dark:text-gray-400">
             Bienvenido al Sistema de Emprendedores
           </p>
+          <p>
+            ADMIN : asd@asd.com contra: asdasd <br />
+            SUPERUSER: zxc@zxc.com contra: zxc <br />
+            EMPRENDEDOR :qwerty@qwerty.com contra: qwerty
+          </p>
         </div>
         {/* <div className="flex gap-2">
           <Link href="/BusinessesPage" className="btn-outline">

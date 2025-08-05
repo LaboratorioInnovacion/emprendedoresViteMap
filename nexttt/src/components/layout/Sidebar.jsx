@@ -1,6 +1,5 @@
 'use client';
-
-import { useState } from 'react';
+import { use, useState,useEffect } from 'react';
 import { 
   LayoutDashboard, 
   Map, 
@@ -9,14 +8,21 @@ import {
   Settings, 
   HelpCircle,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  LogIn,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 function Sidebar({ isMobile, toggleMobileSidebar }) {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    console.log('Session data:', session);
+  }, [session]);
 
   const toggleCollapse = () => {
     setCollapsed(!collapsed);
@@ -51,7 +57,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
             </button>
           </div>
           <nav className="p-2">
-            {navItems.map((item) => {
+            {session && navItems.map((item) => {
               const isActive = pathname === item.path;
               return (
                 <Link key={item.path} href={item.path} onClick={toggleMobileSidebar}
@@ -66,6 +72,14 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
                 </Link>
               );
             })}
+            {!session && (
+              <Link href="/auth/login" onClick={toggleMobileSidebar}
+                className="flex items-center space-x-2 px-4 py-3 rounded-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+              >
+                <LogIn size={20} />
+                <span>Iniciar sesión</span>
+              </Link>
+            )}
           </nav>
         </div>
       </div>
@@ -92,7 +106,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
           </button> */}
         </div>
         <nav className="flex-1 p-2">
-          {navItems.map((item) => {
+          {session && navItems.map((item) => {
             const isActive = pathname === item.path;
             return (
               <Link key={item.path} href={item.path}
@@ -108,6 +122,14 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
               </Link>
             );
           })}
+          {!session && (
+            <Link href="/auth/login"
+              className="flex items-center space-x-2 px-4 py-3 rounded-md text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-700"
+            >
+              <LogIn size={20} />
+              <span>Iniciar sesión</span>
+            </Link>
+          )}
         </nav>
       </div>
     </div>

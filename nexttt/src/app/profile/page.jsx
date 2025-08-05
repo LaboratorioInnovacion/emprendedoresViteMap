@@ -9,6 +9,7 @@ export default function Perfil() {
 
   useEffect(() => {
     if (session?.user?.id) {
+    // if (session?.user?.rol === "EMPRENDEDOR") {
       fetch(`/api/emprendedores/${session.user.id}`)
         .then((res) => res.json())
         .then((data) => {
@@ -35,7 +36,7 @@ export default function Perfil() {
           }
           setLoading(false);
         });
-        console.error("datos", session);
+        // console.error("datos", session);
     }
   }, [session]);
 

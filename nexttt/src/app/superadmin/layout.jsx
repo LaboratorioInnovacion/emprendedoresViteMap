@@ -12,7 +12,7 @@ export default function AdminLayout({ children }) {
   }
 
   // Si no está autenticado o no es ADMIN
-  if (!session || session.user.rol !== 'ADMIN') {
+  if (!session || session.user.rol !== 'SUPERUSUARIO') {
     redirect('/403');
   }
 
