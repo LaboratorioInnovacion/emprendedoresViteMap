@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
 
@@ -9,8 +9,8 @@ export default function Perfil() {
 
   useEffect(() => {
     if (session?.user?.id) {
-    // if (session?.user?.rol === "EMPRENDEDOR") {
-      fetch(`/api/emprendedores/${session.user.id}`)
+      // if (session?.user?.rol === "EMPRENDEDOR") {
+      fetch(`/api/emprendedores/${session.user.emprendedorId}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
@@ -36,7 +36,7 @@ export default function Perfil() {
           }
           setLoading(false);
         });
-        // console.error("datos", session);
+      // console.error("datos", session);
     }
   }, [session]);
 
@@ -76,18 +76,77 @@ export default function Perfil() {
       <p>Email: {session.user.email}</p>
       <p>ID: {session.user.id}</p>
       <p>Rol: {session.user.rol}</p>
-
+      <h3>{form.id ? "Editar" : "Crear"} perfil de emprendedor</h3>
+      <p>Emprendedor ID: {session.user.emprendedorId}</p>
       {session.user.rol === "EMPRENDEDOR" && (
-        <form onSubmit={handleSubmit}>
-          <h3>{form.id ? "Editar" : "Crear"} perfil de emprendedor</h3>
-          <input name="nombre" placeholder="Nombre" value={form.nombre} onChange={handleChange} />
-          <input name="apellido" placeholder="Apellido" value={form.apellido} onChange={handleChange} />
-          <input name="dni" placeholder="DNI" value={form.dni} onChange={handleChange} />
-          <input name="cuil" placeholder="CUIL" value={form.cuil} onChange={handleChange} />
-          <input name="fechaNacimiento" type="date" value={form.fechaNacimiento?.slice(0, 10)} onChange={handleChange} />
-          <input name="direccion" placeholder="Dirección" value={form.direccion} onChange={handleChange} />
-          <input name="departamento" placeholder="Departamento" value={form.departamento} onChange={handleChange} />
-          <input name="telefono" placeholder="Teléfono" value={form.telefono} onChange={handleChange} />
+        <form
+          className="grid grid-cols-3 grid-rows-4 gap-3 border-lg dark:bg-gray-900 "
+          onSubmit={handleSubmit}
+        >
+          <p>Nombre</p>
+          <input
+            className="dark:bg-gray-700"
+            name="nombre"
+            placeholder="Nombre"
+            value={form.nombre}
+            onChange={handleChange}
+          />
+          <p>Apellido</p>
+          <input
+            className="dark:bg-gray-700"
+            name="apellido"
+            placeholder="Apellido"
+            value={form.apellido}
+            onChange={handleChange}
+          />
+          <p>DNI</p>
+          <input
+            className="dark:bg-gray-700"
+            name="dni"
+            placeholder="DNI"
+            value={form.dni}
+            onChange={handleChange}
+          />
+          <p>CUIL</p>
+          <input
+            className="dark:bg-gray-700"
+            name="cuil"
+            placeholder="CUIL"
+            value={form.cuil}
+            onChange={handleChange}
+          />
+          <p>Fecha de Nacimiento</p>
+          <input
+            className="dark:bg-gray-700"
+            name="fechaNacimiento"
+            type="date"
+            value={form.fechaNacimiento?.slice(0, 10)}
+            onChange={handleChange}
+          />
+          <p>Género</p>
+          <input
+            className="dark:bg-gray-700"
+            name="genero"
+            placeholder="Género"
+            value={form.genero}
+            onChange={handleChange}
+          />
+          <p>Departamento</p>
+          <input
+            className="dark:bg-gray-700"
+            name="departamento"
+            placeholder="Departamento"
+            value={form.departamento}
+            onChange={handleChange}
+          />
+          <p>Telefono</p>
+          <input
+            className="dark:bg-gray-700"
+            name="telefono"
+            placeholder="Teléfono"
+            value={form.telefono}
+            onChange={handleChange}
+          />
           {/* Más campos si querés */}
           <button type="submit">{form.id ? "Actualizar" : "Guardar"}</button>
         </form>
@@ -191,8 +250,6 @@ export default function Perfil() {
 // //     </div>
 // //   );
 // // }
-
-
 
 // // 'use client';
 // // import { useAuth } from "../../context/AuthContext";

@@ -34,7 +34,7 @@ export default function LoginPage() {
         <input
           type="email"
           value={email}
-          onChange={e => setEmail(e.target.value)}
+          onChange={(e) => setEmail(e.target.value)}
           style={{ width: "100%", padding: "0.5rem" }}
         />
       </div>
@@ -43,7 +43,7 @@ export default function LoginPage() {
         <input
           type="password"
           value={password}
-          onChange={e => setPassword(e.target.value)}
+          onChange={(e) => setPassword(e.target.value)}
           style={{ width: "100%", padding: "0.5rem" }}
         />
       </div>
@@ -51,10 +51,14 @@ export default function LoginPage() {
       <button onClick={handleLogin} style={{ padding: "0.5rem 1rem" }}>
         Entrar
       </button>
+      <p>
+        ADMIN : asd@asd.com contra: asdasd <br />
+        SUPERUSER: zxc@zxc.com contra: zxc <br />
+        EMPRENDEDOR :qwerty@qwerty.com contra: qwerty
+      </p>
     </div>
   );
 }
-
 
 // // componente login para Next.js con autenticación
 // 'use client';
@@ -62,15 +66,12 @@ export default function LoginPage() {
 // import { redirect, useRouter } from 'next/navigation';
 // import { signIn } from 'next-auth/react';
 
-
 // export default function LoginForm() {
 //   const [form, setForm] = useState({ email: '', password: '' });
 //   const [error, setError] = useState('');
 //   const router = useRouter();
 
 //   async function handleSubmit(e) {
-
-
 
 //     e.preventDefault();
 //     setError('');

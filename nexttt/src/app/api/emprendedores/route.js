@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
+import { useSession } from "next-auth/react";
 
 export async function POST(req) {
   try {
@@ -12,13 +13,13 @@ export async function POST(req) {
 
     console.log("🔐 Token recibido en API:", token);
 
-    if (!token) {
-      return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-    }
+    // if (!token) {
+    //   return NextResponse.json({ error: "No autorizado" }, { status: 403 });
+    // }
 
-    if (token.rol !== "EMPRENDEDOR") {
-      return NextResponse.json({ error: "Rol no permitido" }, { status: 403 });
-    }
+    // if (token.rol !== "EMPRENDEDOR") {
+    //   return NextResponse.json({ error: "Rol no permitido" }, { status: 403 });
+    // }
 
     const data = await req.json();
 
