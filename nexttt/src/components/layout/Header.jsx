@@ -2,9 +2,16 @@
 import { useState, useEffect } from "react";
 import { Search, Bell, User, Moon, Sun, Menu, ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
-import { callbackUrl } from "next-auth/react";
+import { canAccess } from "../../lib/canAcces";
+import { useAuth } from "../../context/AuthContext";
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 
 function Header({ toggleMobileSidebar }) {
+    const { data: session, status } = useSession();
+  
+  const { user, isAuthenticated } = useAuth();
+  const isAdmin = canAccess("ADMIN", user?.rol);
   const [darkMode, setDarkMode] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -22,6 +29,8 @@ function Header({ toggleMobileSidebar }) {
   };
 
   useEffect(() => {
+    console.log('session',session)
+    console.log('status',status)
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -101,7 +110,7 @@ function Header({ toggleMobileSidebar }) {
               />
             </button>
 
-            {dropdownOpen && (
+            {isAuthenticated && dropdownOpen && (
               <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn">
                 <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                   <p className="text-sm font-medium">Admin User</p>
@@ -129,10 +138,29 @@ function Header({ toggleMobileSidebar }) {
                 </a> */}
                 <button
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={() => signOut({ callbackUrl: '/login' })}
+                  onClick={() => signOut({ callbackUrl: "/login" })}
                 >
                   Cerrar sesión
                 </button>
+              </div>
+            )}
+            {!isAuthenticated && dropdownOpen && (
+              <div
+                className="absolute right-0 mt-2 w-48 bg-white dark
+              :bg-gray-800 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn"
+              >
+                <Link
+                  href="/auth/login"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Iniciar sesión
+                </Link>
+                <a
+                  href="/auth/register"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                >
+                  Registrarse
+                </a>
               </div>
             )}
           </div>
