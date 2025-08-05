@@ -6,8 +6,7 @@ import { AuthProvider } from "../context/AuthContext";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import React, { useState, useEffect } from "react";
-import { SessionProvider } from "next-auth/react"; 
-import { useAuth } from "../context/AuthContext";
+import { SessionProvider } from "next-auth/react"; // 🔥 ¡ESTO FALTABA!
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -25,7 +24,6 @@ const geistMono = Geist_Mono({
 // };
 
 export default function RootLayout({ children }) {
-  const { isAuthenticated, role } = useAuth();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);

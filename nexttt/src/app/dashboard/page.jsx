@@ -89,7 +89,7 @@ const Page = () => {
             Bienvenido al Sistema de Emprendedores
           </p>
         </div>
-        {/* <div className="flex gap-2">
+        <div className="flex gap-2">
           <Link href="/BusinessesPage" className="btn-outline">
             <Building2 size={18} className="mr-1" />
             Emprendedores
@@ -98,17 +98,17 @@ const Page = () => {
             <Map size={18} className="mr-1" />
             Explorar Mapa
           </Link>
-        </div> */}
+        </div>
       </div>
-      {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
         <StatCard cantidad={emprendedores.length} empre={undefined} />
         {emprendedores.map((empre) => (
           <StatCard key={empre.id} empre={empre} cantidad={undefined} />
         ))}
-      </div> */}
+      </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card">
-          {/* <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center justify-between mb-4">
             <div className="flex items-center">
               <Map size={20} className="text-primary-600 dark:text-primary-400 mr-2" />
               <h2 className="text-xl font-semibold">Mapa Negocios</h2>
@@ -116,9 +116,9 @@ const Page = () => {
             <Link href="/map" className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center">
               Vista Mapa <ArrowRight size={16} className="ml-1" />
             </Link>
-          </div> */}
+          </div>
           <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden">
-            {/* {L && (
+            {L && (
               <MapContainer
                 center={mapCenter}
                 zoom={12}
@@ -189,18 +189,18 @@ const Page = () => {
                   </Marker>
                 ))}
               </MapContainer>
-            )} */}
+            )}
           </div>
-          {/* <div className="mt-3 flex flex-wrap gap-2">
+          <div className="mt-3 flex flex-wrap gap-2">
             {Object.entries(businessTypeColors).map(([type, color]) => (
               <div key={type} className="flex items-center">
                 <div className="h-3 w-3 rounded-full mr-1" style={{ backgroundColor: color }}></div>
                 <span className="text-xs capitalize">{type}</span>
               </div>
             ))}
-          </div> */}
+          </div>
         </div>
-        {/* <div className="space-y-4">
+        <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
               <Building2 size={20} className="text-primary-600 dark:text-primary-400 mr-2" />
@@ -213,7 +213,7 @@ const Page = () => {
           {emprendedores.slice(-3).map((business) => (
             <RecentBusinessCard key={business.id} business={business} />
           ))}
-        </div> */}
+        </div>
       </div>
     </div>
   );
