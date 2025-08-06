@@ -143,14 +143,14 @@ model Emprendimiento {
   emprendedorId                Int
   emprendedor                  Emprendedor         @relation(fields: [emprendedorId], references: [id])
   etapa                        EtapaEmprendimiento
-  denominacion                 String
+  denominacion                 String?
   fechaInicio                  DateTime?
   inscripcionArca              Boolean
   cuit                         String?
   sector                       Sector
   actividadPrincipal           ActividadSectorial
   tipoEmprendimiento           TipoEmprendimiento
-  direccion                    String
+  direccion                    String?
   ubicacion                    Bytes?
   telefono                     String?
   email                        String?
@@ -162,26 +162,26 @@ model Emprendimiento {
   modoIncorporacionPersonal    String[]
   planeaIncorporarPersonal     PlaneaIncorporar?
   percepcionPlantaPersonal     PercepcionPlanta?
-  requiereCapacitacion         Boolean
+  requiereCapacitacion         Boolean?
   tiposCapacitacion            String[]
   otrosTiposCapacitacion       String?
-  requiereConsultoria          Boolean
+  requiereConsultoria          Boolean?
   tiposConsultoria             String[]
   otrosTiposConsultoria        String?
-  requiereHerramientasTecno    Boolean
+  requiereHerramientasTecno    Boolean?
   tiposHerramientasTecno       String[]
   otrasHerramientasTecno       String?
-  usaRedesSociales             Boolean
+  usaRedesSociales             Boolean?
   tiposRedesSociales           String[]
-  usaMediosPagoElectronicos    Boolean
+  usaMediosPagoElectronicos    Boolean?
   canalesComercializacion      String[]
   otrosCanalesComercializacion String?
-  poseeSucursales              Boolean
+  poseeSucursales              Boolean?
   cantidadSucursales           Int?
   ubicacionSucursales          String[]
   planeaAbrirSucursal          Boolean?
-  createdAt                    DateTime            @default(now())
-  updatedAt                    DateTime            @updatedAt
+  createdAt                    DateTime?            @default(now())
+  updatedAt                    DateTime?            @updatedAt
   asignaciones                 Asignacion[]
 }
 
