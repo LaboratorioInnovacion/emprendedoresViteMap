@@ -9,7 +9,7 @@ import  prisma  from "../../../../lib/prisma";
 //   return NextResponse.json(emprendedor);
 // }
 export async function GET(req, context) {
-  const { params } = context; // Eliminamos el uso incorrecto de await
+  const params = await context.params;
   const id = Number(params.id);
 
   const emprendedor = await prisma.emprendedor.findUnique({
@@ -28,7 +28,7 @@ export async function GET(req, context) {
 }
 
 export async function PUT(req, context) {
-  const { params } = context; // Eliminamos el uso incorrecto de await
+  const params = await context.params;
   const data = await req.json();
 
   const updated = await prisma.emprendedor.update({
@@ -40,7 +40,9 @@ export async function PUT(req, context) {
   return NextResponse.json(updated);
 }
 
-export async function DELETE(_, { params }) {
+// export async function DELETE(_, { params }) {
+export async function DELETE(_, context) {
+  const params = await context.params;
   await prisma.emprendedor.delete({
     where: { id: Number(params.id) }
   });
