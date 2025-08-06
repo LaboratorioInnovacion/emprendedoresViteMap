@@ -9,11 +9,11 @@ import  prisma  from "../../../../lib/prisma";
 //   return NextResponse.json(emprendedor);
 // }
 export async function GET(req, context) {
-  const { params } = context; // 👈 así evitás el warning
+  const { params } = context; // Eliminamos el uso incorrecto de await
   const id = Number(params.id);
 
   const emprendedor = await prisma.emprendedor.findUnique({
-    where: { id }, // o `id` si estás usando el ID del emprendedor
+    where: { id },
     include: {
       emprendimientos: true,
       asignaciones: true,
@@ -27,13 +27,14 @@ export async function GET(req, context) {
   return NextResponse.json(emprendedor);
 }
 
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
+  const { params } = context; // Eliminamos el uso incorrecto de await
   const data = await req.json();
 
   const updated = await prisma.emprendedor.update({
     where: { id: Number(params.id) },
     data,
-   fechaNacimiento: new Date(data.fechaNacimiento),
+    fechaNacimiento: new Date(data.fechaNacimiento),
   });
 
   return NextResponse.json(updated);
