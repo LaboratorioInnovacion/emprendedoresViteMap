@@ -82,6 +82,53 @@ L.Icon.Default.mergeOptions({
     }
   };
 
+  const [showEmprendimientoForm, setShowEmprendimientoForm] = useState(false);
+  const [emprendimientoForm, setEmprendimientoForm] = useState({
+    denominacion: "",
+    etapa: "Idea",
+    sector: "ProduccionElaboracion",
+    actividadPrincipal: "Produccion_Alimentos_Artesanal",
+    tipoEmprendimiento: "Individual",
+    direccion: "",
+    ubicacion: null,
+    telefono: "",
+    email: "",
+    web: "",
+    redSocial1: "",
+    redSocial2: "",
+    inscripcionArca: false,
+    emprendedorId: session?.user?.emprendedorId || null,
+  });
+  const [loadingEmprendimiento, setLoadingEmprendimiento] = useState(false);
+
+  const handleEmprendimientoChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setEmprendimientoForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleEmprendimientoSubmit = async (e) => {
+    e.preventDefault();
+    setLoadingEmprendimiento(true);
+    const res = await fetch("/api/emprendimientos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify(emprendimientoForm),
+    });
+    const data = await res.json();
+    setLoadingEmprendimiento(false);
+    if (res.ok) {
+      alert("Emprendimiento creado correctamente");
+      setShowEmprendimientoForm(false);
+      setEmprendimientoForm((prev) => ({ ...prev, denominacion: "", direccion: "", telefono: "", email: "", web: "", redSocial1: "", redSocial2: "", ubicacion: null }));
+    } else {
+      alert("Error: " + data.error);
+    }
+  };
+
   if (status === "loading" || loading) return <p>Cargando...</p>;
   if (!session) return <p>No estás logueado</p>;
   if (!form) return <p>No se pudo cargar el perfil</p>;
@@ -99,45 +146,81 @@ L.Icon.Default.mergeOptions({
         </div>
 
         {session.user.rol === "EMPRENDEDOR" && (
-          <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
-            {[
-              ["nombre", "Nombre"],
-              ["apellido", "Apellido"],
-              ["dni", "DNI"],
-              ["cuil", "CUIL"],
-              ["fechaNacimiento", "Fecha de Nacimiento", "date"],
-              ["genero", "Género"],
-              ["departamento", "Departamento"],
-              ["telefono", "Teléfono"],
-            ].map(([name, label, type = "text"]) => (
-              <div key={name}>
-                <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                  {label}
-                </label>
-                <input
-                  type={type}
-                  name={name}
-                  value={type === "date" && form[name] ? form[name].slice(0, 10) : form[name] || ""}
-                  onChange={handleChange}
-                  className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-primary-500"
-                />
+          <>
+            <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
+              {/* ...campos del emprendedor... */}
+              {["nombre","apellido","dni","cuil","fechaNacimiento","genero","departamento","telefono"].map((name, idx) => (
+                <div key={name}>
+                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                    {name.charAt(0).toUpperCase() + name.slice(1)}
+                  </label>
+                  <input
+                    type={name === "fechaNacimiento" ? "date" : "text"}
+                    name={name}
+                    value={name === "fechaNacimiento" && form[name] ? form[name].slice(0, 10) : form[name] || ""}
+                    onChange={handleChange}
+                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-primary-500"
+                  />
+                </div>
+              ))}
+
+              <UbicacionField
+                ubicacion={form.ubicacion}
+                setUbicacion={(ubicacion) => setForm((prev) => ({ ...prev, ubicacion }))}
+              />
+
+              <div className="col-span-1 md:col-span-2">
+                <button
+                  type="submit"
+                  className="w-full py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500"
+                >
+                  {form.id ? "Actualizar" : "Guardar"}
+                </button>
               </div>
-            ))}
+            </form>
 
-            <UbicacionField
-              ubicacion={form.ubicacion}
-              setUbicacion={(ubicacion) => setForm((prev) => ({ ...prev, ubicacion }))}
-            />
-
-            <div className="col-span-1 md:col-span-2">
+            <div className="col-span-1 md:col-span-2 mt-8">
               <button
-                type="submit"
-                className="w-full py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500"
+                type="button"
+                className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                onClick={() => setShowEmprendimientoForm((prev) => !prev)}
               >
-                {form.id ? "Actualizar" : "Guardar"}
+                {showEmprendimientoForm ? "Cancelar" : "Agregar Emprendimiento"}
               </button>
             </div>
-          </form>
+
+            {showEmprendimientoForm && (
+              <form className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6" onSubmit={handleEmprendimientoSubmit}>
+                {["denominacion","etapa","sector","actividadPrincipal","tipoEmprendimiento","direccion","telefono","email","web","redSocial1","redSocial2"].map((name) => (
+                  <div key={name}>
+                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+                      {name.charAt(0).toUpperCase() + name.slice(1)}
+                    </label>
+                    <input
+                      type="text"
+                      name={name}
+                      value={emprendimientoForm[name] || ""}
+                      onChange={handleEmprendimientoChange}
+                      className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-green-500"
+                    />
+                  </div>
+                ))}
+                <UbicacionField
+                  ubicacion={emprendimientoForm.ubicacion}
+                  setUbicacion={(ubicacion) => setEmprendimientoForm((prev) => ({ ...prev, ubicacion }))}
+                />
+                <div className="col-span-1 md:col-span-2">
+                  <button
+                    type="submit"
+                    className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                    disabled={loadingEmprendimiento}
+                  >
+                    {loadingEmprendimiento ? "Guardando..." : "Guardar Emprendimiento"}
+                  </button>
+                </div>
+              </form>
+            )}
+          </>
         )}
       </div>
     </div>
