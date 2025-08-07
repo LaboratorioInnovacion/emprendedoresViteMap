@@ -1,0 +1,11 @@
+PUT http://localhost:3000/api/emprendimientos/3
+Content-Type: application/json
+
+{
+  "id": 3,
+  "denominacion": "Nuevo nombre",
+  "emprendedorId": 1,
+  "cantidadPersonal": 2,
+  "cantidadSucursales": 1,
+  "ubicacion": { "lat": -34.6, "lng": -58.4 }
+}

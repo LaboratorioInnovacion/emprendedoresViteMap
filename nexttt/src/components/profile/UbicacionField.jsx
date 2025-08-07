@@ -14,11 +14,11 @@ if (typeof window !== "undefined") {
 }
 
 export default function UbicacionField({ ubicacion, setUbicacion }) {
-  const [position, setPosition] = useState(ubicacion || null);
+  const [position, setPosition] = useState(ubicacion && typeof ubicacion.lat === "number" && typeof ubicacion.lng === "number" ? ubicacion : null);
   const [mapReady, setMapReady] = useState(false);
 
   useEffect(() => {
-    if (!position && typeof window !== "undefined" && navigator.geolocation) {
+    if ((!position || typeof position.lat !== "number" || typeof position.lng !== "number") && typeof window !== "undefined" && navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         ({ coords }) => {
           const newPos = { lat: coords.latitude, lng: coords.longitude };
@@ -78,6 +78,9 @@ export default function UbicacionField({ ubicacion, setUbicacion }) {
             const newPos = { lat, lng };
             setPosition(newPos);
             setUbicacion(newPos);
+          } else {
+            setPosition(null);
+            setUbicacion(null);
           }
         }}
         placeholder="Latitud, Longitud"
