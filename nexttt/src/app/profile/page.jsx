@@ -1,23 +1,9 @@
 "use client";
-
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-} from "react-leaflet";
-import "leaflet/dist/leaflet.css";
-import L from "leaflet";
-
-// Fix para los íconos de Leaflet en Next.js
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-  iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-  shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-});
+import PerfilForm from "../../components/profile/PerfilForm";
+import EmprendimientoForm from "../../components/profile/EmprendimientoForm";
+import EmprendimientosList from "../../components/profile/EmprendimientosList";
 
  function PerfilPage() {
   const { data: session, status } = useSession();
@@ -68,14 +54,17 @@ L.Icon.Default.mergeOptions({
   });
   const [loadingEmprendimiento, setLoadingEmprendimiento] = useState(false);
   const [editEmprendimientoId, setEditEmprendimientoId] = useState(null);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   useEffect(() => {
     if (session?.user?.emprendedorId) {
+      setLoading(true);
       fetch(`/api/emprendedores/${session.user.emprendedorId}`)
         .then((res) => res.json())
         .then((data) => {
           if (data.error) {
-            console.error(data.error);
+            setError(data.error);
             setForm({
               nombre: "",
               apellido: "",
@@ -97,6 +86,10 @@ L.Icon.Default.mergeOptions({
             setForm(data);
           }
           setLoading(false);
+        })
+        .catch((err) => {
+          setError("Error de red: " + err.message);
+          setLoading(false);
         });
     }
   }, [session]);
@@ -107,7 +100,8 @@ L.Icon.Default.mergeOptions({
         .then((res) => res.json())
         .then((data) => {
           if (Array.isArray(data)) setEmprendimientos(data);
-        });
+        })
+        .catch((err) => setError("Error cargando emprendimientos: " + err.message));
     }
   }, [session, showEmprendimientoForm, loadingEmprendimiento]);
 
@@ -121,19 +115,24 @@ L.Icon.Default.mergeOptions({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setSuccess("");
     const method = form?.id ? "PUT" : "POST";
-    const res = await fetch("/api/emprendedores", {
-      method,
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
-      body: JSON.stringify(form),
-    });
-
-    const data = await res.json();
-    if (res.ok) {
-      alert("Perfil actualizado");
-    } else {
-      alert("Error: " + data.error);
+    try {
+      const res = await fetch("/api/emprendedores", {
+        method,
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setSuccess("Perfil actualizado correctamente");
+      } else {
+        setError(data.error || "Error al actualizar el perfil");
+      }
+    } catch (err) {
+      setError("Error de red: " + err.message);
     }
   };
 
@@ -153,15 +152,22 @@ L.Icon.Default.mergeOptions({
 
   const handleDeleteEmprendimiento = async (id) => {
     if (!window.confirm('¿Seguro que deseas eliminar este emprendimiento?')) return;
-    const res = await fetch(`/api/emprendimientos/${id}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    });
-    if (res.ok) {
-      setEmprendimientos((prev) => prev.filter((e) => e.id !== id));
-      alert('Emprendimiento eliminado');
-    } else {
-      alert('Error al eliminar');
+    setError("");
+    setSuccess("");
+    try {
+      const res = await fetch(`/api/emprendimientos?id=${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        setEmprendimientos((prev) => prev.filter((e) => e.id !== id));
+        setSuccess('Emprendimiento eliminado correctamente');
+      } else {
+        setError(data.error || 'Error al eliminar el emprendimiento');
+      }
+    } catch (err) {
+      setError('Error de red: ' + err.message);
     }
   };
 
@@ -173,7 +179,11 @@ L.Icon.Default.mergeOptions({
       ? Buffer.from(JSON.stringify(form.ubicacion)).toString("base64")
       : null,
     cantidadPersonal: form.cantidadPersonal || 0,
-    modoIncorporacionPersonal: form.modoIncorporacionPersonal || [],
+    modoIncorporacionPersonal: Array.isArray(form.modoIncorporacionPersonal)
+      ? form.modoIncorporacionPersonal
+      : form.modoIncorporacionPersonal
+        ? [form.modoIncorporacionPersonal]
+        : [],
     tiposCapacitacion: form.tiposCapacitacion || [],
     tiposConsultoria: form.tiposConsultoria || [],
     tiposHerramientasTecno: form.tiposHerramientasTecno || [],
@@ -186,227 +196,124 @@ L.Icon.Default.mergeOptions({
   const handleEmprendimientoSubmit = async (e) => {
     e.preventDefault();
     setLoadingEmprendimiento(true);
+    setError("");
+    setSuccess("");
     const method = editEmprendimientoId ? 'PUT' : 'POST';
     const url = editEmprendimientoId ? `/api/emprendimientos/${editEmprendimientoId}` : '/api/emprendimientos';
     const adaptedForm = adaptEmprendimientoForm(emprendimientoForm);
-    const res = await fetch(url, {
-      method,
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify(adaptedForm),
-    });
-    const data = await res.json();
-    setLoadingEmprendimiento(false);
-    if (res.ok) {
-      setShowEmprendimientoForm(false);
-      setEditEmprendimientoId(null);
-      setEmprendimientoForm({
-        emprendedorId: session?.user?.emprendedorId || 1,
-        etapa: "Idea",
-        denominacion: "",
-        fechaInicio: "",
-        inscripcionArca: false,
-        cuit: "",
-        sector: "ProduccionElaboracion",
-        actividadPrincipal: "Produccion_Alimentos_Artesanal",
-        tipoEmprendimiento: "Individual",
-        direccion: "",
-        ubicacion: { lat: -34.6037, lng: -58.3816 },
-        telefono: "",
-        email: "",
-        web: "",
-        redSocial1: "",
-        redSocial2: "",
-        tienePersonal: false,
-        cantidadPersonal: 0,
-        modoIncorporacionPersonal: [],
-        planeaIncorporarPersonal: null,
-        percepcionPlantaPersonal: null,
-        requiereCapacitacion: false,
-        tiposCapacitacion: [],
-        otrosTiposCapacitacion: "",
-        requiereConsultoria: false,
-        tiposConsultoria: [],
-        otrosTiposConsultoria: "",
-        requiereHerramientasTecno: false,
-        tiposHerramientasTecno: [],
-        otrasHerramientasTecno: "",
-        usaRedesSociales: false,
-        tiposRedesSociales: [],
-        usaMediosPagoElectronicos: false,
-        canalesComercializacion: [],
-        otrosCanalesComercializacion: "",
-        poseeSucursales: false,
-        cantidadSucursales: 0,
-        ubicacionSucursales: [],
-        planeaAbrirSucursal: false,
+    try {
+      const res = await fetch(url, {
+        method,
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(adaptedForm),
       });
-      // Actualizar lista
-      fetch(`/api/emprendimientos?emprendedorId=${session.user.emprendedorId}`)
-        .then((res) => res.json())
-        .then((data) => {
-          if (Array.isArray(data)) setEmprendimientos(data);
+      const data = await res.json();
+      setLoadingEmprendimiento(false);
+      if (res.ok) {
+        setShowEmprendimientoForm(false);
+        setEditEmprendimientoId(null);
+        setEmprendimientoForm({
+          emprendedorId: session?.user?.emprendedorId || 1,
+          etapa: "Idea",
+          denominacion: "",
+          fechaInicio: "",
+          inscripcionArca: false,
+          cuit: "",
+          sector: "ProduccionElaboracion",
+          actividadPrincipal: "Produccion_Alimentos_Artesanal",
+          tipoEmprendimiento: "Individual",
+          direccion: "",
+          ubicacion: { lat: -34.6037, lng: -58.3816 }, // Siempre valores numéricos
+          telefono: "",
+          email: "",
+          web: "",
+          redSocial1: "",
+          redSocial2: "",
+          tienePersonal: false,
+          cantidadPersonal: 0,
+          modoIncorporacionPersonal: [],
+          planeaIncorporarPersonal: null,
+          percepcionPlantaPersonal: null,
+          requiereCapacitacion: false,
+          tiposCapacitacion: [],
+          otrosTiposCapacitacion: "",
+          requiereConsultoria: false,
+          tiposConsultoria: [],
+          otrosTiposConsultoria: "",
+          requiereHerramientasTecno: false,
+          tiposHerramientasTecno: [],
+          otrasHerramientasTecno: "",
+          usaRedesSociales: false,
+          tiposRedesSociales: [],
+          usaMediosPagoElectronicos: false,
+          canalesComercializacion: [],
+          otrosCanalesComercializacion: "",
+          poseeSucursales: false,
+          cantidadSucursales: 0,
+          ubicacionSucursales: [],
+          planeaAbrirSucursal: false,
         });
-      alert(editEmprendimientoId ? 'Emprendimiento actualizado' : 'Emprendimiento creado correctamente');
-    } else {
-      alert('Error: ' + data.error);
+        // Actualizar lista
+        fetch(`/api/emprendimientos?emprendedorId=${session.user.emprendedorId}`)
+          .then((res) => res.json())
+          .then((data) => {
+            if (Array.isArray(data)) setEmprendimientos(data);
+          });
+        setSuccess(editEmprendimientoId ? 'Emprendimiento actualizado correctamente' : 'Emprendimiento creado correctamente');
+      } else {
+        setError(data.error || 'Error al guardar el emprendimiento');
+      }
+    } catch (err) {
+      setError('Error de red: ' + err.message);
+      setLoadingEmprendimiento(false);
     }
   };
 
-  if (status === "loading" || loading) return <p>Cargando...</p>;
-  if (!session) return <p>No estás logueado</p>;
-  if (!form) return <p>No se pudo cargar el perfil</p>;
+  if (status === "loading" || loading) return <p className="text-center py-8">Cargando...</p>;
+  if (!session) return <p className="text-center py-8 text-red-600">No estás logueado</p>;
+  if (!form) return <p className="text-center py-8 text-red-600">No se pudo cargar el perfil</p>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900">
       <div className="w-full max-w-6xl p-6 bg-white dark:bg-gray-800 rounded-lg shadow-lg">
-        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">
-          Perfil de Usuario
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-700 dark:text-gray-300 mb-4">Perfil de Usuario</h2>
         <div className="mb-6">
           <p className="text-gray-600 dark:text-gray-400">Email: {session.user.email}</p>
           <p className="text-gray-600 dark:text-gray-400">ID: {session.user.id}</p>
           <p className="text-gray-600 dark:text-gray-400">Rol: {session.user.rol}</p>
         </div>
-
+        {error && <div className="mb-4 p-2 bg-red-100 text-red-700 rounded">{error}</div>}
+        {success && <div className="mb-4 p-2 bg-green-100 text-green-700 rounded">{success}</div>}
         {session.user.rol === "EMPRENDEDOR" && (
           <>
-            <form className="grid grid-cols-1 md:grid-cols-2 gap-6" onSubmit={handleSubmit}>
-              {/* ...campos del emprendedor... */}
-              {["nombre","apellido","dni","cuil","fechaNacimiento","genero","departamento","telefono"].map((name, idx) => (
-                <div key={name}>
-                  <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    {name.charAt(0).toUpperCase() + name.slice(1)}
-                  </label>
-                  <input
-                    type={name === "fechaNacimiento" ? "date" : "text"}
-                    name={name}
-                    value={name === "fechaNacimiento" && form[name] ? form[name].slice(0, 10) : form[name] || ""}
-                    onChange={handleChange}
-                    className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-primary-500"
-                  />
-                </div>
-              ))}
-
-              <UbicacionField
-                ubicacion={form.ubicacion}
-                setUbicacion={(ubicacion) => setForm((prev) => ({ ...prev, ubicacion }))}
-              />
-
-              <div className="col-span-1 md:col-span-2">
-                <button
-                  type="submit"
-                  className="w-full py-2 px-4 bg-primary-600 text-white rounded-md hover:bg-primary-700 focus:ring-2 focus:ring-primary-500"
-                >
-                  {form.id ? "Actualizar" : "Guardar"}
-                </button>
-              </div>
-            </form>
-
+            <PerfilForm form={form} handleChange={handleChange} setForm={setForm} handleSubmit={handleSubmit} />
             <div className="col-span-1 md:col-span-2 mt-8">
               <button
                 type="button"
-                className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
+                className={`w-full py-2 px-4 rounded-md focus:ring-2 focus:ring-green-500 ${showEmprendimientoForm ? 'bg-gray-400' : 'bg-green-600 text-white hover:bg-green-700'}`}
                 onClick={() => setShowEmprendimientoForm((prev) => !prev)}
+                disabled={loadingEmprendimiento}
               >
                 {showEmprendimientoForm ? "Cancelar" : "Agregar Emprendimiento"}
               </button>
             </div>
-
             {showEmprendimientoForm && (
-              <form className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6" onSubmit={handleEmprendimientoSubmit}>
-                {["denominacion","etapa","sector","actividadPrincipal","tipoEmprendimiento","direccion","telefono","email","web","redSocial1","redSocial2"].map((name) => (
-                  <div key={name}>
-                    <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                      {name.charAt(0).toUpperCase() + name.slice(1)}
-                    </label>
-                    <input
-                      type="text"
-                      name={name}
-                      value={emprendimientoForm[name] || ""}
-                      onChange={handleEmprendimientoChange}
-                      className="w-full p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-green-500"
-                    />
-                  </div>
-                ))}
-                {/* Checkbox tienePersonal */}
-                <div className="col-span-1 md:col-span-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    <input
-                      type="checkbox"
-                      name="tienePersonal"
-                      checked={!!emprendimientoForm.tienePersonal}
-                      onChange={handleEmprendimientoChange}
-                      className="form-checkbox h-4 w-4 text-green-600"
-                    />
-                    ¿El emprendimiento tiene personal contratado?
-                  </label>
-                </div>
-                {/* Checkbox requiereCapacitacion */}
-                <div className="col-span-1 md:col-span-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    <input
-                      type="checkbox"
-                      name="requiereCapacitacion"
-                      checked={!!emprendimientoForm.requiereCapacitacion}
-                      onChange={handleEmprendimientoChange}
-                      className="form-checkbox h-4 w-4 text-blue-600"
-                    />
-                    ¿El emprendimiento requiere capacitación?
-                  </label>
-                </div>
-                {/* Checkbox requiereHerramientasTecno */}
-                <div className="col-span-1 md:col-span-2">
-                  <label className="flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-                    <input
-                      type="checkbox"
-                      name="requiereHerramientasTecno"
-                      checked={!!emprendimientoForm.requiereHerramientasTecno}
-                      onChange={handleEmprendimientoChange}
-                      className="form-checkbox h-4 w-4 text-purple-600"
-                    />
-                    ¿El emprendimiento requiere herramientas tecnológicas?
-                  </label>
-                </div>
-                <UbicacionField
-                  ubicacion={emprendimientoForm.ubicacion}
-                  setUbicacion={(ubicacion) => setEmprendimientoForm((prev) => ({ ...prev, ubicacion }))}
-                />
-                <div className="col-span-1 md:col-span-2">
-                  <button
-                    type="submit"
-                    className="w-full py-2 px-4 bg-green-600 text-white rounded-md hover:bg-green-700 focus:ring-2 focus:ring-green-500"
-                    disabled={loadingEmprendimiento}
-                  >
-                    {loadingEmprendimiento ? "Guardando..." : editEmprendimientoId ? "Actualizar Emprendimiento" : "Guardar Emprendimiento"}
-                  </button>
-                </div>
-              </form>
+              <EmprendimientoForm
+                emprendimientoForm={emprendimientoForm}
+                handleEmprendimientoChange={handleEmprendimientoChange}
+                setEmprendimientoForm={setEmprendimientoForm}
+                handleEmprendimientoSubmit={handleEmprendimientoSubmit}
+                loadingEmprendimiento={loadingEmprendimiento}
+                editEmprendimientoId={editEmprendimientoId}
+              />
             )}
-
-            {/* Lista de emprendimientos */}
-            <div className="col-span-1 md:col-span-2 mt-10">
-              <h3 className="text-xl font-bold text-gray-700 dark:text-gray-300 mb-4">Mis Emprendimientos</h3>
-              {emprendimientos.length === 0 ? (
-                <p className="text-gray-500">No tienes emprendimientos registrados.</p>
-              ) : (
-                <ul className="space-y-4">
-                  {emprendimientos.map((emp) => (
-                    <li key={emp.id} className="p-4 bg-gray-100 dark:bg-gray-700 rounded-md shadow flex flex-col md:flex-row md:items-center md:justify-between">
-                      <div>
-                        <span className="font-semibold">{emp.denominacion}</span> <span className="text-sm text-gray-500">({emp.etapa})</span>
-                        <div className="text-sm text-gray-600 dark:text-gray-300">{emp.sector} - {emp.actividadPrincipal}</div>
-                        <div className="text-xs text-gray-400">{emp.direccion}</div>
-                      </div>
-                      <div className="flex gap-2 mt-2 md:mt-0">
-                        <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600" onClick={() => handleEditEmprendimiento(emp)}>Editar</button>
-                        <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600" onClick={() => handleDeleteEmprendimiento(emp.id)}>Eliminar</button>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              )}
-            </div>
+            <EmprendimientosList
+              emprendimientos={emprendimientos}
+              handleEditEmprendimiento={handleEditEmprendimiento}
+              handleDeleteEmprendimiento={handleDeleteEmprendimiento}
+              loading={loadingEmprendimiento}
+            />
           </>
         )}
       </div>
@@ -414,93 +321,7 @@ L.Icon.Default.mergeOptions({
   );
 }
 
-// 📍 Subcomponente para mapa con marker arrastrable y geolocalización inicial
-function UbicacionField({ ubicacion, setUbicacion }) {
-  const [position, setPosition] = useState(ubicacion || null);
-  const [mapReady, setMapReady] = useState(false);
-
-  useEffect(() => {
-    if (!position && typeof window !== "undefined" && navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        ({ coords }) => {
-          const newPos = { lat: coords.latitude, lng: coords.longitude };
-          setPosition(newPos);
-          setUbicacion(newPos);
-        },
-        (err) => {
-          console.error("Error obteniendo ubicación:", err);
-          alert("No se pudo obtener la ubicación. Verificá los permisos del navegador.");
-        }
-      );
-    }
-  }, [position, setUbicacion]);
-
-  const DraggableMarker = () => {
-    const map = useMapEvents({
-      click(e) {
-        const { lat, lng } = e.latlng;
-        setPosition({ lat, lng });
-        setUbicacion({ lat, lng });
-      },
-    });
-
-    return position ? (
-      <Marker
-        position={position}
-        draggable={true}
-        eventHandlers={{
-          dragend: (e) => {
-            const marker = e.target;
-            const { lat, lng } = marker.getLatLng();
-            setPosition({ lat, lng });
-            setUbicacion({ lat, lng });
-          },
-        }}
-      />
-    ) : null;
-  };
-
-  return (
-    <div className="col-span-1 md:col-span-2">
-      <label className="block text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
-        Ubicación
-      </label>
-      <input
-        className="w-full mb-4 p-2 border border-gray-300 rounded-md dark:bg-gray-700 dark:border-gray-600 focus:ring-2 focus:ring-primary-500"
-        value={position ? `${position.lat.toFixed(6)}, ${position.lng.toFixed(6)}` : ""}
-        onChange={(e) => {
-          const [latStr, lngStr] = e.target.value.split(",").map((s) => s.trim());
-          const lat = parseFloat(latStr);
-          const lng = parseFloat(lngStr);
-          if (!isNaN(lat) && !isNaN(lng)) {
-            const newPos = { lat, lng };
-            setPosition(newPos);
-            setUbicacion(newPos);
-          }
-        }}
-        placeholder="Latitud, Longitud"
-      />
-
-      {position && (
-        <div className="h-64 rounded-md overflow-hidden">
-          <MapContainer
-            center={position}
-            zoom={13}
-            style={{ height: "100%", width: "100%" }}
-            whenReady={() => setMapReady(true)}
-          >
-            <TileLayer
-              attribution=""
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            />
-            {mapReady && <DraggableMarker />}
-          </MapContainer>
-        </div>
-      )}
-    </div>
-  );
-}
- export default PerfilPage;
+export default PerfilPage;
 // "use client";
 // import { useSession } from "next-auth/react";
 // import { useState, useEffect } from "react";
@@ -1044,152 +865,6 @@ function UbicacionField({ ubicacion, setUbicacion }) {
 // // //   );
 // // // }
 
-// // // 'use client';
-// // // import { useEffect, useState } from 'react';
-// // // // import { useAuth } from '@/context/auth-context';
-// // // import { useAuth } from "../../context/AuthContext";
-// // // import { useRouter } from 'next/navigation';
-
-// // // export default function PerfilPage() {
-// // //   const { user, isLoggedIn, isEmprendedor } = useAuth();
-// // //   const router = useRouter();
-
-// // //   const [form, setForm] = useState({
-// // //     nombre: '',
-// // //     apellido: '',
-// // //     dni: '',
-// // //     cuil: '',
-// // //     direccion: '',
-// // //     telefono: '',
-// // //     genero: '',
-// // //   });
-
-// // //   const [loading, setLoading] = useState(false);
-
-// // //   useEffect(() => {
-// // //     if (!isLoggedIn) return router.push('/auth/login');
-// // //     if (!isEmprendedor) return router.push('/403');
-// // //     if (user?.emprendedorId) return router.push('/');
-// // //   }, [isLoggedIn, isEmprendedor, user]);
-
-// // //   const handleChange = (e) => {
-// // //     const { name, value } = e.target;
-// // //     setForm((prev) => ({ ...prev, [name]: value }));
-// // //   };
-
-// // //   const handleSubmit = async (e) => {
-// // //     e.preventDefault();
-// // //     setLoading(true);
-
-// // //     try {
-// // //       const res = await fetch('/api/emprendedores', {
-// // //         method: 'POST',
-// // //         headers: {
-// // //           'Content-Type': 'application/json',
-// // //         },
-// // //         body: JSON.stringify(form),
-// // //       });
-
-// // //       if (!res.ok) throw new Error('Error al crear el perfil');
-
-// // //       router.push('/');
-// // //     } catch (err) {
-// // //       alert(err.message);
-// // //     } finally {
-// // //       setLoading(false);
-// // //     }
-// // //   };
-
-// // //   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
-
-// // //   return (
-// // //     <div className="max-w-xl mx-auto p-6">
-// // //       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
-
-// // //       <p><strong>Email:</strong> {user?.email}</p>
-// // //       <p><strong>Rol:</strong> {user?.rol}</p>
-
-// // //       <hr className="my-6" />
-
-// // //       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
-
-// // //       <form onSubmit={handleSubmit} className="space-y-4">
-// // //         <input
-// // //           type="text"
-// // //           name="nombre"
-// // //           placeholder="Nombre"
-// // //           value={form.nombre}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="apellido"
-// // //           placeholder="Apellido"
-// // //           value={form.apellido}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="dni"
-// // //           placeholder="DNI"
-// // //           value={form.dni}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="cuil"
-// // //           placeholder="CUIL"
-// // //           value={form.cuil}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="telefono"
-// // //           placeholder="Teléfono"
-// // //           value={form.telefono}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="direccion"
-// // //           placeholder="Dirección"
-// // //           value={form.direccion}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <select
-// // //           name="genero"
-// // //           value={form.genero}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //         >
-// // //           <option value="Masculino">Masculino</option>
-// // //           <option value="Femenino">Femenino</option>
-// // //           <option value="PrefieroNoDecir">Prefiero no decir</option>
-// // //         </select>
-
-// // //         <button
-// // //           type="submit"
-// // //           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
-// // //           disabled={loading}
-// // //         >
-// // //           {loading ? 'Guardando...' : 'Guardar perfil'}
-// // //         </button>
-// // //       </form>
-// // //     </div>
-// // //   );
-// // // }
 
 // // // 'use client';
 // // // import { useEffect, useState } from 'react';
@@ -1337,151 +1012,6 @@ function UbicacionField({ ubicacion, setUbicacion }) {
 // // //   );
 // // // }
 
-// // // 'use client';
-// // // import { useEffect, useState } from 'react';
-// // // import { useAuth } from '@/context/AuthContext';
-// // // import { useRouter } from 'next/navigation';
-
-// // // export default function PerfilPage() {
-// // //   const { user, isLoggedIn, isEmprendedor } = useAuth();
-// // //   const router = useRouter();
-
-// // //   const [form, setForm] = useState({
-// // //     nombre: '',
-// // //     apellido: '',
-// // //     dni: '',
-// // //     cuil: '',
-// // //     direccion: '',
-// // //     telefono: '',
-// // //     genero: '',
-// // //   });
-
-// // //   const [loading, setLoading] = useState(false);
-
-// // //   useEffect(() => {
-// // //     if (!isLoggedIn) return router.push('/auth/login');
-// // //     if (!isEmprendedor) return router.push('/403');
-// // //     if (user?.emprendedorId) return router.push('/');
-// // //   }, [isLoggedIn, isEmprendedor, user]);
-
-// // //   const handleChange = (e) => {
-// // //     const { name, value } = e.target;
-// // //     setForm((prev) => ({ ...prev, [name]: value }));
-// // //   };
-
-// // //   const handleSubmit = async (e) => {
-// // //     e.preventDefault();
-// // //     setLoading(true);
-
-// // //     try {
-// // //       const res = await fetch('/api/emprendedores', {
-// // //         method: 'POST',
-// // //         headers: {
-// // //           'Content-Type': 'application/json',
-// // //         },
-// // //         body: JSON.stringify(form),
-// // //       });
-
-// // //       if (!res.ok) throw new Error('Error al crear el perfil');
-
-// // //       router.push('/');
-// // //     } catch (err) {
-// // //       alert(err.message);
-// // //     } finally {
-// // //       setLoading(false);
-// // //     }
-// // //   };
-
-// // //   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
-
-// // //   return (
-// // //     <div className="max-w-xl mx-auto p-6">
-// // //       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
-
-// // //       <p><strong>Email:</strong> {user?.email}</p>
-// // //       <p><strong>Rol:</strong> {user?.rol}</p>
-
-// // //       <hr className="my-6" />
-
-// // //       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
-
-// // //       <form onSubmit={handleSubmit} className="space-y-4">
-// // //         <input
-// // //           type="text"
-// // //           name="nombre"
-// // //           placeholder="Nombre"
-// // //           value={form.nombre}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="apellido"
-// // //           placeholder="Apellido"
-// // //           value={form.apellido}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="dni"
-// // //           placeholder="DNI"
-// // //           value={form.dni}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="cuil"
-// // //           placeholder="CUIL"
-// // //           value={form.cuil}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="telefono"
-// // //           placeholder="Teléfono"
-// // //           value={form.telefono}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="direccion"
-// // //           placeholder="Dirección"
-// // //           value={form.direccion}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <select
-// // //           name="genero"
-// // //           value={form.genero}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //         >
-// // //           <option value="Masculino">Masculino</option>
-// // //           <option value="Femenino">Femenino</option>
-// // //           <option value="PrefieroNoDecir">Prefiero no decir</option>
-// // //         </select>
-
-// // //         <button
-// // //           type="submit"
-// // //           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
-// // //           disabled={loading}
-// // //         >
-// // //           {loading ? 'Guardando...' : 'Guardar perfil'}
-// // //         </button>
-// // //       </form>
-// // //     </div>
-// // //   );
-// // // }
 
 // // // 'use client';
 // // // import { useEffect, useState } from 'react';
@@ -1629,151 +1159,6 @@ function UbicacionField({ ubicacion, setUbicacion }) {
 // // //   );
 // // // }
 
-// // // 'use client';
-// // // import { useEffect, useState } from 'react';
-// // // import { useAuth } from '@/context/AuthContext';
-// // // import { useRouter } from 'next/navigation';
-
-// // // export default function PerfilPage() {
-// // //   const { user, isLoggedIn, isEmprendedor } = useAuth();
-// // //   const router = useRouter();
-
-// // //   const [form, setForm] = useState({
-// // //     nombre: '',
-// // //     apellido: '',
-// // //     dni: '',
-// // //     cuil: '',
-// // //     direccion: '',
-// // //     telefono: '',
-// // //     genero: '',
-// // //   });
-
-// // //   const [loading, setLoading] = useState(false);
-
-// // //   useEffect(() => {
-// // //     if (!isLoggedIn) return router.push('/auth/login');
-// // //     if (!isEmprendedor) return router.push('/403');
-// // //     if (user?.emprendedorId) return router.push('/');
-// // //   }, [isLoggedIn, isEmprendedor, user]);
-
-// // //   const handleChange = (e) => {
-// // //     const { name, value } = e.target;
-// // //     setForm((prev) => ({ ...prev, [name]: value }));
-// // //   };
-
-// // //   const handleSubmit = async (e) => {
-// // //     e.preventDefault();
-// // //     setLoading(true);
-
-// // //     try {
-// // //       const res = await fetch('/api/emprendedores', {
-// // //         method: 'POST',
-// // //         headers: {
-// // //           'Content-Type': 'application/json',
-// // //         },
-// // //         body: JSON.stringify(form),
-// // //       });
-
-// // //       if (!res.ok) throw new Error('Error al crear el perfil');
-
-// // //       router.push('/');
-// // //     } catch (err) {
-// // //       alert(err.message);
-// // //     } finally {
-// // //       setLoading(false);
-// // //     }
-// // //   };
-
-// // //   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
-
-// // //   return (
-// // //     <div className="max-w-xl mx-auto p-6">
-// // //       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
-
-// // //       <p><strong>Email:</strong> {user?.email}</p>
-// // //       <p><strong>Rol:</strong> {user?.rol}</p>
-
-// // //       <hr className="my-6" />
-
-// // //       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
-
-// // //       <form onSubmit={handleSubmit} className="space-y-4">
-// // //         <input
-// // //           type="text"
-// // //           name="nombre"
-// // //           placeholder="Nombre"
-// // //           value={form.nombre}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="apellido"
-// // //           placeholder="Apellido"
-// // //           value={form.apellido}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="dni"
-// // //           placeholder="DNI"
-// // //           value={form.dni}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="cuil"
-// // //           placeholder="CUIL"
-// // //           value={form.cuil}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="telefono"
-// // //           placeholder="Teléfono"
-// // //           value={form.telefono}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <input
-// // //           type="text"
-// // //           name="direccion"
-// // //           placeholder="Dirección"
-// // //           value={form.direccion}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //           required
-// // //         />
-// // //         <select
-// // //           name="genero"
-// // //           value={form.genero}
-// // //           onChange={handleChange}
-// // //           className="w-full p-2 border rounded"
-// // //         >
-// // //           <option value="Masculino">Masculino</option>
-// // //           <option value="Femenino">Femenino</option>
-// // //           <option value="PrefieroNoDecir">Prefiero no decir</option>
-// // //         </select>
-
-// // //         <button
-// // //           type="submit"
-// // //           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
-// // //           disabled={loading}
-// // //         >
-// // //           {loading ? 'Guardando...' : 'Guardar perfil'}
-// // //         </button>
-// // //       </form>
-// // //     </div>
-// // //   );
-// // // }
 
 // // // 'use client';
 // // // import { useEffect, useState } from 'react';
@@ -1921,6 +1306,7 @@ function UbicacionField({ ubicacion, setUbicacion }) {
 // // //   );
 // // // }
 
+
 // // // 'use client';
 // // // import { useEffect, useState } from 'react';
 // // // import { useAuth } from '@/context/AuthContext';
@@ -2066,3 +1452,443 @@ function UbicacionField({ ubicacion, setUbicacion }) {
 // // //     </div>
 // // //   );
 // // // }
+
+
+// // // 'use client';
+// // // import { useEffect, useState } from 'react';
+// // // import { useAuth } from '@/context/AuthContext';
+// // // import { useRouter } from 'next/navigation';
+
+// // // export default function PerfilPage() {
+// // //   const { user, isLoggedIn, isEmprendedor } = useAuth();
+// // //   const router = useRouter();
+
+// // //   const [form, setForm] = useState({
+// // //     nombre: '',
+// // //     apellido: '',
+// // //     dni: '',
+// // //     cuil: '',
+// // //     direccion: '',
+// // //     telefono: '',
+// // //     genero: '',
+// // //   });
+
+// // //   const [loading, setLoading] = useState(false);
+
+// // //   useEffect(() => {
+// // //     if (!isLoggedIn) return router.push('/auth/login');
+// // //     if (!isEmprendedor) return router.push('/403');
+// // //     if (user?.emprendedorId) return router.push('/');
+// // //   }, [isLoggedIn, isEmprendedor, user]);
+
+// // //   const handleChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setForm((prev) => ({ ...prev, [name]: value }));
+// // //   };
+
+// // //   const handleSubmit = async (e) => {
+// // //     e.preventDefault();
+// // //     setLoading(true);
+
+// // //     try {
+// // //       const res = await fetch('/api/emprendedores', {
+// // //         method: 'POST',
+// // //         headers: {
+// // //           'Content-Type': 'application/json',
+// // //         },
+// // //         body: JSON.stringify(form),
+// // //       });
+
+// // //       if (!res.ok) throw new Error('Error al crear el perfil');
+
+// // //       router.push('/');
+// // //     } catch (err) {
+// // //       alert(err.message);
+// // //     } finally {
+// // //       setLoading(false);
+// // //     }
+// // //   };
+
+// // //   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
+
+// // //   return (
+// // //     <div className="max-w-xl mx-auto p-6">
+// // //       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
+
+// // //       <p><strong>Email:</strong> {user?.email}</p>
+// // //       <p><strong>Rol:</strong> {user?.rol}</p>
+
+// // //       <hr className="my-6" />
+
+// // //       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
+
+// // //       <form onSubmit={handleSubmit} className="space-y-4">
+// // //         <input
+// // //           type="text"
+// // //           name="nombre"
+// // //           placeholder="Nombre"
+// // //           value={form.nombre}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="apellido"
+// // //           placeholder="Apellido"
+// // //           value={form.apellido}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="dni"
+// // //           placeholder="DNI"
+// // //           value={form.dni}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="cuil"
+// // //           placeholder="CUIL"
+// // //           value={form.cuil}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="telefono"
+// // //           placeholder="Teléfono"
+// // //           value={form.telefono}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="direccion"
+// // //           placeholder="Dirección"
+// // //           value={form.direccion}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <select
+// // //           name="genero"
+// // //           value={form.genero}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //         >
+// // //           <option value="Masculino">Masculino</option>
+// // //           <option value="Femenino">Femenino</option>
+// // //           <option value="PrefieroNoDecir">Prefiero no decir</option>
+// // //         </select>
+
+// // //         <button
+// // //           type="submit"
+// // //           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
+// // //           disabled={loading}
+// // //         >
+// // //           {loading ? 'Guardando...' : 'Guardar perfil'}
+// // //         </button>
+// // //       </form>
+// // //     </div>
+// // //   );
+// // // }
+
+
+// // // 'use client';
+// // // import { useEffect, useState } from 'react';
+// // // import { useAuth } from '@/context/AuthContext';
+// // // import { useRouter } from 'next/navigation';
+
+// // // export default function PerfilPage() {
+// // //   const { user, isLoggedIn, isEmprendedor } = useAuth();
+// // //   const router = useRouter();
+
+// // //   const [form, setForm] = useState({
+// // //     nombre: '',
+// // //     apellido: '',
+// // //     dni: '',
+// // //     cuil: '',
+// // //     direccion: '',
+// // //     telefono: '',
+// // //     genero: '',
+// // //   });
+
+// // //   const [loading, setLoading] = useState(false);
+
+// // //   useEffect(() => {
+// // //     if (!isLoggedIn) return router.push('/auth/login');
+// // //     if (!isEmprendedor) return router.push('/403');
+// // //     if (user?.emprendedorId) return router.push('/');
+// // //   }, [isLoggedIn, isEmprendedor, user]);
+
+// // //   const handleChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setForm((prev) => ({ ...prev, [name]: value }));
+// // //   };
+
+// // //   const handleSubmit = async (e) => {
+// // //     e.preventDefault();
+// // //     setLoading(true);
+
+// // //     try {
+// // //       const res = await fetch('/api/emprendedores', {
+// // //         method: 'POST',
+// // //         headers: {
+// // //           'Content-Type': 'application/json',
+// // //         },
+// // //         body: JSON.stringify(form),
+// // //       });
+
+// // //       if (!res.ok) throw new Error('Error al crear el perfil');
+
+// // //       router.push('/');
+// // //     } catch (err) {
+// // //       alert(err.message);
+// // //     } finally {
+// // //       setLoading(false);
+// // //     }
+// // //   };
+
+// // //   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
+
+// // //   return (
+// // //     <div className="max-w-xl mx-auto p-6">
+// // //       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
+
+// // //       <p><strong>Email:</strong> {user?.email}</p>
+// // //       <p><strong>Rol:</strong> {user?.rol}</p>
+
+// // //       <hr className="my-6" />
+
+// // //       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
+
+// // //       <form onSubmit={handleSubmit} className="space-y-4">
+// // //         <input
+// // //           type="text"
+// // //           name="nombre"
+// // //           placeholder="Nombre"
+// // //           value={form.nombre}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="apellido"
+// // //           placeholder="Apellido"
+// // //           value={form.apellido}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="dni"
+// // //           placeholder="DNI"
+// // //           value={form.dni}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="cuil"
+// // //           placeholder="CUIL"
+// // //           value={form.cuil}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="telefono"
+// // //           placeholder="Teléfono"
+// // //           value={form.telefono}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="direccion"
+// // //           placeholder="Dirección"
+// // //           value={form.direccion}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <select
+// // //           name="genero"
+// // //           value={form.genero}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //         >
+// // //           <option value="Masculino">Masculino</option>
+// // //           <option value="Femenino">Femenino</option>
+// // //           <option value="PrefieroNoDecir">Prefiero no decir</option>
+// // //         </select>
+
+// // //         <button
+// // //           type="submit"
+// // //           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
+// // //           disabled={loading}
+// // //         >
+// // //           {loading ? 'Guardando...' : 'Guardar perfil'}
+// // //         </button>
+// // //       </form>
+// // //     </div>
+// // //   );
+// // // }
+
+
+// // // 'use client';
+// // // import { useEffect, useState } from 'react';
+// // // import { useAuth } from '@/context/AuthContext';
+// // // import { useRouter } from 'next/navigation';
+
+// // // export default function PerfilPage() {
+// // //   const { user, isLoggedIn, isEmprendedor } = useAuth();
+// // //   const router = useRouter();
+
+// // //   const [form, setForm] = useState({
+// // //     nombre: '',
+// // //     apellido: '',
+// // //     dni: '',
+// // //     cuil: '',
+// // //     direccion: '',
+// // //     telefono: '',
+// // //     genero: '',
+// // //   });
+
+// // //   const [loading, setLoading] = useState(false);
+
+// // //   useEffect(() => {
+// // //     if (!isLoggedIn) return router.push('/auth/login');
+// // //     if (!isEmprendedor) return router.push('/403');
+// // //     if (user?.emprendedorId) return router.push('/');
+// // //   }, [isLoggedIn, isEmprendedor, user]);
+
+// // //   const handleChange = (e) => {
+// // //     const { name, value } = e.target;
+// // //     setForm((prev) => ({ ...prev, [name]: value }));
+// // //   };
+
+// // //   const handleSubmit = async (e) => {
+// // //     e.preventDefault();
+// // //     setLoading(true);
+
+// // //     try {
+// // //       const res = await fetch('/api/emprendedores', {
+// // //         method: 'POST',
+// // //         headers: {
+// // //           'Content-Type': 'application/json',
+// // //         },
+// // //         body: JSON.stringify(form),
+// // //       });
+
+// // //       if (!res.ok) throw new Error('Error al crear el perfil');
+
+// // //       router.push('/');
+// // //     } catch (err) {
+// // //       alert(err.message);
+// // //     } finally {
+// // //       setLoading(false);
+// // //     }
+// // //   };
+
+// // //   if (!isLoggedIn || !isEmprendedor || user?.emprendedorId) return null;
+
+// // //   return (
+// // //     <div className="max-w-xl mx-auto p-6">
+// // //       <h1 className="text-2xl font-bold mb-4">Mi Perfil</h1>
+
+// // //       <p><strong>Email:</strong> {user?.email}</p>
+// // //       <p><strong>Rol:</strong> {user?.rol}</p>
+
+// // //       <hr className="my-6" />
+
+// // //       <h2 className="text-xl font-semibold mb-2">Completa tu perfil como emprendedor</h2>
+
+// // //       <form onSubmit={handleSubmit} className="space-y-4">
+// // //         <input
+// // //           type="text"
+// // //           name="nombre"
+// // //           placeholder="Nombre"
+// // //           value={form.nombre}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="apellido"
+// // //           placeholder="Apellido"
+// // //           value={form.apellido}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="dni"
+// // //           placeholder="DNI"
+// // //           value={form.dni}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="cuil"
+// // //           placeholder="CUIL"
+// // //           value={form.cuil}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="telefono"
+// // //           placeholder="Teléfono"
+// // //           value={form.telefono}
+// // //           onChange={handleChange}
+// // //           className="w-full p-2 border rounded"
+// // //           required
+// // //         />
+// // //         <input
+// // //           type="text"
+// // //           name="direccion"
+// // //           placeholder="Dirección"
+// // //           value={form.direccion}
+ // //           onChange={handleChange}
+ // //           className="w-full p-2 border rounded"
+ // //           required
+ // //         />
+ // //         <select
+ // //           name="genero"
+ // //           value={form.genero}
+ // //           onChange={handleChange}
+ // //           className="w-full p-2 border rounded"
+ // //         >
+ // //           <option value="Masculino">Masculino</option>
+ // //           <option value="Femenino">Femenino</option>
+ // //           <option value="PrefieroNoDecir">Prefiero no decir</option>
+ // //         </select>
+ // //         <button
+ // //           type="submit"
+ // //           className="w-full bg-blue-600 text-white p-2 rounded disabled:opacity-50"
+ // //           disabled={loading}
+ // //         >
+ // //           {loading ? 'Guardando...' : 'Guardar perfil'}
+ // //         </button>
+ // //       </form>
+ // //     </div>
+ // //   );
+ // // }
