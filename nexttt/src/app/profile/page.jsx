@@ -138,10 +138,21 @@ import EmprendimientosList from "../../components/profile/EmprendimientosList";
 
   const handleEmprendimientoChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setEmprendimientoForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+    setEmprendimientoForm((prev) => {
+      // Si el campo es modoIncorporacionPersonal y el input es select-multiple
+      if (name === "modoIncorporacionPersonal" && e.target.multiple) {
+        const selected = Array.from(e.target.selectedOptions).map((opt) => opt.value);
+        return { ...prev, [name]: selected };
+      }
+      // Si el campo es modoIncorporacionPersonal y no es múltiple
+      if (name === "modoIncorporacionPersonal") {
+        return { ...prev, [name]: Array.isArray(value) ? value : [value] };
+      }
+      return {
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      };
+    });
   };
 
   const handleEditEmprendimiento = (emprendimiento) => {
