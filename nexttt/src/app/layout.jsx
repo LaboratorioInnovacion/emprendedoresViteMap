@@ -8,7 +8,8 @@ import Sidebar from "../components/layout/Sidebar";
 import React, { useState, useEffect } from "react";
 import { SessionProvider } from "next-auth/react"; 
 import { useAuth } from "../context/AuthContext";
-
+import { EmpreProvider, useEmpre } from "../context/EmpreContext";
+import { EmprendimientosProvider } from "../context/EmprendimientosContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -60,6 +61,8 @@ export default function RootLayout({ children }) {
     <html lang="es">
       <SessionProvider>
       <AuthProvider>
+        <EmpreProvider>
+          <EmprendimientosProvider>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
         >
@@ -89,6 +92,8 @@ export default function RootLayout({ children }) {
             </div>
           </EmprendedoresProvider>
         </body>
+        </EmprendimientosProvider>
+        </EmpreProvider>
       </AuthProvider>
       </SessionProvider>
     </html>

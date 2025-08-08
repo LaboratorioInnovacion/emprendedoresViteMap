@@ -1,44 +1,26 @@
 'use client';
 
-import React, { useState } from "react";
-import { Business, BusinessType, FilterOptions } from "../../types";
+import React, { useState, useEffect } from "react";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
-import { useEmprendedores } from "../../context/EmprendedoresContext";
+import { useEmpre } from "../../context/EmpreContext";
 
-interface BusinessListProps {
-  businesses: Business[];
-  onViewDetail: (id: string) => void;
-  onAddBusiness: () => void;
-}
+// Elimina la interfaz, ya que los datos vienen del contexto
 
-const BusinessList: React.FC<BusinessListProps> = ({
-  businesses,
-  onViewDetail,
-  onAddBusiness,
-}) => {
-  const [filters, setFilters] = useState<FilterOptions>({
+const BusinessList = ({ onViewDetail, onAddBusiness }) => {
+  const [filters, setFilters] = useState({
     businessTypes: [],
     status: [],
     searchTerm: "",
   });
   const [showFilters, setShowFilters] = useState(false);
-  const { emprendedores } = useEmprendedores();
-  console.log("Emprendedores:", emprendedores);
+  const { emprendedores, loading, error, fetchEmprendedores } = useEmpre();
 
-  const businessTypes: BusinessType[] = [
-    "Gastronomía", // Rojo vibrante
-    "Servicios", // Azul profundo
-    "Indumentaria", // Ámbar intenso
-    "Tecnología", // Verde fresco
-    "Educación", // Índigo saturado
-    "Artesanía", // Índigo oscuro
-    "Turismo", // Índigo profundo
-    "Salud", // Rosa profundo
-    "Otro", // Gris oscuro
-  ];
+  useEffect(() => {
+    fetchEmprendedores();
+    // eslint-disable-next-line
+  }, []);
 
-  const statusOptions = ["active", "inactive", "pending"];
-
+  // Elimina lógica y tipos de businessTypes y statusOptions
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFilters({
       ...filters,
@@ -46,64 +28,15 @@ const BusinessList: React.FC<BusinessListProps> = ({
     });
   };
 
-  const toggleBusinessTypeFilter = (type: BusinessType) => {
-    if (filters.businessTypes.includes(type)) {
-      setFilters({
-        ...filters,
-        businessTypes: filters.businessTypes.filter((t) => t !== type),
-      });
-    } else {
-      setFilters({
-        ...filters,
-        businessTypes: [...filters.businessTypes, type],
-      });
-    }
-  };
-
-  const toggleStatusFilter = (status: "active" | "inactive" | "pending") => {
-    if (filters.status.includes(status)) {
-      setFilters({
-        ...filters,
-        status: filters.status.filter((s) => s !== status),
-      });
-    } else {
-      setFilters({
-        ...filters,
-        status: [...filters.status, status],
-      });
-    }
-  };
-
-  const resetFilters = () => {
-    setFilters({
-      businessTypes: [],
-      status: [],
-      searchTerm: "",
-    });
-  };
-
-  const filteredBusinesses = emprendedores.filter((business) => {
+  // Adaptar filtro para los campos reales del modelo emprendedor
+  const filteredBusinesses = emprendedores.filter((emp) => {
     if (
       filters.searchTerm &&
-      !business.name.toLowerCase().includes(filters.searchTerm.toLowerCase())
+      !(`${emp.nombre} ${emp.apellido}`.toLowerCase().includes(filters.searchTerm.toLowerCase()))
     ) {
       return false;
     }
-
-    if (
-      filters.businessTypes.length > 0 &&
-      !filters.businessTypes.includes(business.type)
-    ) {
-      return false;
-    }
-
-    if (
-      filters.status.length > 0 &&
-      !filters.status.includes(business.status)
-    ) {
-      return false;
-    }
-
+    // Si quieres filtrar por otros campos, agrega aquí
     return true;
   });
 
@@ -126,14 +59,13 @@ const BusinessList: React.FC<BusinessListProps> = ({
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-2xl font-bold">Emprendedores</h2>
-
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1 sm:flex-none">
               <input
                 type="text"
-                placeholder="Buscar Negocio..."
+                placeholder="Buscar emprendedor..."
                 value={filters.searchTerm}
-                onChange={handleSearchChange}
+                onChange={e => setFilters({ ...filters, searchTerm: e.target.value })}
                 className="input pl-9 w-full sm:w-60"
               />
               <Search
@@ -141,17 +73,7 @@ const BusinessList: React.FC<BusinessListProps> = ({
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
             </div>
-
             <div className="flex gap-2">
-              <button
-                onClick={() => setShowFilters(!showFilters)}
-                className="btn-outline px-3 flex-1 sm:flex-none justify-center"
-                title="Filter"
-              >
-                <Filter size={18} />
-                <span className="ml-2 sm:hidden">Filtros</span>
-              </button>
-
               <button
                 onClick={onAddBusiness}
                 className="btn-primary flex-1 sm:flex-none justify-center"
@@ -164,121 +86,41 @@ const BusinessList: React.FC<BusinessListProps> = ({
         </div>
       </div>
 
-      {/* Filters Panel */}
-      {showFilters && (
-        <div className="card animate-fadeIn">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Filtros</h3>
-            <button
-              onClick={resetFilters}
-              className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
-            >
-              Borrar Filtros
-            </button>
-          </div>
 
-          <div className="space-y-6">
-            <div>
-              <h4 className="font-medium mb-2">Tipo de Rubro</h4>
-              <div className="flex flex-wrap gap-2">
-                {businessTypes.map((type) => {
-                  const count = emprendedores.filter((b) => b.type === type).length;
-                  return (
-                    <button
-                      key={type}
-                      onClick={() => toggleBusinessTypeFilter(type)}
-                      className={`badge text-xs py-1.5 px-3 capitalize ${
-                        filters.businessTypes.includes(type)
-                          ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                      }`}
-                    >
-                      {type} <span className="ml-1 text-xs text-gray-500">({count})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-medium mb-2">Estado</h4>
-              <div className="flex flex-wrap gap-2">
-                {statusOptions.map((status) => (
-                  <button
-                    key={status}
-                    onClick={() =>
-                      toggleStatusFilter(
-                        status as "active" | "inactive" | "pending"
-                      )
-                    }
-                    className={`badge text-xs py-1.5 px-3 capitalize ${
-                      filters.status.includes(
-                        status as "active" | "inactive" | "pending"
-                      )
-                        ? getStatusBadgeClass(
-                            status as "active" | "inactive" | "pending"
-                          )
-                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                    }`}
-                  >
-                    {status}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Business Cards for Mobile */}
+      {/* Cards para mobile */}
       <div className="block sm:hidden space-y-4">
-        {filteredBusinesses.length > 0 ? (
-          filteredBusinesses.map((business) => (
+        {loading ? (
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">Cargando...</div>
+        ) : error ? (
+          <div className="text-center py-8 text-red-500">{error}</div>
+        ) : filteredBusinesses.length > 0 ? (
+          filteredBusinesses.map((emp) => (
             <div
-              key={business.id}
+              key={emp.id}
               className="cardempre hover:shadow-lg transition-shadow cursor-pointer"
-              onClick={() => onViewDetail(business.id)}
+              onClick={() => onViewDetail(emp.id)}
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  {business.imageUrl ? (
-                    <img
-                      className="h-16 w-16 rounded-lg object-cover"
-                      src={business.imageUrl}
-                      alt={business.name}
-                    />
-                  ) : (
-                    <div className="h-16 w-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
-                      {business.name.charAt(0).toUpperCase()}
-                    </div>
-                  )}
+                  <div className="h-16 w-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                    {emp.nombre.charAt(0).toUpperCase()}
+                  </div>
                 </div>
-
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <div>
                       <h3 className="text-base font-medium truncate">
-                        {business.name}
+                        {emp.nombre} {emp.apellido}
                       </h3>
                       <span className="badge badge-secondary text-xs capitalize mt-1">
-                        {business.type}
+                        {emp.nivelEstudios}
                       </span>
                     </div>
-                    <span
-                      className={`badge ${getStatusBadgeClass(
-                        business.status
-                      )} flex items-center text-xs`}
-                    >
-                      <Activity size={12} className="mr-1" />
-                      {business.status.charAt(0).toUpperCase() +
-                        business.status.slice(1)}
-                    </span>
                   </div>
-
                   <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center">
                       <MapPin size={14} className="mr-1 flex-shrink-0" />
-                      <span className="truncate">{business.address}</span>
+                      <span className="truncate">{emp.departamento}, {emp.direccion}</span>
                     </div>
                   </div>
                 </div>
@@ -287,116 +129,44 @@ const BusinessList: React.FC<BusinessListProps> = ({
           ))
         ) : (
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">
-            No se encontraron negocios.
+            No se encontraron emprendedores.
           </div>
         )}
       </div>
 
-      {/* Business Table for Desktop */}
+      {/* Tabla para desktop */}
       <div className="hidden sm:block overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-              >
-                Nombre
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-              >
-                Tipo
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-              >
-                Ubicacion
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-              >
-                Estado
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-              >
-                Ultima Actualización
-              </th>
-              <th
-                scope="col"
-                className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider"
-              >
-                Acciones
-              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Departamento</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dirección</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nivel de estudios</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha Nacimiento</th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Acciones</th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
-            {filteredBusinesses.length > 0 ? (
-              filteredBusinesses.map((business) => (
-                <tr
-                  key={business.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-                >
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center">
-                      <div className="flex-shrink-0 h-10 w-10">
-                        {business.imageUrl ? (
-                          <img
-                            className="h-10 w-10 rounded-full object-cover"
-                            src={business.imageUrl}
-                            alt={business.name}
-                          />
-                        ) : (
-                          <div className="h-10 w-10 rounded-full bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
-                            {business.name.charAt(0).toUpperCase()}
-                          </div>
-                        )}
-                      </div>
-                      <div className="ml-4">
-                        <div className="text-sm font-medium">
-                          {business.name}
-                        </div>
-                        <div className="text-sm text-gray-500 dark:text-gray-400">
-                          {business.contact.email}
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="badge badge-secondary capitalize">
-                      {business.type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    <div className="flex items-center">
-                      <MapPin size={14} className="mr-1 flex-shrink-0" />
-                      <span className="truncate max-w-[200px]">
-                        {business.address}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`badge ${getStatusBadgeClass(
-                        business.status
-                      )} flex items-center`}
-                    >
-                      <Activity size={12} className="mr-1" />
-                      {business.status.charAt(0).toUpperCase() +
-                        business.status.slice(1)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
-                    {new Date(business.updatedAt).toLocaleDateString()}
-                  </td>
+            {loading ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Cargando...</td>
+              </tr>
+            ) : error ? (
+              <tr>
+                <td colSpan={6} className="px-6 py-4 text-center text-red-500">{error}</td>
+              </tr>
+            ) : filteredBusinesses.length > 0 ? (
+              filteredBusinesses.map((emp) => (
+                <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+                  <td className="px-6 py-4 whitespace-nowrap">{emp.nombre} {emp.apellido}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{emp.departamento}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{emp.direccion}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{emp.nivelEstudios}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">{new Date(emp.fechaNacimiento).toLocaleDateString()}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
-                      onClick={() => onViewDetail(business.id)}
+                      onClick={() => onViewDetail(emp.id)}
                       className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-300"
                     >
                       Ver Detalles
@@ -406,11 +176,8 @@ const BusinessList: React.FC<BusinessListProps> = ({
               ))
             ) : (
               <tr>
-                <td
-                  colSpan={6}
-                  className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
-                >
-                  No hay negocios con estos rubros o estados.
+                <td colSpan={6} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                  No se encontraron emprendedores.
                 </td>
               </tr>
             )}
