@@ -37,6 +37,18 @@ export async function POST(req) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }
 }
+export async function PUT(req, context) {
+  const params = await context.params;
+  const data = await req.json();
+
+  const updated = await prisma.emprendedor.update({
+    where: { id: Number(params.id) },
+    data,
+    fechaNacimiento: new Date(data.fechaNacimiento),
+  });
+
+  return NextResponse.json(updated);
+}
 
 // import { NextResponse } from "next/server";
 // import prisma from "../../../lib/prisma";
