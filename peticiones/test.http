@@ -1,11 +1,72 @@
-PUT http://localhost:3000/api/emprendimientos/3
+### Obtener todos los emprendedores
+GET http://localhost:3000/api/emprendedores
+Content-Type: application/json
+
+### Obtener emprendedor por ID
+GET http://localhost:3000/api/emprendedores/1
+Content-Type: application/json
+
+### Crear emprendedor
+POST http://localhost:3000/api/emprendedores
 Content-Type: application/json
 
 {
-  "id": 3,
-  "denominacion": "Nuevo nombre",
+  "nombre": "Juan",
+  "apellido": "Pérez",
+  "dni": "12345678",
+  "departamento": "Capital",
+  "direccion": "Calle Falsa 123",
+  "nivelEstudios": "Universitario",
+  "fechaNacimiento": "1990-01-01"
+}
+
+### Actualizar emprendedor
+PUT http://localhost:3000/api/emprendedores/1
+Content-Type: application/json
+
+{
+  "nombre": "Juan Modificado",
+  "apellido": "Pérez",
+  "departamento": "Valle Viejo",
+  "direccion": "Calle Real 456",
+  "nivelEstudios": "Secundario",
+  "fechaNacimiento": "1990-01-01"
+}
+
+### Eliminar emprendedor
+DELETE http://localhost:3000/api/emprendedores/1
+
+### Obtener todos los emprendimientos
+GET http://localhost:3000/api/emprendimientos
+Content-Type: application/json
+
+### Obtener emprendimiento por ID
+GET http://localhost:3000/api/emprendimientos/1
+Content-Type: application/json
+
+### Crear emprendimiento
+POST http://localhost:3000/api/emprendimientos
+Content-Type: application/json
+
+{
+  "denominacion": "Nuevo Emprendimiento",
   "emprendedorId": 1,
   "cantidadPersonal": 2,
   "cantidadSucursales": 1,
   "ubicacion": { "lat": -34.6, "lng": -58.4 }
 }
+
+### Actualizar emprendimiento
+PUT http://localhost:3000/api/emprendimientos/3
+Content-Type: application/json
+
+{
+  "denominacion": "Nombre Actualizado",
+  "emprendedorId": 1,
+  "cantidadPersonal": 3,
+  "cantidadSucursales": 2,
+  "ubicacion": { "lat": -34.7, "lng": -58.5 }
+}
+
+### Eliminar emprendimiento
+DELETE http://localhost:3000/api/emprendimientos/3

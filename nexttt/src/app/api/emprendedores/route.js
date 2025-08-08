@@ -1,3 +1,11 @@
+export async function GET() {
+  try {
+    const emprendedores = await prisma.emprendedor.findMany();
+    return NextResponse.json(emprendedores);
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
 import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
