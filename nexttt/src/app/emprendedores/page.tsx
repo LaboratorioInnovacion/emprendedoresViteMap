@@ -46,7 +46,27 @@ const EmprendedoresPage = () => {
       try {
         const res = await fetch("/api/emprendedores");
         const data = await res.json();
-        setEmprendedores(data);
+        // Decodificar ubicacion si viene como bytes
+        const decodeUbicacion = (ubicacion: any) => {
+          if (!ubicacion || typeof ubicacion !== "object") return null;
+          try {
+            // Convertir a array de bytes y luego a string
+            const bytes = Object.values(ubicacion).map(v => Number(v));
+            const str = String.fromCharCode(...bytes);
+            const obj = JSON.parse(str);
+            if (obj.lat && obj.lng) return obj;
+            return null;
+          } catch {
+            return null;
+          }
+        };
+        const emprendedoresAdaptados = data.map((emp: any) => ({
+          ...emp,
+          ubicacion: emp.ubicacion && typeof emp.ubicacion === "object"
+            ? decodeUbicacion(emp.ubicacion)
+            : emp.ubicacion,
+        }));
+        setEmprendedores(emprendedoresAdaptados);
       } catch (err) {
         setError("Error al cargar los emprendedores");
       }
@@ -74,8 +94,8 @@ const EmprendedoresPage = () => {
 
   // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
   const defaultViewport = {
-    center: [ -32.9471, -60.6306 ] as [number, number], // Rosario, Argentina (ejemplo)
-    zoom: 12,
+  center: [ -32.9471, -60.6306 ] as [number, number],
+  zoom: 12,
   };
 
   return (
@@ -88,7 +108,9 @@ const EmprendedoresPage = () => {
             name: `${emp.nombre} ${emp.apellido}`,
             type: emp.nivelEstudios || "Otro",
             address: `${emp.departamento}, ${emp.direccion}`,
-            location: emp.ubicacion || { lat: -32.9471, lng: -60.6306 }, // fallback si no hay ubicación
+            location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
+              ? emp.ubicacion
+              : { lat: -32.9471, lng: -60.6306 },
             imageUrl: emp.imageUrl,
             status: emp.estado || "active",
             contact: emp.contact || {},

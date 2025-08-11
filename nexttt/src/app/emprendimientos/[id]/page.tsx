@@ -1,16 +1,12 @@
-
-
 'use client';
 import { useParams, useRouter } from 'next/navigation';
 import { Building2, MapPin, Phone, Mail, Globe, Calendar, Clock, ChevronLeft, Activity, Pencil, Trash2, Star } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import BusinessMap from '../../../components/map/BusinessMap';
 import React, { useMemo, useState, useEffect } from 'react';
-
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
 
 const EmprendimientoPage = () => {
   const params = useParams();
@@ -19,8 +15,22 @@ const EmprendimientoPage = () => {
   const [emprendimiento, setEmprendimiento] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [L, setL] = useState(null);
   const [markerIcon, setMarkerIcon] = useState(null);
+  const [showEdit, setShowEdit] = useState(false);
+  const [editLoading, setEditLoading] = useState(false);
+  const [editError, setEditError] = useState("");
+  const [editUbicacion, setEditUbicacion] = useState(null);
+
+  // Inicializa editUbicacion al abrir el modal
+  useEffect(() => {
+    if (showEdit) {
+      if (emprendimiento?.ubicacion && emprendimiento.ubicacion.lat !== undefined && emprendimiento.ubicacion.lng !== undefined) {
+        setEditUbicacion({ lat: emprendimiento.ubicacion.lat, lng: emprendimiento.ubicacion.lng });
+      } else {
+        setEditUbicacion({ lat: -34.61, lng: -58.38 }); // Buenos Aires por defecto
+      }
+    }
+  }, [showEdit, emprendimiento]);
 
   useEffect(() => {
     const fetchEmprendimiento = async () => {
@@ -29,7 +39,14 @@ const EmprendimientoPage = () => {
         const res = await fetch(`/api/emprendimientos/${id}`);
         const data = await res.json();
         if (res.ok) {
-          setEmprendimiento(data);
+          // Si la ubicación viene como string, decodificar
+          let ubicacion = data.ubicacion;
+          if (ubicacion && typeof ubicacion === "string") {
+            try {
+              ubicacion = JSON.parse(ubicacion);
+            } catch {}
+          }
+          setEmprendimiento({ ...data, ubicacion });
         } else {
           setError(data.error || "Error al cargar el emprendimiento");
         }
@@ -43,15 +60,15 @@ const EmprendimientoPage = () => {
 
   useEffect(() => {
     const loadLeaflet = async () => {
-      const leaflet = await import('leaflet');
-      setL(leaflet);
       const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='#2563eb' stroke='white' stroke-width='2'/></svg>`;
       const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
-      const icon = new leaflet.Icon({
-        iconUrl,
-        iconSize: [28, 28],
-        iconAnchor: [16, 16],
-        popupAnchor: [0, -16],
+      const icon = new L.Icon({
+        iconUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-icon.png',
+        iconSize: [25, 41],
+        iconAnchor: [12, 41],
+        popupAnchor: [1, -34],
+        shadowUrl: 'https://unpkg.com/leaflet@1.9.3/dist/images/marker-shadow.png',
+        shadowSize: [41, 41],
       });
       setMarkerIcon(icon);
     };
@@ -129,6 +146,28 @@ const EmprendimientoPage = () => {
           <button className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500">
             <Trash2 size={18} className="mr-1" />
             Borrar
+          </button>
+          <button
+            className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500"
+            onClick={async () => {
+              if (!window.confirm('¿Seguro que quieres borrar este emprendimiento?')) return;
+              try {
+                const res = await fetch(`/api/emprendimientos?id=${id}`, {
+                  method: 'DELETE',
+                });
+                const data = await res.json();
+                if (res.ok && data.ok) {
+                  router.push('/emprendimientos');
+                } else {
+                  alert(data.error || 'Error al borrar');
+                }
+              } catch (err) {
+                alert('Error de red');
+              }
+            }}
+          >
+            <Trash2 size={18} className="mr-1" />
+            Borrar Definitivo
           </button>
         </div>
       </div>
@@ -225,21 +264,24 @@ const EmprendimientoPage = () => {
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Ubicación</h2>
             <div className="h-64 rounded-lg overflow-hidden">
-              {L && markerIcon && emprendimiento.ubicacion && (
-                <MapContainer
-                  center={[emprendimiento.ubicacion.lat, emprendimiento.ubicacion.lng]}
-                  zoom={14}
-                  style={{ height: "100%", width: "100%" }}
-                >
-                  <TileLayer
-                    attribution='&copy; <a>OpenStreetMap</a>'
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                  />
-                  <Marker position={[emprendimiento.ubicacion.lat, emprendimiento.ubicacion.lng]} icon={markerIcon}>
-                    <Popup>{emprendimiento.denominacion || emprendimiento.name}</Popup>
+              <MapContainer
+                center={emprendimiento.ubicacion && emprendimiento.ubicacion.lat !== undefined && emprendimiento.ubicacion.lng !== undefined
+                  ? [emprendimiento.ubicacion.lat, emprendimiento.ubicacion.lng]
+                  : [-34.61, -58.38]}
+                zoom={14}
+                style={{ height: "100%", width: "100%" }}
+                scrollWheelZoom={true}
+              >
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                {emprendimiento.ubicacion && emprendimiento.ubicacion.lat !== undefined && emprendimiento.ubicacion.lng !== undefined && (
+                  <Marker
+                    position={[emprendimiento.ubicacion.lat, emprendimiento.ubicacion.lng]}
+                    icon={markerIcon}
+                  >
+                    <Popup>Ubicación del emprendimiento</Popup>
                   </Marker>
-                </MapContainer>
-              )}
+                )}
+              </MapContainer>
             </div>
             {emprendimiento.ubicacion && (
               <div className="mt-4">
@@ -266,6 +308,82 @@ const EmprendimientoPage = () => {
                 <Pencil size={18} className="mr-2" />
                 Editar Detalles
               </button>
+              <button className="btn-outline w-full justify-center" onClick={() => setShowEdit(true)}>
+                <Pencil size={18} className="mr-2" />
+                Editar Detalles
+              </button>
+      {/* Modal de edición */}
+      {showEdit && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-lg shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Editar Emprendimiento</h2>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                setEditLoading(true);
+                setEditError("");
+                try {
+                  const form = e.target as HTMLFormElement;
+                  const formData = new FormData(form);
+                  const body: any = { id };
+                  formData.forEach((value, key) => {
+                    body[key] = value;
+                  });
+                  // Si lat/lng se editan, actualizar ubicación
+                  if (body.lat && body.lng) {
+                    body.ubicacion = { lat: Number(body.lat), lng: Number(body.lng) };
+                    delete body.lat;
+                    delete body.lng;
+                  }
+                  const res = await fetch(`/api/emprendimientos`, {
+                    method: "PUT",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(body),
+                  });
+                  const data = await res.json();
+                  if (res.ok) {
+                    setEmprendimiento({ ...emprendimiento, ...body });
+                    setShowEdit(false);
+                  } else {
+                    setEditError(data.error || "Error al editar");
+                  }
+                } catch (err) {
+                  setEditError("Error de red");
+                }
+                setEditLoading(false);
+              }}
+            >
+              <div className="space-y-3">
+                <label className="block">
+                  <span className="text-sm font-medium">Denominación</span>
+                  <input name="denominacion" defaultValue={emprendimiento.denominacion || ""} className="input w-full" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-medium">Descripción</span>
+                  <textarea name="descripcion" defaultValue={emprendimiento.descripcion || ""} className="input w-full" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-medium">Dirección</span>
+                  <input name="direccion" defaultValue={emprendimiento.direccion || ""} className="input w-full" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-medium">Latitud</span>
+                  <input name="lat" type="number" step="any" defaultValue={emprendimiento.ubicacion?.lat || ""} className="input w-full" />
+                </label>
+                <label className="block">
+                  <span className="text-sm font-medium">Longitud</span>
+                  <input name="lng" type="number" step="any" defaultValue={emprendimiento.ubicacion?.lng || ""} className="input w-full" />
+                </label>
+              </div>
+              {editError && <div className="text-red-500 mt-2">{editError}</div>}
+              <div className="flex justify-end gap-2 mt-6">
+                <button type="button" className="btn-outline" onClick={() => setShowEdit(false)} disabled={editLoading}>Cancelar</button>
+                <button type="submit" className="btn-primary" disabled={editLoading}>{editLoading ? "Guardando..." : "Guardar Cambios"}</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
             </div>
           </div>
         </div>

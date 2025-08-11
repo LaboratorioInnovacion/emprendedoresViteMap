@@ -49,7 +49,34 @@ const EmprendimientosPage = () => {
       try {
         const res = await fetch("/api/emprendimientos");
         const data = await res.json();
-        setEmprendimientos(data);
+        // Decodificar ubicacion si viene como bytes
+        const decodeUbicacion = (ubicacion: any) => {
+          if (!ubicacion || typeof ubicacion !== "object") return null;
+          try {
+            const bytes = Object.values(ubicacion).map(v => Number(v));
+            const str = String.fromCharCode(...bytes);
+            const obj = JSON.parse(str);
+            if (obj.lat && obj.lng) return obj;
+            return null;
+          } catch {
+            return null;
+          }
+        };
+        const emprendimientosAdaptados = data.map((emp: any) => {
+          let ubicacion = null;
+          if (emp.ubicacion && typeof emp.ubicacion === "object") {
+            ubicacion = decodeUbicacion(emp.ubicacion);
+          }
+          // Si no tiene ubicación, usar la del emprendedor si existe
+          if (!ubicacion && emp.emprendedor && emp.emprendedor.ubicacion && typeof emp.emprendedor.ubicacion === "object") {
+            ubicacion = decodeUbicacion(emp.emprendedor.ubicacion);
+          }
+          return {
+            ...emp,
+            ubicacion,
+          };
+        });
+        setEmprendimientos(emprendimientosAdaptados);
       } catch (err) {
         setError("Error al cargar los emprendimientos");
       }
@@ -60,14 +87,13 @@ const EmprendimientosPage = () => {
 
   // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
   const defaultViewport = {
-    center: [ -32.9471, -60.6306 ], // Rosario, Argentina (ejemplo)
+    center: [ -32.9471, -60.6306 ] as [number, number],
     zoom: 12,
   };
 
-  // Filtrar por nombre/apellido del emprendedor, denominación, rubro y estado
+  // Filtrado de emprendimientos
   const filtered = emprendimientos.filter((emp) => {
-    const emprendedor = emp.emprendedor || {};
-    const nombreCompleto = `${emprendedor.nombre || ""} ${emprendedor.apellido || ""}`.toLowerCase();
+    const nombreCompleto = `${emp.emprendedor?.nombre || ""} ${emp.emprendedor?.apellido || ""}`.toLowerCase();
     const denominacion = (emp.denominacion || "").toLowerCase();
     const rubro = (emp.rubro || "Otro");
     const estado = (emp.estado || "active");
@@ -97,11 +123,19 @@ const EmprendimientosPage = () => {
             name: emp.denominacion,
             type: emp.rubro || "Otro",
             address: emp.direccion,
-            location: emp.ubicacion || { lat: -32.9471, lng: -60.6306 }, // fallback si no hay ubicación
+            location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
+              ? emp.ubicacion
+              : { lat: -32.9471, lng: -60.6306 },
             imageUrl: emp.imageUrl,
             status: emp.estado || "active",
-            contact: emp.contact || {},
+            contact: {
+              phone: emp.contact?.phone || "",
+              email: emp.contact?.email || "",
+              website: emp.contact?.website || ""
+            },
             description: emp.descripcion || "",
+            createdAt: emp.createdAt || "",
+            updatedAt: emp.updatedAt || "",
           }))}
           defaultViewport={defaultViewport}
         />

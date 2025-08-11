@@ -44,9 +44,10 @@ export async function PUT(req, context) {
     if (data.fechaNacimiento) {
       data.fechaNacimiento = new Date(data.fechaNacimiento);
     }
-    // Si ubicacion es objeto, conviértelo a Bytes
-    if (data.ubicacion && typeof data.ubicacion === 'object') {
-      data.ubicacion = { set: Buffer.from(JSON.stringify(data.ubicacion)) };
+    // Si ubicacion existe, conviértelo a Bytes (acepta string o objeto)
+    if (data.ubicacion) {
+      let ubicacionStr = typeof data.ubicacion === 'object' ? JSON.stringify(data.ubicacion) : data.ubicacion;
+      data.ubicacion = { set: Buffer.from(ubicacionStr) };
     }
     // Eliminar relaciones del objeto data
     delete data.emprendimientos;

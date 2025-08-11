@@ -2,7 +2,6 @@
 import 'leaflet/dist/leaflet.css'; // Importa los estilos de Leaflet para los mapas
 import React, { useState, useEffect } from "react";
 import dynamic from 'next/dynamic'; // Importa componentes de forma dinámica para evitar problemas de SSR
-import { useMapEvents } from 'react-leaflet';
 import { Business, BusinessType, MapViewport } from "../../types";
 import { businessTypeColors } from "../../data/mockData";
 import {
@@ -85,23 +84,11 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
 
   // Maneja la selección de una ubicación en el mapa (modo selección)
   const handleLocationSelect = (lat: number, lng: number) => {
-    setSelectedLocation([lat, lng]);
     if (onLocationSelect) {
+      setSelectedLocation([lat, lng]);
       onLocationSelect(lat, lng);
     }
   };
-
-  // Hook para capturar el click en el mapa
-  function LocationSelector() {
-    useMapEvents({
-      click: (e) => {
-        if (selectionMode && e?.latlng) {
-          handleLocationSelect(e.latlng.lat, e.latlng.lng);
-        }
-      },
-    });
-    return null;
-  }
 
   // Maneja la selección de un negocio (al hacer click en "Ver Detalles")
   const handleBusinessSelect = (id: string) => {
@@ -171,7 +158,6 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
             zoom={14}
             style={{ height: "100%", width: "100%" }}
           >
-            {selectionMode && <LocationSelector />}
             {/* Capa base de OpenStreetMap */}
             <DynamicTileLayer
               // @ts-expect-error attribution es válido en react-leaflet v4
