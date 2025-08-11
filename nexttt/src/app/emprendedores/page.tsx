@@ -5,6 +5,7 @@ import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
 import { useEmpre } from "../../context/EmpreContext";
+import BusinessMap from "../../components/map/BusinessMap";
 
 const niveles = [
   "Primario",
@@ -71,8 +72,33 @@ const EmprendedoresPage = () => {
     setSearchTerm("");
   };
 
+  // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
+  const defaultViewport = {
+    center: [ -32.9471, -60.6306 ] as [number, number], // Rosario, Argentina (ejemplo)
+    zoom: 12,
+  };
+
   return (
     <div className="space-y-4">
+      {/* Mapa de emprendedores */}
+      <div className="mb-4">
+        <BusinessMap
+          emprendedores={emprendedores.map(emp => ({
+            id: emp.id,
+            name: `${emp.nombre} ${emp.apellido}`,
+            type: emp.nivelEstudios || "Otro",
+            address: `${emp.departamento}, ${emp.direccion}`,
+            location: emp.ubicacion || { lat: -32.9471, lng: -60.6306 }, // fallback si no hay ubicación
+            imageUrl: emp.imageUrl,
+            status: emp.estado || "active",
+            contact: emp.contact || {},
+            description: emp.descripcion || "",
+            createdAt: emp.createdAt || null,
+            updatedAt: emp.updatedAt || null,
+          }))}
+          defaultViewport={defaultViewport}
+        />
+      </div>
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
