@@ -33,7 +33,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
     { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { path: '/MapPage', label: 'Mapa', icon: <Map size={20} /> },
     // { path: '/BusinessesPage', label: 'Emprendedores', icon: <UsersRound  size={20} /> },
-    { path: '/BusinessesPage', label: 'Emprendedores', icon: <UsersRound  size={20} /> },
+    { path: '/emprendedores', label: 'Emprendedores', icon: <UsersRound  size={20} /> },
     { path: '/emprendimientos', label: 'Emprendimientos', icon: <Building2 size={20} /> },
     // { path: '/admin', label: 'Admin', icon: <HelpCircle size={20} /> },
     { path: '/herramientas', label: 'Herramientas', icon: <HelpCircle size={20} /> },
