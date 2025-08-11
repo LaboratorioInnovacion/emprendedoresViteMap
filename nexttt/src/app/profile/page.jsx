@@ -118,8 +118,9 @@ import EmprendimientosList from "../../components/profile/EmprendimientosList";
     setError("");
     setSuccess("");
     const method = form?.id ? "PUT" : "POST";
+    const url = form?.id ? `/api/emprendedores/${form.id}` : "/api/emprendedores";
     try {
-      const res = await fetch("/api/emprendedores", {
+      const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
         credentials: "include",
