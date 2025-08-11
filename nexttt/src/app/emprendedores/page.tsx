@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useEffect } from "react";
@@ -5,54 +6,69 @@ import { useRouter } from "next/navigation";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
 import { useEmpre } from "../../context/EmpreContext";
 
-// Elimina la interfaz, ya que los datos vienen del contexto
+const niveles = [
+  "Primario",
+  "Secundario",
+  "Terciario",
+  "Universitario",
+  "Otro",
+];
 
-const BusinessList = ({ onAddBusiness }) => {
+const estados = ["active", "inactive", "pending"];
+
+const getStatusBadgeClass = (status) => {
+  switch (status) {
+    case "active":
+      return "bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500";
+    case "inactive":
+      return "bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500";
+    case "pending":
+      return "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500";
+    default:
+      return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+  }
+};
+
+const EmprendedoresPage = () => {
   const router = useRouter();
-  const [filters, setFilters] = useState({
-    businessTypes: [],
-    status: [],
-    searchTerm: "",
-  });
+  const [emprendedores, setEmprendedores] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [selectedNiveles, setSelectedNiveles] = useState([]);
+  const [selectedEstados, setSelectedEstados] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
-  const { emprendedores, loading, error, fetchEmprendedores } = useEmpre();
 
   useEffect(() => {
+    const fetchEmprendedores = async () => {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/emprendedores");
+        const data = await res.json();
+        setEmprendedores(data);
+      } catch (err) {
+        setError("Error al cargar los emprendedores");
+      }
+      setLoading(false);
+    };
     fetchEmprendedores();
-    // eslint-disable-next-line
   }, []);
 
-  // Elimina lógica y tipos de businessTypes y statusOptions
-  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setFilters({
-      ...filters,
-      searchTerm: e.target.value,
-    });
-  };
-
-  // Adaptar filtro para los campos reales del modelo emprendedor
-  const filteredBusinesses = emprendedores.filter((emp) => {
-    if (
-      filters.searchTerm &&
-      !(`${emp.nombre} ${emp.apellido}`.toLowerCase().includes(filters.searchTerm.toLowerCase()))
-    ) {
-      return false;
-    }
-    // Si quieres filtrar por otros campos, agrega aquí
-    return true;
+  // Filtrar por nombre/apellido, nivel de estudios y estado
+  const filtered = emprendedores.filter((emp) => {
+    const nombreCompleto = `${emp.nombre || ""} ${emp.apellido || ""}`.toLowerCase();
+    const nivel = emp.nivelEstudios || "Otro";
+    const estado = emp.estado || "active";
+    const matchesSearch = nombreCompleto.includes(searchTerm.toLowerCase());
+    const matchesNivel = selectedNiveles.length === 0 || selectedNiveles.includes(nivel);
+    const matchesEstado = selectedEstados.length === 0 || selectedEstados.includes(estado);
+    return matchesSearch && matchesNivel && matchesEstado;
   });
 
-  const getStatusBadgeClass = (status: "active" | "inactive" | "pending") => {
-    switch (status) {
-      case "active":
-        return "bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500";
-      case "inactive":
-        return "bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500";
-      case "pending":
-        return "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500";
-      default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
-    }
+  const resetFilters = () => {
+    setSelectedNiveles([]);
+    setSelectedEstados([]);
+    setSearchTerm("");
   };
 
   return (
@@ -66,8 +82,8 @@ const BusinessList = ({ onAddBusiness }) => {
               <input
                 type="text"
                 placeholder="Buscar emprendedor..."
-                value={filters.searchTerm}
-                onChange={e => setFilters({ ...filters, searchTerm: e.target.value })}
+                value={searchTerm}
+                onChange={e => setSearchTerm(e.target.value)}
                 className="input pl-9 w-full sm:w-60"
               />
               <Search
@@ -77,7 +93,15 @@ const BusinessList = ({ onAddBusiness }) => {
             </div>
             <div className="flex gap-2">
               <button
-                onClick={onAddBusiness}
+                onClick={() => setShowFilters(!showFilters)}
+                className="btn-outline px-3 flex-1 sm:flex-none justify-center"
+                title="Filtros"
+              >
+                <Filter size={18} />
+                <span className="ml-2 sm:hidden">Filtros</span>
+              </button>
+              <button
+                onClick={() => router.push('/emprendedores/nuevo')}
                 className="btn-primary flex-1 sm:flex-none justify-center"
               >
                 <Plus size={18} className="sm:mr-1" />
@@ -88,6 +112,73 @@ const BusinessList = ({ onAddBusiness }) => {
         </div>
       </div>
 
+      {/* Filters Panel */}
+      {showFilters && (
+        <div className="card animate-fadeIn">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-medium">Filtros</h3>
+            <button
+              onClick={resetFilters}
+              className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+            >
+              Borrar Filtros
+            </button>
+          </div>
+          <div className="space-y-6">
+            <div>
+              <h4 className="font-medium mb-2">Nivel de estudios</h4>
+              <div className="flex flex-wrap gap-2">
+                {niveles.map((nivel) => {
+                  const count = emprendedores.filter((e) => (e.nivelEstudios || "Otro") === nivel).length;
+                  return (
+                    <button
+                      key={nivel}
+                      onClick={() =>
+                        setSelectedNiveles((prev) =>
+                          prev.includes(nivel)
+                            ? prev.filter((n) => n !== nivel)
+                            : [...prev, nivel]
+                        )
+                      }
+                      className={`badge text-xs py-1.5 px-3 capitalize ${
+                        selectedNiveles.includes(nivel)
+                          ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
+                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                      }`}
+                    >
+                      {nivel} <span className="ml-1 text-xs text-gray-500">({count})</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+            <div>
+              <h4 className="font-medium mb-2">Estado</h4>
+              <div className="flex flex-wrap gap-2">
+                {estados.map((estado) => (
+                  <button
+                    key={estado}
+                    onClick={() =>
+                      setSelectedEstados((prev) =>
+                        prev.includes(estado)
+                          ? prev.filter((e) => e !== estado)
+                          : [...prev, estado]
+                      )
+                    }
+                    className={`badge text-xs py-1.5 px-3 capitalize ${
+                      selectedEstados.includes(estado)
+                        ? getStatusBadgeClass(estado)
+                        : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
+                    }`}
+                  >
+                    {estado}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Cards para mobile */}
       <div className="block sm:hidden space-y-4">
@@ -95,8 +186,8 @@ const BusinessList = ({ onAddBusiness }) => {
           <div className="text-center py-8 text-gray-500 dark:text-gray-400">Cargando...</div>
         ) : error ? (
           <div className="text-center py-8 text-red-500">{error}</div>
-        ) : filteredBusinesses.length > 0 ? (
-          filteredBusinesses.map((emp) => (
+        ) : filtered.length > 0 ? (
+          filtered.map((emp) => (
             <div
               key={emp.id}
               className="cardempre hover:shadow-lg transition-shadow cursor-pointer"
@@ -118,6 +209,12 @@ const BusinessList = ({ onAddBusiness }) => {
                         {emp.nivelEstudios}
                       </span>
                     </div>
+                    <span
+                      className={`badge ${getStatusBadgeClass(emp.estado || "active")} flex items-center text-xs`}
+                    >
+                      <Activity size={12} className="mr-1" />
+                      {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
+                    </span>
                   </div>
                   <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center">
@@ -142,9 +239,10 @@ const BusinessList = ({ onAddBusiness }) => {
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nivel de estudios</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Departamento</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dirección</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nivel de estudios</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estado</th>
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha Nacimiento</th>
               <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Acciones</th>
             </tr>
@@ -152,20 +250,28 @@ const BusinessList = ({ onAddBusiness }) => {
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Cargando...</td>
+                <td colSpan={7} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Cargando...</td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-red-500">{error}</td>
+                <td colSpan={7} className="px-6 py-4 text-center text-red-500">{error}</td>
               </tr>
-            ) : filteredBusinesses.length > 0 ? (
-              filteredBusinesses.map((emp) => (
+            ) : filtered.length > 0 ? (
+              filtered.map((emp) => (
                 <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                   <td className="px-6 py-4 whitespace-nowrap">{emp.nombre} {emp.apellido}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className="badge badge-secondary capitalize">{emp.nivelEstudios}</span>
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">{emp.departamento}</td>
                   <td className="px-6 py-4 whitespace-nowrap">{emp.direccion}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.nivelEstudios}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{new Date(emp.fechaNacimiento).toLocaleDateString()}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`badge ${getStatusBadgeClass(emp.estado || "active")} flex items-center`}>
+                      <Activity size={12} className="mr-1" />
+                      {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">{emp.fechaNacimiento ? new Date(emp.fechaNacimiento).toLocaleDateString() : '-'}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <button
                       onClick={() => router.push(`/emprendedores/${emp.id}`)}
@@ -178,7 +284,7 @@ const BusinessList = ({ onAddBusiness }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={6} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                <td colSpan={7} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
                   No se encontraron emprendedores.
                 </td>
               </tr>
@@ -190,4 +296,4 @@ const BusinessList = ({ onAddBusiness }) => {
   );
 };
 
-export default BusinessList;
+export default EmprendedoresPage;

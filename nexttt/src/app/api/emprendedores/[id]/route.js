@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
 
-export async function GET(req, { params }) {
+export async function GET(req, context) {
   try {
+    const params = await context.params;
     const id = Number(params.id);
     if (!id) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
@@ -31,10 +32,10 @@ export async function GET(req, { params }) {
   }
 }
 
-export async function PUT(req, { params }) {
+export async function PUT(req, context) {
   try {
-    const { id } = await params;
-    const numId = Number(id);
+    const params = await context.params;
+    const numId = Number(params.id);
     if (!numId) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
@@ -60,8 +61,9 @@ export async function PUT(req, { params }) {
   }
 }
 
-export async function DELETE(req, { params }) {
+export async function DELETE(req, context) {
   try {
+    const params = await context.params;
     const id = Number(params.id);
     if (!id) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
