@@ -44,6 +44,13 @@ export async function POST(req) {
     if (!body.denominacion || !body.emprendedorId) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
     }
+    // Si recibes fechaInicio como "2025-08-12"
+    if (body.fechaInicio) {
+      body.fechaInicio = new Date(body.fechaInicio).toISOString();
+    }
+    if (body.emprendedorId) {
+      body.emprendedorId = Number(body.emprendedorId);
+    }
     const nuevo = await prisma.emprendimiento.create({
       data: {
         ...body,
@@ -63,6 +70,10 @@ export async function PUT(req) {
   try {
     const body = await req.json();
     if (!body.id) return NextResponse.json({ error: 'Falta id' }, { status: 400 });
+    // Si recibes fechaInicio como "2025-08-12"
+    if (body.fechaInicio) {
+      body.fechaInicio = new Date(body.fechaInicio).toISOString();
+    }
     const actualizado = await prisma.emprendimiento.update({
       where: { id: Number(body.id) },
       data: {

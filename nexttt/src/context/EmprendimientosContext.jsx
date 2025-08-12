@@ -13,10 +13,6 @@ export function EmprendimientosProvider({ children }) {
 			fetchemprendimientosall();
 		}, []);
 
-		useEffect(() => {
-			console.log("EMPRENDIMIENTOS actualizado", allemprendimientos);
-		}, [allemprendimientos]);
-
 	// Obtener todos los emprendimientos de el usuario
 	const fetchEmprendimientos = async (emprendedorId = null) => {
 		setLoading(true);
@@ -42,6 +38,7 @@ export function EmprendimientosProvider({ children }) {
 			const data = await res.json();
 			console.log("data",data)
 			setAllemprendimientos(data);
+			console.log("estado",allemprendimientos)
 		} catch (err) {
 			setError("Error al obtener todos los emprendimientos");
 		} finally {
@@ -129,6 +126,7 @@ export function EmprendimientosProvider({ children }) {
 		<EmprendimientosContext.Provider
 			value={{
 				emprendimientos,
+				allemprendimientos,
 				loading,
 				error,
 				fetchEmprendimientos,

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import "leaflet/dist/leaflet.css";
 import StatCard from "../components/dashboard/StatCard";
@@ -16,6 +16,7 @@ import {
   Activity,
 } from "lucide-react";
 
+
 const Page = () => {
   const { allemprendimientos, fetchemprendimientosall, loading, error } =
     useEmprendimientos();
@@ -23,8 +24,10 @@ const Page = () => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const mapCenter = calculateMapCenter();
 
-  console.log("todos los emprendimientos", allemprendimientos);
-  // Carga dinámica de react-leaflet (memoizada para evitar recreación)
+useEffect(() => {
+  console.log("allemprendimientos actualizado:", allemprendimientos);
+}, [allemprendimientos]);
+
   const MapContainer = React.useMemo(
     () =>
       dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
@@ -63,6 +66,19 @@ const Page = () => {
     };
     loadLeaflet();
   }, []);
+
+  // Función para decodificar la ubicación
+  function parseUbicacion(ubicacionObj) {
+    if (!ubicacionObj) return null;
+    const str = Object.values(ubicacionObj)
+      .map((code) => String.fromCharCode(code))
+      .join("");
+    try {
+      return JSON.parse(str);
+    } catch {
+      return null;
+    }
+  }
 
   // Filtro de negocios (usar solo emprendimientos del contexto)
   const filteredBusinesses = (allemprendimientos || []).filter((business) => {
@@ -158,62 +174,70 @@ const Page = () => {
                   attribution=""
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {filteredBusinesses.map((business) =>
-                  business.ubicacion &&
-                  business.ubicacion.lat &&
-                  business.ubicacion.lng ? (
-                    <Marker
-                      key={business.id}
-                      position={[
-                        business.ubicacion.lat,
-                        business.ubicacion.lng,
-                      ]}
-                      icon={createBusinessIcon(business.tipoEmprendimiento)}
-                    >
-                      <Popup>
-                        <div className="w-64">
-                          <h3 className="font-medium text-base mb-1">
-                            {business.denominacion}
-                          </h3>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            <span className="badge badge-secondary text-xs capitalize">
-                              {business.tipoEmprendimiento}
-                            </span>
-                          </div>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center text-gray-600 dark:text-gray-400">
-                              <MapPin
-                                size={14}
-                                className="mr-1 flex-shrink-0"
-                              />
-                              <span className="truncate">
-                                {business.direccion}
+                {filteredBusinesses.map((business) => {
+                  const ubicacion = business.ubicacion && !business.ubicacion.lat && !business.ubicacion.lng
+                    ? parseUbicacion(business.ubicacion)
+                    : business.ubicacion;
+                  if (ubicacion && ubicacion.lat && ubicacion.lng) {
+                    return (
+                      <Marker
+                        key={business.id}
+                        position={[ubicacion.lat, ubicacion.lng]}
+                        icon={createBusinessIcon(business.tipoEmprendimiento)}
+                      >
+                        <Popup>
+                          <div className="w-64">
+                            <h3 className="font-medium text-base mb-1">
+                              {business.denominacion}
+                            </h3>
+                            <div className="flex flex-wrap gap-2 mb-2">
+                              <span className="badge badge-secondary text-xs capitalize">
+                                {business.tipoEmprendimiento}
                               </span>
                             </div>
-                            {business.telefono && (
+                            <div className="space-y-2 text-sm">
                               <div className="flex items-center text-gray-600 dark:text-gray-400">
-                                <Phone
+                                <MapPin
                                   size={14}
                                   className="mr-1 flex-shrink-0"
                                 />
-                                <span>{business.telefono}</span>
+                                <span className="truncate">
+                                  {business.direccion}
+                                </span>
                               </div>
-                            )}
+                              {ubicacion && (
+                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                  <span>
+                                    Lat: {ubicacion.lat}, Lng: {ubicacion.lng}
+                                  </span>
+                                </div>
+                              )}
+                              {business.telefono && (
+                                <div className="flex items-center text-gray-600 dark:text-gray-400">
+                                  <Phone
+                                    size={14}
+                                    className="mr-1 flex-shrink-0"
+                                  />
+                                  <span>{business.telefono}</span>
+                                </div>
+                              )}
+                            </div>
+                            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                              <Link
+                                href={`/emprendimientos/${business.id}`}
+                                className="btn-primary w-full justify-center text-sm py-1.5"
+                                style={{ color: "#fff" }}
+                              >
+                                Ver Detalles
+                              </Link>
+                            </div>
                           </div>
-                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                            <Link
-                              href={`/emprendimientos/${business.id}`}
-                              className="btn-primary w-full justify-center text-sm py-1.5"
-                              style={{ color: "#fff" }}
-                            >
-                              Ver Detalles
-                            </Link>
-                          </div>
-                        </div>
-                      </Popup>
-                    </Marker>
-                  ) : null
-                )}
+                        </Popup>
+                      </Marker>
+                    );
+                  }
+                  return null;
+                })}
               </MapContainer>
             )}
             {filteredBusinesses.length === 0 && (
@@ -242,9 +266,9 @@ const Page = () => {
               <ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
-          {(allemprendimientos || []).slice(-3).map((business) => (
+          {/* {(allemprendimientos || []).slice(-3).map((business) => (
             <RecentBusinessCard key={business.id} business={business} />
-          ))}
+          ))} */}
         </div>
       </div>
     </div>

@@ -22,7 +22,6 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
   const { data: session } = useSession();
 
   useEffect(() => {
-    console.log('Session data:', session);
   }, [session]);
 
   const toggleCollapse = () => {
