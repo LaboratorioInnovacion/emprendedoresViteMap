@@ -1,0 +1,198 @@
+
+"use client";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import dynamic from "next/dynamic";
+
+const MapContainer = dynamic(() => import("react-leaflet").then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import("react-leaflet").then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic(() => import("react-leaflet").then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import("react-leaflet").then(mod => mod.Popup), { ssr: false });
+
+function NuevoEmprendimientoPage() {
+  const router = useRouter();
+  const [form, setForm] = useState({
+    emprendedorId: '',
+    etapa: '',
+    denominacion: '',
+    fechaInicio: '',
+    inscripcionArca: false,
+    cuit: '',
+    sector: '',
+    actividadPrincipal: '',
+    tipoEmprendimiento: '',
+    direccion: '',
+    telefono: '',
+    email: '',
+    web: '',
+    redSocial1: '',
+    redSocial2: '',
+    tienePersonal: false,
+    cantidadPersonal: '',
+    modoIncorporacionPersonal: '',
+    planeaIncorporarPersonal: '',
+    percepcionPlantaPersonal: '',
+    requiereCapacitacion: false,
+    tiposCapacitacion: '',
+    otrosTiposCapacitacion: '',
+    requiereConsultoria: false,
+    tiposConsultoria: '',
+    otrosTiposConsultoria: '',
+    requiereHerramientasTecno: false,
+    tiposHerramientasTecno: '',
+    otrasHerramientasTecno: '',
+    usaRedesSociales: false,
+    tiposRedesSociales: '',
+    usaMediosPagoElectronicos: false,
+    canalesComercializacion: '',
+    otrosCanalesComercializacion: '',
+    poseeSucursales: false,
+    cantidadSucursales: '',
+    ubicacionSucursales: '',
+    planeaAbrirSucursal: false,
+  });
+  const [ubicacion, setUbicacion] = useState({ lat: -34.61, lng: -58.38 });
+  // Importar MapSelector dinámicamente para SSR
+  const MapSelector = dynamic(() => import("../../../../components/MapSelector"), { ssr: false });
+  const [mapMsg, setMapMsg] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    setError("");
+    try {
+      // Procesar arrays separando por coma
+      const body = { ...form };
+      [
+        "modoIncorporacionPersonal",
+        "tiposCapacitacion",
+        "tiposConsultoria",
+        "tiposHerramientasTecno",
+        "tiposRedesSociales",
+        "canalesComercializacion",
+        "ubicacionSucursales",
+      ].forEach((key) => {
+        if (body[key]) {
+          body[key] = body[key].split(",").map((v) => v.trim()).filter(Boolean);
+        }
+      });
+      if (ubicacion && ubicacion.lat && ubicacion.lng) {
+        body.ubicacion = { lat: ubicacion.lat, lng: ubicacion.lng };
+      }
+      const res = await fetch("/api/emprendimientos", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+      const data = await res.json();
+      if (res.ok) {
+        router.push("/emprendimientos");
+      } else {
+        setError(data.error || "Error al crear");
+      }
+    } catch (err) {
+      setError("Error de red");
+    }
+    setLoading(false);
+  };
+
+  return (
+    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-4">
+      <h2 className="text-xl font-bold mb-4">Nuevo Emprendimiento</h2>
+  <p>ID Emprendedor</p>
+      <input name="emprendedorId" value={form.emprendedorId} onChange={handleChange} placeholder="ID Emprendedor" className="input w-full" />
+  <p>Etapa</p>
+      <input name="etapa" value={form.etapa} onChange={handleChange} placeholder="Etapa" className="input w-full" />
+  <p>Denominación</p>
+      <input name="denominacion" value={form.denominacion} onChange={handleChange} placeholder="Denominación" className="input w-full" />
+  <p>Fecha Inicio</p>
+      <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleChange} className="input w-full" />
+      <label><input type="checkbox" name="inscripcionArca" checked={form.inscripcionArca} onChange={handleChange} /> Inscripción Arca</label>
+  <p>CUIT</p>
+      <input name="cuit" value={form.cuit} onChange={handleChange} placeholder="CUIT" className="input w-full" />
+  <p>Sector</p>
+      <input name="sector" value={form.sector} onChange={handleChange} placeholder="Sector" className="input w-full" />
+  <p>Actividad Principal</p>
+      <input name="actividadPrincipal" value={form.actividadPrincipal} onChange={handleChange} placeholder="Actividad Principal" className="input w-full" />
+  <p>Tipo Emprendimiento</p>
+      <input name="tipoEmprendimiento" value={form.tipoEmprendimiento} onChange={handleChange} placeholder="Tipo Emprendimiento" className="input w-full" />
+  <p>Dirección</p>
+      <input name="direccion" value={form.direccion} onChange={handleChange} placeholder="Dirección" className="input w-full" />
+  <p>Teléfono</p>
+      <input name="telefono" value={form.telefono} onChange={handleChange} placeholder="Teléfono" className="input w-full" />
+  <p>Email</p>
+      <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className="input w-full" />
+  <p>Web</p>
+      <input name="web" value={form.web} onChange={handleChange} placeholder="Web" className="input w-full" />
+  <p>Red Social 1</p>
+      <input name="redSocial1" value={form.redSocial1} onChange={handleChange} placeholder="Red Social 1" className="input w-full" />
+  <p>Red Social 2</p>
+      <input name="redSocial2" value={form.redSocial2} onChange={handleChange} placeholder="Red Social 2" className="input w-full" />
+      <label><input type="checkbox" name="tienePersonal" checked={form.tienePersonal} onChange={handleChange} /> Tiene Personal</label>
+  <p>Cantidad Personal</p>
+      <input type="number" name="cantidadPersonal" value={form.cantidadPersonal} onChange={handleChange} placeholder="Cantidad Personal" className="input w-full" />
+  <p>Modo Incorporación Personal</p>
+      <input name="modoIncorporacionPersonal" value={form.modoIncorporacionPersonal} onChange={handleChange} placeholder="Modo Incorporación Personal (separado por coma)" className="input w-full" />
+  <p>Planea Incorporar Personal</p>
+      <input name="planeaIncorporarPersonal" value={form.planeaIncorporarPersonal} onChange={handleChange} placeholder="Planea Incorporar Personal" className="input w-full" />
+  <p>Percepción Planta Personal</p>
+      <input name="percepcionPlantaPersonal" value={form.percepcionPlantaPersonal} onChange={handleChange} placeholder="Percepción Planta Personal" className="input w-full" />
+      <label><input type="checkbox" name="requiereCapacitacion" checked={form.requiereCapacitacion} onChange={handleChange} /> Requiere Capacitacion</label>
+  <p>Tipos Capacitacion</p>
+      <input name="tiposCapacitacion" value={form.tiposCapacitacion} onChange={handleChange} placeholder="Tipos Capacitacion (separado por coma)" className="input w-full" />
+  <p>Otros Tipos Capacitacion</p>
+      <input name="otrosTiposCapacitacion" value={form.otrosTiposCapacitacion} onChange={handleChange} placeholder="Otros Tipos Capacitacion" className="input w-full" />
+      <label><input type="checkbox" name="requiereConsultoria" checked={form.requiereConsultoria} onChange={handleChange} /> Requiere Consultoria</label>
+  <p>Tipos Consultoria</p>
+      <input name="tiposConsultoria" value={form.tiposConsultoria} onChange={handleChange} placeholder="Tipos Consultoria (separado por coma)" className="input w-full" />
+  <p>Otros Tipos Consultoria</p>
+      <input name="otrosTiposConsultoria" value={form.otrosTiposConsultoria} onChange={handleChange} placeholder="Otros Tipos Consultoria" className="input w-full" />
+      <label><input type="checkbox" name="requiereHerramientasTecno" checked={form.requiereHerramientasTecno} onChange={handleChange} /> Requiere Herramientas Tecno</label>
+  <p>Tipos Herramientas Tecno</p>
+      <input name="tiposHerramientasTecno" value={form.tiposHerramientasTecno} onChange={handleChange} placeholder="Tipos Herramientas Tecno (separado por coma)" className="input w-full" />
+  <p>Otras Herramientas Tecno</p>
+      <input name="otrasHerramientasTecno" value={form.otrasHerramientasTecno} onChange={handleChange} placeholder="Otras Herramientas Tecno" className="input w-full" />
+      <label><input type="checkbox" name="usaRedesSociales" checked={form.usaRedesSociales} onChange={handleChange} /> Usa Redes Sociales</label>
+      <input name="tiposRedesSociales" value={form.tiposRedesSociales} onChange={handleChange} placeholder="Tipos Redes Sociales (separado por coma)" className="input w-full" />
+      <label><input type="checkbox" name="usaMediosPagoElectronicos" checked={form.usaMediosPagoElectronicos} onChange={handleChange} /> Usa Medios Pago Electrónicos</label>
+  <p>Canales Comercialización</p>
+      <input name="canalesComercializacion" value={form.canalesComercializacion} onChange={handleChange} placeholder="Canales Comercialización (separado por coma)" className="input w-full" />
+  <p>Otros Canales Comercialización</p>
+      <input name="otrosCanalesComercializacion" value={form.otrosCanalesComercializacion} onChange={handleChange} placeholder="Otros Canales Comercialización" className="input w-full" />
+      <label><input type="checkbox" name="poseeSucursales" checked={form.poseeSucursales} onChange={handleChange} /> Posee Sucursales</label>
+  <p>Cantidad Sucursales</p>
+      <input type="number" name="cantidadSucursales" value={form.cantidadSucursales} onChange={handleChange} placeholder="Cantidad Sucursales" className="input w-full" />
+  <p>Ubicación Sucursales</p>
+      <input name="ubicacionSucursales" value={form.ubicacionSucursales} onChange={handleChange} placeholder="Ubicación Sucursales (separado por coma)" className="input w-full" />
+      <label><input type="checkbox" name="planeaAbrirSucursal" checked={form.planeaAbrirSucursal} onChange={handleChange} /> Planea Abrir Sucursal</label>
+      {/* Mapa para seleccionar ubicación */}
+      <div className="mt-4">
+        <span className="text-sm font-medium mb-2 block">Selecciona la ubicación en el mapa</span>
+        <div className="h-64 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
+          <MapSelector ubicacion={ubicacion} onSelect={setUbicacion} />
+        </div>
+        <div className="mt-2 text-xs text-gray-500">
+          {ubicacion
+            ? <>Lat: {ubicacion.lat.toFixed(6)}, Lng: {ubicacion.lng.toFixed(6)}</>
+            : <>No hay ubicación seleccionada</>}
+        </div>
+      </div>
+      <button type="submit" className="btn-primary w-full" disabled={loading}>
+        {loading ? "Creando..." : "Crear"}
+      </button>
+      {error && <div className="text-red-500 mt-2">{error}</div>}
+    </form>
+  );
+}
+
+export default NuevoEmprendimientoPage;

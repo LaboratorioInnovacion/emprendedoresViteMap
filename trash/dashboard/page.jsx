@@ -1,12 +1,16 @@
-"use client";
-import React, { useEffect, useState } from "react";
-import dynamic from "next/dynamic";
-import "leaflet/dist/leaflet.css";
-import StatCard from "../components/dashboard/StatCard";
-import RecentBusinessCard from "../components/dashboard/RecentBusinessCard";
-import { businessTypeColors, calculateMapCenter } from "../data/mockData";
-import { useEmprendimientos } from "../context/EmprendimientosContext";
-import Link from "next/link";
+'use client';
+import React, { useEffect, useState } from 'react';
+import dynamic from 'next/dynamic';
+import 'leaflet/dist/leaflet.css';
+import StatCard from '../../components/dashboard/StatCard';
+import RecentBusinessCard from '../../components/dashboard/RecentBusinessCard';
+
+import {
+  businessTypeColors,
+  calculateMapCenter,
+} from '../../data/mockData';
+import { useEmprendedores } from '../../context/EmprendedoresContext';
+import Link from 'next/link';
 import {
   Building2,
   Map,
@@ -14,70 +18,38 @@ import {
   MapPin,
   Phone,
   Activity,
-} from "lucide-react";
+} from 'lucide-react';
 
 const Page = () => {
-  const { allemprendimientos, fetchemprendimientosall, loading, error } =
-    useEmprendimientos();
-  const [searchTerm, setSearchTerm] = useState("");
+  const { emprendedores } = useEmprendedores();
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedTypes, setSelectedTypes] = useState([]);
   const mapCenter = calculateMapCenter();
 
-  console.log("todos los emprendimientos", allemprendimientos);
   // Carga dinámica de react-leaflet (memoizada para evitar recreación)
-  const MapContainer = React.useMemo(
-    () =>
-      dynamic(() => import("react-leaflet").then((mod) => mod.MapContainer), {
-        ssr: false,
-      }),
-    []
-  );
-  const TileLayer = React.useMemo(
-    () =>
-      dynamic(() => import("react-leaflet").then((mod) => mod.TileLayer), {
-        ssr: false,
-      }),
-    []
-  );
-  const Marker = React.useMemo(
-    () =>
-      dynamic(() => import("react-leaflet").then((mod) => mod.Marker), {
-        ssr: false,
-      }),
-    []
-  );
-  const Popup = React.useMemo(
-    () =>
-      dynamic(() => import("react-leaflet").then((mod) => mod.Popup), {
-        ssr: false,
-      }),
-    []
-  );
+  const MapContainer = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false }), []);
+  const TileLayer = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false }), []);
+  const Marker = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false }), []);
+  const Popup = React.useMemo(() => dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false }), []);
 
   // Carga dinámica de leaflet para evitar problemas de SSR
   const [L, setL] = useState(null);
   useEffect(() => {
     const loadLeaflet = async () => {
-      const leaflet = await import("leaflet");
+      const leaflet = await import('leaflet');
       setL(leaflet);
     };
     loadLeaflet();
   }, []);
 
-  // Filtro de negocios (usar solo emprendimientos del contexto)
-  const filteredBusinesses = (allemprendimientos || []).filter((business) => {
+  // Filtro de negocios (usar solo emprendedores del contexto)
+  const filteredBusinesses = emprendedores.filter((business) => {
     const matchesSearch =
-      business.denominacion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      "" ||
-      business.tipoEmprendimiento
-        ?.toLowerCase()
-        .includes(searchTerm.toLowerCase()) ||
-      "" ||
-      business.direccion?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      "";
+      business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      business.address.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesType =
-      selectedTypes.length === 0 ||
-      selectedTypes.includes(business.tipoEmprendimiento);
+      selectedTypes.length === 0 || selectedTypes.includes(business.type);
     return matchesSearch && matchesType;
   });
 
@@ -98,14 +70,14 @@ const Page = () => {
   // Badge de estado
   const getStatusBadgeClass = (status) => {
     switch (status) {
-      case "active":
-        return "bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500";
-      case "inactive":
-        return "bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500";
-      case "pending":
-        return "bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500";
+      case 'active':
+        return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500';
+      case 'inactive':
+        return 'bg-error-100 text-error-700 dark:bg-error-900/30 dark:text-error-500';
+      case 'pending':
+        return 'bg-warning-100 text-warning-700 dark:bg-warning-900/30 dark:text-warning-500';
       default:
-        return "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300";
+        return 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300';
     }
   };
 
@@ -115,12 +87,7 @@ const Page = () => {
         <div>
           <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400">
-            Bienvenido al Sistema de Emprendimientos
-          </p>
-          <p>
-            ADMIN : asd@asd.com contra: asdasd <br />
-            SUPERUSER: zxc@zxc.com contra: zxc <br />
-            EMPRENDEDOR :qwerty@qwerty.com contra: qwerty
+            Bienvenido al Sistema de Emprendedores
           </p>
         </div>
         <div className="flex gap-2">
@@ -135,114 +102,116 @@ const Page = () => {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-4">
-        <StatCard
-          cantidad={(allemprendimientos || []).length}
-          empre={undefined}
-        />
-        {(allemprendimientos || []).map((empre) => (
+        <StatCard cantidad={emprendedores.length} empre={undefined} />
+        {emprendedores.map((empre) => (
           <StatCard key={empre.id} empre={empre} cantidad={undefined} />
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card">
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center">
+              <Map size={20} className="text-primary-600 dark:text-primary-400 mr-2" />
+              <h2 className="text-xl font-semibold">Mapa Negocios</h2>
+            </div>
+            <Link href="/map" className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center">
+              Vista Mapa <ArrowRight size={16} className="ml-1" />
+            </Link>
+          </div>
           <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden">
-            {/* Renderizar mapa si hay Leaflet y emprendimientos */}
-            {L && filteredBusinesses.length > 0 && (
+            {L && (
               <MapContainer
                 center={mapCenter}
                 zoom={12}
-                style={{ height: "100%", width: "100%" }}
+                style={{ height: '100%', width: '100%' }}
                 zoomControl={false}
               >
                 <TileLayer
                   attribution=""
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
-                {filteredBusinesses.map((business) =>
-                  business.ubicacion &&
-                  business.ubicacion.lat &&
-                  business.ubicacion.lng ? (
-                    <Marker
-                      key={business.id}
-                      position={[
-                        business.ubicacion.lat,
-                        business.ubicacion.lng,
-                      ]}
-                      icon={createBusinessIcon(business.tipoEmprendimiento)}
-                    >
-                      <Popup>
-                        <div className="w-64">
-                          <h3 className="font-medium text-base mb-1">
-                            {business.denominacion}
-                          </h3>
-                          <div className="flex flex-wrap gap-2 mb-2">
-                            <span className="badge badge-secondary text-xs capitalize">
-                              {business.tipoEmprendimiento}
-                            </span>
-                          </div>
-                          <div className="space-y-2 text-sm">
-                            <div className="flex items-center text-gray-600 dark:text-gray-400">
-                              <MapPin
-                                size={14}
-                                className="mr-1 flex-shrink-0"
-                              />
-                              <span className="truncate">
-                                {business.direccion}
+                {filteredBusinesses.map((business) => (
+                  <Marker
+                    key={business.id}
+                    position={[business.location.lat, business.location.lng]}
+                    icon={createBusinessIcon(business.type)}
+                  >
+                    <Popup>
+                      <div className="w-64">
+                        <div className="flex items-start gap-3 mb-3">
+                          {business.imageUrl ? (
+                            <img
+                              src={business.imageUrl}
+                              alt={business.name}
+                              className="w-16 h-16 rounded-lg object-cover"
+                            />
+                          ) : (
+                            <div className="w-16 h-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400 text-xl font-bold">
+                              {business.name.charAt(0)}
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium text-base mb-1">
+                              {business.name}
+                            </h3>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="badge badge-secondary text-xs capitalize">
+                                {business.type}
+                              </span>
+                              <span
+                                className={`badge ${getStatusBadgeClass(business.status)} flex items-center text-xs`}
+                              >
+                                <Activity size={12} className="mr-1" />
+                                {business.status.charAt(0).toUpperCase() + business.status.slice(1)}
                               </span>
                             </div>
-                            {business.telefono && (
-                              <div className="flex items-center text-gray-600 dark:text-gray-400">
-                                <Phone
-                                  size={14}
-                                  className="mr-1 flex-shrink-0"
-                                />
-                                <span>{business.telefono}</span>
-                              </div>
-                            )}
-                          </div>
-                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                            <Link
-                              href={`/emprendimientos/${business.id}`}
-                              className="btn-primary w-full justify-center text-sm py-1.5"
-                              style={{ color: "#fff" }}
-                            >
-                              Ver Detalles
-                            </Link>
                           </div>
                         </div>
-                      </Popup>
-                    </Marker>
-                  ) : null
-                )}
+                        <div className="space-y-2 text-sm">
+                          <p className="text-gray-600 dark:text-gray-400 line-clamp-2">
+                            {business.description}
+                          </p>
+                          <div className="flex items-center text-gray-600 dark:text-gray-400">
+                            <MapPin size={14} className="mr-1 flex-shrink-0" />
+                            <span className="truncate">{business.address}</span>
+                          </div>
+                          <div className="flex items-center text-gray-600 dark:text-gray-400">
+                            <Phone size={14} className="mr-1 flex-shrink-0" />
+                            <span>{business.contact.phone}</span>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                          <Link href={`/businesses/${business.id}`} className="btn-primary w-full justify-center text-sm py-1.5" style={{ color: '#fff' }}>
+                            Ver Detalles
+                          </Link>
+                        </div>
+                      </div>
+                    </Popup>
+                  </Marker>
+                ))}
               </MapContainer>
             )}
-            {filteredBusinesses.length === 0 && (
-              <div className="flex items-center justify-center h-full text-gray-400">
-                No hay emprendimientos para mostrar en el mapa.
+          </div>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {Object.entries(businessTypeColors).map(([type, color]) => (
+              <div key={type} className="flex items-center">
+                <div className="h-3 w-3 rounded-full mr-1" style={{ backgroundColor: color }}></div>
+                <span className="text-xs capitalize">{type}</span>
               </div>
-            )}
+            ))}
           </div>
         </div>
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <Building2
-                size={20}
-                className="text-primary-600 dark:text-primary-400 mr-2"
-              />
-              <h2 className="text-xl font-semibold">
-                Emprendimientos Recientes
-              </h2>
+              <Building2 size={20} className="text-primary-600 dark:text-primary-400 mr-2" />
+              <h2 className="text-xl font-semibold">Negocios Recientes</h2>
             </div>
-            <Link
-              href="/emprendimientos"
-              className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center"
-            >
-              Ver Todo
-              <ArrowRight size={16} className="ml-1" />
+            <Link href="/businesses" className="text-sm text-primary-600 dark:text-primary-400 hover:underline flex items-center">
+              Ver Todo<ArrowRight size={16} className="ml-1" />
             </Link>
           </div>
-          {(allemprendimientos || []).slice(-3).map((business) => (
+          {emprendedores.slice(-3).map((business) => (
             <RecentBusinessCard key={business.id} business={business} />
           ))}
         </div>

@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
+import { set } from "react-hook-form";
 
 const EmprendimientosContext = createContext();
 
@@ -6,8 +7,17 @@ export function EmprendimientosProvider({ children }) {
 	const [emprendimientos, setEmprendimientos] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const [allemprendimientos, setAllemprendimientos] = useState([]);
 
-	// Obtener todos los emprendimientos
+		useEffect(() => {
+			fetchemprendimientosall();
+		}, []);
+
+		useEffect(() => {
+			console.log("EMPRENDIMIENTOS actualizado", allemprendimientos);
+		}, [allemprendimientos]);
+
+	// Obtener todos los emprendimientos de el usuario
 	const fetchEmprendimientos = async (emprendedorId = null) => {
 		setLoading(true);
 		setError(null);
@@ -19,6 +29,21 @@ export function EmprendimientosProvider({ children }) {
 			setEmprendimientos(data);
 		} catch (err) {
 			setError("Error al obtener emprendimientos");
+		} finally {
+			setLoading(false);
+		}
+	};
+
+	const fetchemprendimientosall = async () => {
+		setLoading(true);
+		setError(null);
+		try {
+			const res = await fetch("/api/emprendimientos");
+			const data = await res.json();
+			console.log("data",data)
+			setAllemprendimientos(data);
+		} catch (err) {
+			setError("Error al obtener todos los emprendimientos");
 		} finally {
 			setLoading(false);
 		}
@@ -111,6 +136,7 @@ export function EmprendimientosProvider({ children }) {
 				createEmprendimiento,
 				updateEmprendimiento,
 				deleteEmprendimiento,
+				fetchemprendimientosall,
 			}}
 		>
 			{children}
