@@ -13,7 +13,7 @@ function NuevoEmprendimientoPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [form, setForm] = useState({
-    emprendedorId: user?.emprendedorId,
+    emprendedorId: '',
     etapa: '',
     denominacion: '',
     fechaInicio: '',
@@ -52,6 +52,13 @@ function NuevoEmprendimientoPage() {
     ubicacionSucursales: '',
     planeaAbrirSucursal: false,
   });
+
+  // Actualizar emprendedorId cuando user esté disponible
+  useEffect(() => {
+    if (user && user.emprendedorId) {
+      setForm((prev) => ({ ...prev, emprendedorId: user.emprendedorId }));
+    }
+  }, [user]);
   const [ubicacion, setUbicacion] = useState({ lat: -34.61, lng: -58.38 });
   // Importar MapSelector dinámicamente para SSR
   const MapSelector = dynamic(() => import("../../../components/MapSelector"), { ssr: false });
