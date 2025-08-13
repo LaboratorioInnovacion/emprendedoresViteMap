@@ -1,10 +1,10 @@
 
 'use client';
-
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
 import BusinessMap from "../../components/map/BusinessMap";
+import { useEmprendimientos } from "../../context/EmprendimientosContext";
 
 const rubros = [
   "Gastronomía",
@@ -35,64 +35,22 @@ const getStatusBadgeClass = (status) => {
 
 const EmprendimientosPage = () => {
   const router = useRouter();
-  const [emprendimientos, setEmprendimientos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { allemprendimientos, loading, error } = useEmprendimientos();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRubros, setSelectedRubros] = useState([]);
   const [selectedEstados, setSelectedEstados] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
 
-  useEffect(() => {
-    const fetchEmprendimientos = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/emprendimientos");
-        const data = await res.json();
-        // Decodificar ubicacion si viene como bytes
-        const decodeUbicacion = (ubicacion: any) => {
-          if (!ubicacion || typeof ubicacion !== "object") return null;
-          try {
-            const bytes = Object.values(ubicacion).map(v => Number(v));
-            const str = String.fromCharCode(...bytes);
-            const obj = JSON.parse(str);
-            if (obj.lat && obj.lng) return obj;
-            return null;
-          } catch {
-            return null;
-          }
-        };
-        const emprendimientosAdaptados = data.map((emp: any) => {
-          let ubicacion = null;
-          if (emp.ubicacion && typeof emp.ubicacion === "object") {
-            ubicacion = decodeUbicacion(emp.ubicacion);
-          }
-          // Si no tiene ubicación, usar la del emprendedor si existe
-          if (!ubicacion && emp.emprendedor && emp.emprendedor.ubicacion && typeof emp.emprendedor.ubicacion === "object") {
-            ubicacion = decodeUbicacion(emp.emprendedor.ubicacion);
-          }
-          return {
-            ...emp,
-            ubicacion,
-          };
-        });
-        setEmprendimientos(emprendimientosAdaptados);
-      } catch (err) {
-        setError("Error al cargar los emprendimientos");
-      }
-      setLoading(false);
-    };
-    fetchEmprendimientos();
-  }, []);
+
 
   // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
   const defaultViewport = {
-    center: [ -32.9471, -60.6306 ] as [number, number],
+    center: [ -28.46957, -65.78524 ] as [number, number],
     zoom: 12,
   };
 
   // Filtrado de emprendimientos
-  const filtered = emprendimientos.filter((emp) => {
+  const filtered = allemprendimientos.filter((emp) => {
     const nombreCompleto = `${emp.emprendedor?.nombre || ""} ${emp.emprendedor?.apellido || ""}`.toLowerCase();
     const denominacion = (emp.denominacion || "").toLowerCase();
     const rubro = (emp.rubro || "Otro");
@@ -118,7 +76,7 @@ const EmprendimientosPage = () => {
       {/* Mapa de emprendimientos */}
       <div className="mb-4">
         <BusinessMap
-          emprendedores={emprendimientos.map(emp => ({
+          emprendedores={allemprendimientos.map(emp => ({
             id: emp.id,
             name: emp.denominacion,
             type: emp.rubro || "Otro",
@@ -129,9 +87,9 @@ const EmprendimientosPage = () => {
             imageUrl: emp.imageUrl,
             status: emp.estado || "active",
             contact: {
-              phone: emp.contact?.phone || "",
-              email: emp.contact?.email || "",
-              website: emp.contact?.website || ""
+              phone: emp.contact?.phone || emp.telefono || "",
+              email: emp.contact?.email || emp.email || "",
+              website: emp.contact?.website || emp.web || ""
             },
             description: emp.descripcion || "",
             createdAt: emp.createdAt || "",
@@ -196,7 +154,7 @@ const EmprendimientosPage = () => {
               <h4 className="font-medium mb-2">Rubro</h4>
               <div className="flex flex-wrap gap-2">
                 {rubros.map((rubro) => {
-                  const count = emprendimientos.filter((e) => (e.rubro || "Otro") === rubro).length;
+                  const count = allemprendimientos.filter((e) => (e.rubro || "Otro") === rubro).length;
                   return (
                     <button
                       key={rubro}

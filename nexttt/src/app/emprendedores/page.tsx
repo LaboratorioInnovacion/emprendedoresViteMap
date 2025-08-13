@@ -61,8 +61,8 @@ const EmprendedoresPage = () => {
 
   // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
   const defaultViewport = {
-  center: [ -32.9471, -60.6306 ] as [number, number],
-  zoom: 12,
+    center: [ -28.46957, -65.78524 ] as [number, number],
+    zoom: 12,
   };
 
   return (

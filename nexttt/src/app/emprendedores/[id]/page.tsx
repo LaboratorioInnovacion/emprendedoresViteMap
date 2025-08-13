@@ -1,3 +1,15 @@
+'use client';
+import React, { useState, useEffect } from "react";
+import { useEmpre } from "../../../context/EmpreContext";
+import { ChevronLeft, BadgeCheck, Phone, MapPin, User, GraduationCap, Calendar, Users, Landmark, Info, Rocket, Pencil, Trash2, Mail } from "lucide-react";
+import dynamic from "next/dynamic";
+import Image from "next/image";
+const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
+const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
+const Marker = dynamic<any>(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
+import 'leaflet/dist/leaflet.css';
+
 // Oculta el warning de Next.js sobre acceso directo a params (migración)
 if (typeof window !== "undefined") {
   const originalConsoleError = window.console.error;
@@ -11,20 +23,6 @@ if (typeof window !== "undefined") {
     originalConsoleError.apply(window.console, args);
   };
 }
-
-'use client';
-
-import React, { useState, useEffect } from "react";
-import { useEmpre } from "../../../context/EmpreContext";
-import { ChevronLeft, BadgeCheck, Phone, MapPin, User, GraduationCap, Calendar, Users, Landmark, Info, Rocket, Pencil, Trash2, Mail } from "lucide-react";
-import dynamic from "next/dynamic";
-import Image from "next/image";
-const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
-const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic<any>(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
-const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
-import 'leaflet/dist/leaflet.css';
-
 
 const EmprendedorPage = ({ params }) => {
   const { fetchEmprendedorById } = useEmpre();
@@ -259,7 +257,7 @@ const EmprendedorPage = ({ params }) => {
             <h2 className="text-xl font-semibold mb-4">Ubicación</h2>
             <div className="h-64 rounded-lg overflow-hidden">
               {L && markerIcon && ubicacion && (
-                {/* @ts-expect-error center prop error por dynamic, funciona en runtime */}
+                // @ts-expect-error center prop error por dynamic, funciona en runtime
                 <MapContainer
                   center={[ubicacion.lat, ubicacion.lng] as [number, number]}
                   zoom={14}
