@@ -1,20 +1,8 @@
 "use client";
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import { useEffect, useState } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
 
-// Fix para los íconos de Leaflet en Next.js/Vite
-if (typeof window !== "undefined" && L.Icon && L.Icon.Default) {
-  delete L.Icon.Default.prototype._getIconUrl;
-  L.Icon.Default.mergeOptions({
-    iconRetinaUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png",
-    iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
-    shadowUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png",
-  });
-}
-
-export default function MapSelector({ ubicacion, onSelect, height = "256px" }) {
+export default function MapSelector({ ubicacion, onSelect }) {
   const [position, setPosition] = useState(ubicacion || { lat: -34.6037, lng: -58.3816 });
 
   const MapClickHandler = () => {
@@ -43,7 +31,7 @@ export default function MapSelector({ ubicacion, onSelect, height = "256px" }) {
       center={position}
       zoom={13}
       scrollWheelZoom={true}
-      style={{ height, width: "100%" }}
+      style={{ height: "100%", width: "100%" }}
     >
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
       <MapClickHandler />
