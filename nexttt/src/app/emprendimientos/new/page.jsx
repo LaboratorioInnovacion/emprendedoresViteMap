@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import { useAuth } from "../../../context/AuthContext";
@@ -66,6 +66,9 @@ function NuevoEmprendimientoPage() {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+  useEffect(() => {
+    console.log("idempre",form.emprendedorId);
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -163,6 +166,8 @@ function NuevoEmprendimientoPage() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-4">
+      {/* Campo oculto para emprendedorId */}
+      <input type="hidden" name="emprendedorId" value={user.emprendedorId} />
       <h2 className="text-xl font-bold mb-4">Nuevo Emprendimiento</h2>
       {/* <p>ID Emprendedor</p> */}
       {/* <input name="emprendedorId" value={form.emprendedorId} onChange={handleChange} placeholder="ID Emprendedor" className="input w-full" /> */}

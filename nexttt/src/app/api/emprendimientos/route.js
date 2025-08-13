@@ -40,6 +40,7 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json();
+    console.log(body)
     // Validación básica
     if (!body.denominacion || !body.emprendedorId) {
       return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });

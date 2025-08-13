@@ -9,6 +9,43 @@ import "leaflet/dist/leaflet.css";
 
 function NuevoEmprendimientoPage() {
   const router = useRouter();
+  // Opciones enums
+  const etapaOptions = ["Idea", "EnMarcha", "Consolidado"];
+  const sectorOptions = ["ProduccionElaboracion", "Comercio", "Servicios"];
+  const tipoEmprendimientoOptions = ["Individual", "Asociativo", "Familiar", "Cooperativo"];
+  const actividadPrincipalOptions = [
+    "Produccion_Alimentos_Artesanal",
+    "Produccion_Alimentos_Industrial",
+    "Produccion_Articulos_Hogar",
+    "Produccion_Indumentaria",
+    "Produccion_Quimicos_Hogar",
+    "Produccion_Belleza",
+    "Produccion_Grafica",
+    "Produccion_Vivero",
+    "Produccion_Otro",
+    "Comercio_Indumentaria",
+    "Comercio_Alimentos",
+    "Comercio_Articulos_Hogar",
+    "Comercio_Libreria",
+    "Comercio_Informatica",
+    "Comercio_Belleza",
+    "Comercio_Mascotas",
+    "Comercio_Regional",
+    "Comercio_Construccion",
+    "Comercio_Vivero",
+    "Comercio_Otro",
+    "Servicio_Profesionales",
+    "Servicio_Salud",
+    "Servicio_Educativos",
+    "Servicio_Turisticos",
+    "Servicio_Reparacion_Electro",
+    "Servicio_Reparacion_Vehiculos",
+    "Servicio_Construccion",
+    "Servicio_Gastronomicos",
+    "Servicio_Otro"
+  ];
+  const planeaIncorporarOptions = ["Si", "No", "NoLoSabe"];
+  const percepcionPlantaOptions = ["Adecuada", "Mayor", "Menor", "NoLoSabe"];
   const [form, setForm] = useState({
     emprendedorId: "",
     etapa: "",
@@ -119,13 +156,12 @@ function NuevoEmprendimientoPage() {
         className="input w-full"
       />
       <p>Etapa</p>
-      <input
-        name="etapa"
-        value={form.etapa}
-        onChange={handleChange}
-        placeholder="Etapa"
-        className="input w-full"
-      />
+      <select name="etapa" value={form.etapa} onChange={handleChange} className="input w-full">
+        <option value="">Selecciona etapa</option>
+        {etapaOptions.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
       <p>Denominación</p>
       <input
         name="denominacion"
@@ -160,29 +196,26 @@ function NuevoEmprendimientoPage() {
         className="input w-full"
       />
       <p>Sector</p>
-      <input
-        name="sector"
-        value={form.sector}
-        onChange={handleChange}
-        placeholder="Sector"
-        className="input w-full"
-      />
+      <select name="sector" value={form.sector} onChange={handleChange} className="input w-full">
+        <option value="">Selecciona sector</option>
+        {sectorOptions.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
       <p>Actividad Principal</p>
-      <input
-        name="actividadPrincipal"
-        value={form.actividadPrincipal}
-        onChange={handleChange}
-        placeholder="Actividad Principal"
-        className="input w-full"
-      />
+      <select name="actividadPrincipal" value={form.actividadPrincipal} onChange={handleChange} className="input w-full">
+        <option value="">Selecciona actividad</option>
+        {actividadPrincipalOptions.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
       <p>Tipo Emprendimiento</p>
-      <input
-        name="tipoEmprendimiento"
-        value={form.tipoEmprendimiento}
-        onChange={handleChange}
-        placeholder="Tipo Emprendimiento"
-        className="input w-full"
-      />
+      <select name="tipoEmprendimiento" value={form.tipoEmprendimiento} onChange={handleChange} className="input w-full">
+        <option value="">Selecciona tipo</option>
+        {tipoEmprendimientoOptions.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
       <p>Dirección</p>
       <input
         name="direccion"
@@ -258,21 +291,19 @@ function NuevoEmprendimientoPage() {
         className="input w-full"
       />
       <p>Planea Incorporar Personal</p>
-      <input
-        name="planeaIncorporarPersonal"
-        value={form.planeaIncorporarPersonal}
-        onChange={handleChange}
-        placeholder="Planea Incorporar Personal"
-        className="input w-full"
-      />
+      <select name="planeaIncorporarPersonal" value={form.planeaIncorporarPersonal} onChange={handleChange} className="input w-full">
+        <option value="">Selecciona opción</option>
+        {planeaIncorporarOptions.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
       <p>Percepción Planta Personal</p>
-      <input
-        name="percepcionPlantaPersonal"
-        value={form.percepcionPlantaPersonal}
-        onChange={handleChange}
-        placeholder="Percepción Planta Personal"
-        className="input w-full"
-      />
+      <select name="percepcionPlantaPersonal" value={form.percepcionPlantaPersonal} onChange={handleChange} className="input w-full">
+        <option value="">Selecciona opción</option>
+        {percepcionPlantaOptions.map((opt) => (
+          <option key={opt} value={opt}>{opt}</option>
+        ))}
+      </select>
       <label>
         <input
           type="checkbox"
