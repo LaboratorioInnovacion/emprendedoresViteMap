@@ -21,7 +21,17 @@ export async function GET(req, context) {
     // Decodificar ubicacion si existe
     if (emprendedor.ubicacion) {
       try {
-        emprendedor.ubicacion = JSON.parse(Buffer.from(emprendedor.ubicacion).toString());
+        const str = Buffer.isBuffer(emprendedor.ubicacion)
+          ? emprendedor.ubicacion.toString("utf8")
+          : String.fromCharCode(...emprendedor.ubicacion);
+        const obj = JSON.parse(str);
+        if (obj.type === "Point" && Array.isArray(obj.coordinates)) {
+          emprendedor.ubicacion = { lng: obj.coordinates[0], lat: obj.coordinates[1] };
+        } else if (typeof obj.lat === "number" && typeof obj.lng === "number") {
+          emprendedor.ubicacion = obj;
+        } else {
+          emprendedor.ubicacion = null;
+        }
       } catch (e) {
         emprendedor.ubicacion = null;
       }

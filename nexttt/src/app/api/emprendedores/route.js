@@ -1,15 +1,39 @@
-export async function GET() {
-  try {
-    const emprendedores = await prisma.emprendedor.findMany();
-    return NextResponse.json(emprendedores);
-  } catch (err) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
-  }
-}
 import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { useSession } from "next-auth/react";
+
+// Utilidad para decodificar ubicacion Bytes a {lat, lng}
+function decodeUbicacion(ubicacion) {
+  if (!ubicacion) return null;
+  try {
+    const str = Buffer.isBuffer(ubicacion)
+      ? ubicacion.toString("utf8")
+      : String.fromCharCode(...ubicacion);
+    const obj = JSON.parse(str);
+    if (obj.type === "Point" && Array.isArray(obj.coordinates)) {
+      return { lng: obj.coordinates[0], lat: obj.coordinates[1] };
+    }
+    if (typeof obj.lat === "number" && typeof obj.lng === "number") {
+      return obj;
+    }
+  } catch (e) {}
+  return null;
+}
+
+export async function GET() {
+  try {
+    const emprendedores = await prisma.emprendedor.findMany();
+    // Decodificar ubicacion para todos
+    const emprendedoresConUbicacion = emprendedores.map((emp) => ({
+      ...emp,
+      ubicacion: decodeUbicacion(emp.ubicacion),
+    }));
+    return NextResponse.json(emprendedoresConUbicacion);
+  } catch (err) {
+    return NextResponse.json({ error: err.message }, { status: 500 });
+  }
+}
 
 export async function POST(req) {
   try {
@@ -34,7 +58,7 @@ export async function POST(req) {
     const nuevo = await prisma.emprendedor.create({
       data: {
         ...data,
-       fechaNacimiento: new Date(data.fechaNacimiento), // 👈 esto es clave
+        fechaNacimiento: new Date(data.fechaNacimiento), // 👈 esto es clave
         usuario: { connect: { id: token.id } },
       },
     });
@@ -92,7 +116,6 @@ export async function PUT(req, context) {
 //   }
 // }
 
-
 // import { NextResponse } from "next/server";
 // import prisma from "../../../lib/prisma";
 // import { getToken } from "next-auth/jwt";
@@ -125,7 +148,6 @@ export async function PUT(req, context) {
 //     return NextResponse.json({ error: err.message }, { status: 403 });
 //   }
 // }
-
 
 // import { NextResponse } from "next/server";
 // // import prisma from '@/lib/prisma';

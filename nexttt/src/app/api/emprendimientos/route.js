@@ -10,6 +10,24 @@ function parseUbicacion(ubicacion) {
   }));
 }
 
+// Utilidad para decodificar ubicacion Bytes a {lat, lng}
+function decodeUbicacion(ubicacion) {
+  if (!ubicacion) return null;
+  try {
+    const str = Buffer.isBuffer(ubicacion)
+      ? ubicacion.toString("utf8")
+      : String.fromCharCode(...ubicacion);
+    const obj = JSON.parse(str);
+    if (obj.type === "Point" && Array.isArray(obj.coordinates)) {
+      return { lng: obj.coordinates[0], lat: obj.coordinates[1] };
+    }
+    if (typeof obj.lat === "number" && typeof obj.lng === "number") {
+      return obj;
+    }
+  } catch (e) {}
+  return null;
+}
+
 // GET: lista o por id
 export async function GET(req) {
   try {
@@ -21,7 +39,11 @@ export async function GET(req) {
         include: { emprendedor: true, asignaciones: true }
       });
       if (!emprendimiento) return NextResponse.json({ error: 'No encontrado' }, { status: 404 });
-      return NextResponse.json(emprendimiento);
+      // Decodificar ubicacion
+      return NextResponse.json({
+        ...emprendimiento,
+        ubicacion: decodeUbicacion(emprendimiento.ubicacion)
+      });
     }
     // Lista filtrada por emprendedorId si existe
     const emprendedorId = searchParams.get('emprendedorId');
@@ -30,7 +52,12 @@ export async function GET(req) {
       where,
       include: { emprendedor: true, asignaciones: true }
     });
-    return NextResponse.json(lista);
+    // Decodificar ubicacion para todos
+    const listaConUbicacion = lista.map(emp => ({
+      ...emp,
+      ubicacion: decodeUbicacion(emp.ubicacion)
+    }));
+    return NextResponse.json(listaConUbicacion);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }

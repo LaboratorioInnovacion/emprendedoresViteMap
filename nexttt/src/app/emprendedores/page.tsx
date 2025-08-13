@@ -31,47 +31,15 @@ const getStatusBadgeClass = (status) => {
 
 const EmprendedoresPage = () => {
   const router = useRouter();
-  const [emprendedores, setEmprendedores] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const { emprendedores, loading, error, fetchEmprendedores } = useEmpre();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedNiveles, setSelectedNiveles] = useState([]);
   const [selectedEstados, setSelectedEstados] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    const fetchEmprendedores = async () => {
-      setLoading(true);
-      try {
-        const res = await fetch("/api/emprendedores");
-        const data = await res.json();
-        // Decodificar ubicacion si viene como bytes
-        const decodeUbicacion = (ubicacion: any) => {
-          if (!ubicacion || typeof ubicacion !== "object") return null;
-          try {
-            // Convertir a array de bytes y luego a string
-            const bytes = Object.values(ubicacion).map(v => Number(v));
-            const str = String.fromCharCode(...bytes);
-            const obj = JSON.parse(str);
-            if (obj.lat && obj.lng) return obj;
-            return null;
-          } catch {
-            return null;
-          }
-        };
-        const emprendedoresAdaptados = data.map((emp: any) => ({
-          ...emp,
-          ubicacion: emp.ubicacion && typeof emp.ubicacion === "object"
-            ? decodeUbicacion(emp.ubicacion)
-            : emp.ubicacion,
-        }));
-        setEmprendedores(emprendedoresAdaptados);
-      } catch (err) {
-        setError("Error al cargar los emprendedores");
-      }
-      setLoading(false);
-    };
     fetchEmprendedores();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Filtrar por nombre/apellido, nivel de estudios y estado

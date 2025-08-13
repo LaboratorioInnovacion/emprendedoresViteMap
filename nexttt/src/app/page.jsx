@@ -16,7 +16,6 @@ import {
   Activity,
 } from "lucide-react";
 
-
 const Page = () => {
   const { allemprendimientos, fetchemprendimientosall, loading, error } =
     useEmprendimientos();
@@ -24,9 +23,9 @@ const Page = () => {
   const [selectedTypes, setSelectedTypes] = useState([]);
   const mapCenter = calculateMapCenter();
 
-useEffect(() => {
-  console.log("allemprendimientos actualizado:", allemprendimientos);
-}, [allemprendimientos]);
+  useEffect(() => {
+    console.log("allemprendimientos actualizado:", allemprendimientos);
+  }, [allemprendimientos]);
 
   const MapContainer = React.useMemo(
     () =>
@@ -68,22 +67,49 @@ useEffect(() => {
   }, []);
 
   // Función para decodificar la ubicación
+  // Función robusta para decodificar la ubicación
   function parseUbicacion(ubicacionObj) {
     if (!ubicacionObj) return null;
-    const str = Object.values(ubicacionObj)
-      .map((code) => String.fromCharCode(code))
-      .join("");
-    try {
-      const parsed = JSON.parse(str);
-      // Aseguramos que tenga lat y lng
-      if (parsed && typeof parsed.lat === "number" && typeof parsed.lng === "number") {
-        return parsed;
-      }
-      return null;
-    } catch (e) {
-      console.error("Error parseando ubicacion:", e, ubicacionObj);
-      return null;
+    // Si ya es un objeto {lat, lng}
+    if (
+      typeof ubicacionObj.lat === "number" &&
+      typeof ubicacionObj.lng === "number"
+    ) {
+      return ubicacionObj;
     }
+    // Si es un string JSON
+    if (typeof ubicacionObj === "string") {
+      try {
+        const parsed = JSON.parse(ubicacionObj);
+        if (
+          parsed &&
+          typeof parsed.lat === "number" &&
+          typeof parsed.lng === "number"
+        ) {
+          return parsed;
+        }
+      } catch (e) {}
+    }
+    // Si es un objeto tipo array de bytes (como el caso reportado)
+    if (
+      typeof ubicacionObj === "object" &&
+      Object.keys(ubicacionObj).every((k) => !isNaN(Number(k)))
+    ) {
+      try {
+        const str = String.fromCharCode(...Object.values(ubicacionObj));
+        const parsed = JSON.parse(str);
+        if (
+          parsed &&
+          typeof parsed.lat === "number" &&
+          typeof parsed.lng === "number"
+        ) {
+          return parsed;
+        }
+      } catch (e) {
+        console.error("Error parseando ubicacion:", e, ubicacionObj);
+      }
+    }
+    return null;
   }
 
   // Filtro de negocios (usar solo emprendimientos del contexto)
@@ -132,10 +158,8 @@ useEffect(() => {
   };
 
   useEffect(() => {
-    console.log("Fetching emprendimientos...",filteredBusinesses);
-    return () => {
-      
-    };
+    console.log("Fetching emprendimientos...", filteredBusinesses);
+    return () => {};
   }, []);
 
   return (
@@ -188,69 +212,66 @@ useEffect(() => {
                   url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
                 {filteredBusinesses.map((business) => {
-                  const ubicacion = business.ubicacion && !business.ubicacion.lat && !business.ubicacion.lng
-                    ? parseUbicacion(business.ubicacion)
-                    : business.ubicacion;
-                  console.log("Marcador:", business.denominacion, ubicacion);
-                  if (ubicacion && typeof ubicacion.lat === "number" && typeof ubicacion.lng === "number") {
-                    return (
-                      <Marker
-                        key={business.id}
-                        position={[ubicacion.lat, ubicacion.lng]}
-                        icon={createBusinessIcon(business.tipoEmprendimiento)}
-                      >
-                        <Popup>
-                          <div className="w-64">
-                            <h3 className="font-medium text-base mb-1">
-                              {business.denominacion}
-                            </h3>
-                            <div className="flex flex-wrap gap-2 mb-2">
-                              <span className="badge badge-secondary text-xs capitalize">
-                                {business.tipoEmprendimiento}
+                  const ubicacion = parseUbicacion(business.ubicacion);
+                  if (!ubicacion || typeof ubicacion.lat !== "number" || typeof ubicacion.lng !== "number") {
+                    console.warn("No se pudo parsear la ubicación del emprendimiento:", business.id, business.denominacion, business.ubicacion, "Resultado:", ubicacion);
+                    return null;
+                  }
+                  console.log("Marcador:", business.id, business.denominacion, ubicacion);
+                  return (
+                    <Marker
+                      key={business.id}
+                      position={[ubicacion.lat, ubicacion.lng]}
+                      icon={createBusinessIcon(business.tipoEmprendimiento)}
+                    >
+                      <Popup>
+                        <div className="w-64">
+                          <h3 className="font-medium text-base mb-1">
+                            {business.denominacion}
+                          </h3>
+                          <div className="flex flex-wrap gap-2 mb-2">
+                            <span className="badge badge-secondary text-xs capitalize">
+                              {business.tipoEmprendimiento}
+                            </span>
+                          </div>
+                          <div className="space-y-2 text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400">
+                              <MapPin
+                                size={14}
+                                className="mr-1 flex-shrink-0"
+                              />
+                              <span className="truncate">
+                                {business.direccion}
                               </span>
                             </div>
-                            <div className="space-y-2 text-sm">
+                            <div className="flex items-center text-gray-600 dark:text-gray-400">
+                              <span>
+                                Lat: {ubicacion.lat}, Lng: {ubicacion.lng}
+                              </span>
+                            </div>
+                            {business.telefono && (
                               <div className="flex items-center text-gray-600 dark:text-gray-400">
-                                <MapPin
+                                <Phone
                                   size={14}
                                   className="mr-1 flex-shrink-0"
                                 />
-                                <span className="truncate">
-                                  {business.direccion}
-                                </span>
+                                <span>{business.telefono}</span>
                               </div>
-                              {ubicacion && (
-                                <div className="flex items-center text-gray-600 dark:text-gray-400">
-                                  <span>
-                                    Lat: {ubicacion.lat}, Lng: {ubicacion.lng}
-                                  </span>
-                                </div>
-                              )}
-                              {business.telefono && (
-                                <div className="flex items-center text-gray-600 dark:text-gray-400">
-                                  <Phone
-                                    size={14}
-                                    className="mr-1 flex-shrink-0"
-                                  />
-                                  <span>{business.telefono}</span>
-                                </div>
-                              )}
-                            </div>
-                            <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
-                              <Link
-                                href={`/emprendimientos/${business.id}`}
-                                className="btn-primary w-full justify-center text-sm py-1.5"
-                                style={{ color: "#fff" }}
-                              >
-                                Ver Detalles
-                              </Link>
-                            </div>
+                            )}
                           </div>
-                        </Popup>
-                      </Marker>
-                    );
-                  }
-                  return null;
+                          <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700">
+                            <Link
+                              href={`/emprendimientos/${business.id}`}
+                              className="btn-primary w-full justify-center text-sm py-1.5"
+                              style={{ color: "#fff" }}
+                            >
+                              Ver Detalles
+                            </Link>
+                          </div>
+                        </div>
+                      </Popup>
+                    </Marker>
+                  );
                 })}
               </MapContainer>
             )}
@@ -285,17 +306,22 @@ useEffect(() => {
             const adaptedBusiness = {
               id: business.id,
               name: business.denominacion,
-              description: business.actividadPrincipal || business.sector || '',
+              description: business.actividadPrincipal || business.sector || "",
               address: business.direccion,
               contact: {
                 phone: business.telefono,
                 email: business.email,
               },
               type: business.tipoEmprendimiento,
-              status: business.etapa ? business.etapa.toLowerCase() : 'active',
-              imageUrl: '', // Si tienes una imagen, pon la url aquí
+              status: business.etapa ? business.etapa.toLowerCase() : "active",
+              imageUrl: "", // Si tienes una imagen, pon la url aquí
             };
-            return <RecentBusinessCard key={business.id} business={adaptedBusiness} />;
+            return (
+              <RecentBusinessCard
+                key={business.id}
+                business={adaptedBusiness}
+              />
+            );
           })}
         </div>
       </div>

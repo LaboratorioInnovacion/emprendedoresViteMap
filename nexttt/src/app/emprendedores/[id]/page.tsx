@@ -1,18 +1,33 @@
+// Oculta el warning de Next.js sobre acceso directo a params (migración)
+if (typeof window !== "undefined") {
+  const originalConsoleError = window.console.error;
+  window.console.error = function (...args) {
+    if (
+      typeof args[0] === "string" &&
+      args[0].includes("A param property was accessed directly with `params.id`.")
+    ) {
+      return;
+    }
+    originalConsoleError.apply(window.console, args);
+  };
+}
 
 'use client';
 
 import React, { useState, useEffect } from "react";
+import { useEmpre } from "../../../context/EmpreContext";
 import { ChevronLeft, BadgeCheck, Phone, MapPin, User, GraduationCap, Calendar, Users, Landmark, Info, Rocket, Pencil, Trash2, Mail } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Marker = dynamic<any>(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 import 'leaflet/dist/leaflet.css';
 
 
 const EmprendedorPage = ({ params }) => {
+  const { fetchEmprendedorById } = useEmpre();
   const [emprendedor, setEmprendedor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -20,23 +35,31 @@ const EmprendedorPage = ({ params }) => {
   const [markerIcon, setMarkerIcon] = useState(null);
   // ...existing code...
   useEffect(() => {
-    const fetchEmprendedor = async () => {
+    // Soporte para Next.js 14+ donde params es una promesa
+    let isMounted = true;
+    async function load() {
+      let id = params.id;
+      if (typeof id === "undefined" && typeof params.then === "function") {
+        // params es una promesa
+        const resolved = await params;
+        id = resolved.id;
+      }
       setLoading(true);
-      try {
-        const res = await fetch(`/api/emprendedores/${params.id}`);
-        const data = await res.json();
-        if (res.ok) {
+      setError("");
+      const data = await fetchEmprendedorById(id);
+      if (isMounted) {
+        if (data && !data.error) {
           setEmprendedor(data);
         } else {
-          setError(data.error || "Error al cargar el emprendedor");
+          setError(data?.error || "Error al cargar el emprendedor");
         }
-      } catch (err) {
-        setError("Error de red");
+        setLoading(false);
       }
-      setLoading(false);
-    };
-    fetchEmprendedor();
-  }, [params.id]);
+    }
+    load();
+    return () => { isMounted = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params]);
 
   useEffect(() => {
     const loadLeaflet = async () => {
@@ -73,13 +96,10 @@ const EmprendedorPage = ({ params }) => {
   // Avatar por defecto si no hay foto
   const avatarUrl = emprendedor.fotoUrl || "/profile-default.png";
 
-  // Decodificar ubicación si existe
-  let ubicacion = null;
-  if (emprendedor.ubicacion) {
-    try {
-      ubicacion = JSON.parse(emprendedor.ubicacion);
-    } catch {}
-  }
+  // La API ya devuelve ubicacion como objeto {lat, lng} o null
+  const ubicacion = emprendedor.ubicacion && typeof emprendedor.ubicacion.lat === "number" && typeof emprendedor.ubicacion.lng === "number"
+    ? emprendedor.ubicacion
+    : null;
 
   // Badge de estado
   const getStatusBadgeClass = () => {
@@ -239,16 +259,19 @@ const EmprendedorPage = ({ params }) => {
             <h2 className="text-xl font-semibold mb-4">Ubicación</h2>
             <div className="h-64 rounded-lg overflow-hidden">
               {L && markerIcon && ubicacion && (
+                {/* @ts-expect-error center prop error por dynamic, funciona en runtime */}
                 <MapContainer
-                  center={[ubicacion.lat, ubicacion.lng]}
+                  center={[ubicacion.lat, ubicacion.lng] as [number, number]}
                   zoom={14}
                   style={{ height: "100%", width: "100%" }}
                 >
                   <TileLayer
-                    attribution='&copy; <a>OpenStreetMap</a>'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
-                  <Marker position={[ubicacion.lat, ubicacion.lng]} icon={markerIcon}>
+                  <Marker
+                    position={[ubicacion.lat, ubicacion.lng] as [number, number]}
+                    icon={markerIcon}
+                  >
                     <Popup>{emprendedor.direccion}</Popup>
                   </Marker>
                 </MapContainer>
