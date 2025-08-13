@@ -3,8 +3,8 @@
 
 import React, { useState, useEffect } from "react";
 import { ChevronLeft, BadgeCheck, Phone, MapPin, User, GraduationCap, Calendar, Users, Landmark, Info, Rocket, Pencil, Trash2, Mail } from "lucide-react";
-import dynamic from "next/dynamic";
 import Image from "next/image";
+import dynamic from "next/dynamic";
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
@@ -42,13 +42,15 @@ const EmprendedorPage = ({ params }) => {
     const loadLeaflet = async () => {
       const leaflet = await import('leaflet');
       setL(leaflet);
-      const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='#2563eb' stroke='white' stroke-width='2'/></svg>`;
+      // Usar SVG embebido para evitar peticiones 404 de iconos y cuadrados
+      const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='32' height='32'><circle cx='16' cy='16' r='14' fill='#2563eb' stroke='white' stroke-width='3'/></svg>`;
       const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
       const icon = new leaflet.Icon({
         iconUrl,
-        iconSize: [28, 28],
-        iconAnchor: [16, 16],
-        popupAnchor: [0, -16],
+        iconSize: [32, 32],
+        iconAnchor: [16, 32],
+        popupAnchor: [0, -32],
+        shadowUrl: undefined, // Evita buscar marker-shadow.png
       });
       setMarkerIcon(icon);
     };
@@ -76,9 +78,19 @@ const EmprendedorPage = ({ params }) => {
   // Decodificar ubicación si existe
   let ubicacion = null;
   if (emprendedor.ubicacion) {
-    try {
-      ubicacion = JSON.parse(emprendedor.ubicacion);
-    } catch {}
+    if (typeof emprendedor.ubicacion === 'string') {
+      try {
+        ubicacion = JSON.parse(emprendedor.ubicacion);
+      } catch {}
+    } else if (typeof emprendedor.ubicacion === 'object') {
+      // Si es objeto tipo buffer (como en tu modelo), decodificar
+      const str = Object.values(emprendedor.ubicacion as Record<string, number>)
+        .map((code: number) => String.fromCharCode(code))
+        .join("");
+      try {
+        ubicacion = JSON.parse(str);
+      } catch {}
+    }
   }
 
   // Badge de estado
@@ -237,15 +249,15 @@ const EmprendedorPage = ({ params }) => {
           {/* Map card */}
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Ubicación</h2>
-            <div className="h-64 rounded-lg overflow-hidden">
+            <div className="rounded-lg overflow-hidden" style={{ minHeight: '400px', height: '400px', width: '100%' }}>
               {L && markerIcon && ubicacion && (
                 <MapContainer
                   center={[ubicacion.lat, ubicacion.lng]}
                   zoom={14}
-                  style={{ height: "100%", width: "100%" }}
+                  style={{ height: '100%', width: '100%' }}
                 >
                   <TileLayer
-                    attribution='&copy; <a>OpenStreetMap</a>'
+                    attribution='&copy; OpenStreetMap contributors'
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
                   <Marker position={[ubicacion.lat, ubicacion.lng]} icon={markerIcon}>

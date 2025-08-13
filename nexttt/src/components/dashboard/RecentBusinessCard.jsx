@@ -56,7 +56,7 @@ function RecentBusinessCard({ business }) {
             <div className="flex justify-between items-center mt-3">
               <span className="badge badge-secondary">{business.type}</span>
               <a 
-                href={`/businesses/${business.id}`}
+                href={`/emprendimientos/${business.id}`}
                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
                 Ver Detalles
