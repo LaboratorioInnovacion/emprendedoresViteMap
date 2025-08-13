@@ -1,6 +1,7 @@
 'use client'
 import 'leaflet/dist/leaflet.css'; // Importa los estilos de Leaflet para los mapas
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import dynamic from 'next/dynamic'; // Importa componentes de forma dinámica para evitar problemas de SSR
 import { useMapEvents } from 'react-leaflet';
 import { Business, BusinessType, MapViewport } from "../../types";
@@ -38,6 +39,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   onLocationSelect,
   selectionMode = false,
 }) => {
+  const router = useRouter();
   // Estado para el término de búsqueda en el input
   const [searchTerm, setSearchTerm] = useState("");
   // Estado para los tipos de negocio seleccionados en los filtros
@@ -107,6 +109,8 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   const handleBusinessSelect = (id: string) => {
     if (onBusinessSelect) {
       onBusinessSelect(id);
+    } else {
+      router.push(`/emprendedores/${id}`);
     }
   };
 

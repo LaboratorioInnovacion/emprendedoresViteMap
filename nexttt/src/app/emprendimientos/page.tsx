@@ -1,4 +1,3 @@
-
 'use client';
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -41,11 +40,9 @@ const EmprendimientosPage = () => {
   const [selectedEstados, setSelectedEstados] = useState([]);
   const [showFilters, setShowFilters] = useState(false);
 
-
-
   // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
   const defaultViewport = {
-    center: [ -28.46957, -65.78524 ] as [number, number],
+    center: [-28.46957, -65.78524] as [number, number],
     zoom: 12,
   };
 
@@ -96,6 +93,7 @@ const EmprendimientosPage = () => {
             updatedAt: emp.updatedAt || "",
           }))}
           defaultViewport={defaultViewport}
+          onBusinessSelect={id => router.push(`/emprendimientos/${id}`)}
         />
       </div>
       {/* Header Section */}
