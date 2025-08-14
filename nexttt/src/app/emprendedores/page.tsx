@@ -68,27 +68,7 @@ const EmprendedoresPage = () => {
 
   return (
     <div className="space-y-4">
-      {/* Mapa de emprendedores */}
-      <div className="mb-4">
-        <BusinessMap
-          emprendedores={emprendedores.map(emp => ({
-            id: emp.id,
-            name: `${emp.nombre} ${emp.apellido}`,
-            type: emp.nivelEstudios || "Otro",
-            address: `${emp.departamento}, ${emp.direccion}`,
-            location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
-              ? emp.ubicacion
-              : { lat: -32.9471, lng: -60.6306 },
-            imageUrl: emp.imageUrl,
-            status: emp.estado || "active",
-            contact: emp.contact || {},
-            description: emp.descripcion || "",
-            createdAt: emp.createdAt || null,
-            updatedAt: emp.updatedAt || null,
-          }))}
-          defaultViewport={defaultViewport}
-        />
-      </div>
+
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -204,40 +184,38 @@ const EmprendedoresPage = () => {
           <div className="text-center py-8 text-red-500">{error}</div>
         ) : filtered.length > 0 ? (
           filtered.map((emp) => (
-            <Link key={emp.id} href={`/emprendedores/${emp.id}`} legacyBehavior>
-              <a className="cardempre hover:shadow-lg transition-shadow cursor-pointer block">
-                <div className="flex items-start gap-4">
-                  <div className="flex-shrink-0">
-                    <div className="h-16 w-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
-                      {emp.nombre.charAt(0).toUpperCase()}
-                    </div>
+            <Link key={emp.id} href={`/emprendedores/${emp.id}`} className="cardempre hover:shadow-lg transition-shadow cursor-pointer block">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <div className="h-16 w-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
+                    {emp.nombre.charAt(0).toUpperCase()}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-base font-medium truncate">
-                          {emp.nombre} {emp.apellido}
-                        </h3>
-                        <span className="badge badge-secondary text-xs capitalize mt-1">
-                          {emp.nivelEstudios}
-                        </span>
-                      </div>
-                      <span
-                        className={`badge ${getStatusBadgeClass(emp.estado || "active")} flex items-center text-xs`}
-                      >
-                        <Activity size={12} className="mr-1" />
-                        {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
+                </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-base font-medium truncate">
+                        {emp.nombre} {emp.apellido}
+                      </h3>
+                      <span className="badge badge-secondary text-xs capitalize mt-1">
+                        {emp.nivelEstudios}
                       </span>
                     </div>
-                    <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                      <div className="flex items-center">
-                        <MapPin size={14} className="mr-1 flex-shrink-0" />
-                        <span className="truncate">{emp.departamento}, {emp.direccion}</span>
-                      </div>
+                    <span
+                      className={`badge ${getStatusBadgeClass(emp.estado || "active") } flex items-center text-xs`}
+                    >
+                      <Activity size={12} className="mr-1" />
+                      {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
+                    </span>
+                  </div>
+                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center">
+                      <MapPin size={14} className="mr-1 flex-shrink-0" />
+                      <span className="truncate">{emp.departamento}, {emp.direccion}</span>
                     </div>
                   </div>
                 </div>
-              </a>
+              </div>
             </Link>
           ))
         ) : (
@@ -305,6 +283,27 @@ const EmprendedoresPage = () => {
             )}
           </tbody>
         </table>
+      </div>
+            {/* Mapa de emprendedores */}
+      <div className="mb-4">
+        <BusinessMap
+          emprendedores={emprendedores.map(emp => ({
+            id: emp.id,
+            name: `${emp.nombre} ${emp.apellido}`,
+            type: emp.nivelEstudios || "Otro",
+            address: `${emp.departamento}, ${emp.direccion}`,
+            location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
+              ? emp.ubicacion
+              : { lat: -32.9471, lng: -60.6306 },
+            imageUrl: emp.imageUrl,
+            status: emp.estado || "active",
+            contact: emp.contact || {},
+            description: emp.descripcion || "",
+            createdAt: emp.createdAt || null,
+            updatedAt: emp.updatedAt || null,
+          }))}
+          defaultViewport={defaultViewport}
+        />
       </div>
     </div>
   );

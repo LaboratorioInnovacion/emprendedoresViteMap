@@ -445,143 +445,22 @@ const EmprendimientoPage = () => {
                 <Mail size={18} className="mr-2" />
                 Contacto del Negocio
               </button>
-              <button className="btn-outline w-full justify-center">
-                <Pencil size={18} className="mr-2" />
-                Editar Detalles
-              </button>
+              {/* Modal de edición (comentado, antes permitía editar el emprendimiento en un modal emergente):
+              {showEdit && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 overflow-auto">
+                  <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-lg shadow-lg max-h-[90vh] overflow-y-auto">
+                    ...formulario de edición aquí...
+                  </div>
+                </div>
+              )}
+              */}
               <button
                 className="btn-outline w-full justify-center"
-                onClick={() => setShowEdit(true)}
+                onClick={() => router.push(`/emprendimientos/${id}/edit`)}
               >
                 <Pencil size={18} className="mr-2" />
                 Editar Detalles
               </button>
-              {/* Modal de edición */}
-              {showEdit && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 overflow-auto">
-                  <div className="bg-white dark:bg-gray-900 rounded-lg p-6 w-full max-w-lg shadow-lg max-h-[90vh] overflow-y-auto">
-                    <h2 className="text-xl font-semibold mb-4">Editar Emprendimiento</h2>
-                    <form
-                      onSubmit={async (e) => {
-                        e.preventDefault();
-                        setEditLoading(true);
-                        setEditError("");
-                        try {
-                          const form = e.target as HTMLFormElement;
-                          const formData = new FormData(form);
-                          // Solo campos válidos del modelo
-                          const validFields = [
-                            "denominacion", "fechaInicio", "inscripcionArca", "cuit", "sector", "actividadPrincipal", "tipoEmprendimiento", "direccion", "telefono", "email", "web", "redSocial1", "redSocial2", "tienePersonal", "cantidadPersonal", "modoIncorporacionPersonal", "planeaIncorporarPersonal", "percepcionPlantaPersonal", "requiereCapacitacion", "tiposCapacitacion", "otrosTiposCapacitacion", "requiereConsultoria", "tiposConsultoria", "otrosTiposConsultoria", "requiereHerramientasTecno", "tiposHerramientasTecno", "otrasHerramientasTecno", "usaRedesSociales", "tiposRedesSociales", "usaMediosPagoElectronicos", "canalesComercializacion", "otrosCanalesComercializacion", "poseeSucursales", "cantidadSucursales", "ubicacionSucursales", "planeaAbrirSucursal"
-                          ];
-                          const body: any = {};
-                          formData.forEach((value, key) => {
-                            if (validFields.includes(key)) {
-                              body[key] = value;
-                            }
-                          });
-                          // Si hay ubicacion seleccionada en el mapa, usarla
-                          if (editUbicacion && editUbicacion.lat !== undefined && editUbicacion.lng !== undefined) {
-                            body.ubicacion = { lat: editUbicacion.lat, lng: editUbicacion.lng };
-                          }
-                          const res = await fetch(`/api/emprendimientos/${id}`, {
-                            method: "PUT",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify(body),
-                          });
-                          const data = await res.json();
-                          if (res.ok) {
-                            setEmprendimiento({ ...emprendimiento, ...body });
-                            setShowEdit(false);
-                          } else {
-                            setEditError(data.error || "Error al editar");
-                          }
-                        } catch (err) {
-                          setEditError("Error de red");
-                        }
-                        setEditLoading(false);
-                      }}
-                    >
-                      <div className="space-y-3">
-                        <label className="block"><span className="text-sm font-medium">Denominación</span><input name="denominacion" defaultValue={emprendimiento.denominacion || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Fecha Inicio</span><input type="date" name="fechaInicio" defaultValue={emprendimiento.fechaInicio ? new Date(emprendimiento.fechaInicio).toISOString().split('T')[0] : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Inscripción Arca</span><input type="checkbox" name="inscripcionArca" defaultChecked={emprendimiento.inscripcionArca || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">CUIT</span><input name="cuit" defaultValue={emprendimiento.cuit || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Sector</span><input name="sector" defaultValue={emprendimiento.sector || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Actividad Principal</span><input name="actividadPrincipal" defaultValue={emprendimiento.actividadPrincipal || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Tipo Emprendimiento</span><input name="tipoEmprendimiento" defaultValue={emprendimiento.tipoEmprendimiento || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Dirección</span><input name="direccion" defaultValue={emprendimiento.direccion || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Teléfono</span><input name="telefono" defaultValue={emprendimiento.telefono || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Email</span><input name="email" defaultValue={emprendimiento.email || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Web</span><input name="web" defaultValue={emprendimiento.web || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Red Social 1</span><input name="redSocial1" defaultValue={emprendimiento.redSocial1 || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Red Social 2</span><input name="redSocial2" defaultValue={emprendimiento.redSocial2 || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Tiene Personal</span><input type="checkbox" name="tienePersonal" defaultChecked={emprendimiento.tienePersonal || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Cantidad Personal</span><input type="number" name="cantidadPersonal" defaultValue={emprendimiento.cantidadPersonal || 0} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Modo Incorporación Personal (separado por coma)</span><input name="modoIncorporacionPersonal" defaultValue={Array.isArray(emprendimiento.modoIncorporacionPersonal) ? emprendimiento.modoIncorporacionPersonal.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Planea Incorporar Personal</span><input name="planeaIncorporarPersonal" defaultValue={emprendimiento.planeaIncorporarPersonal || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Percepción Planta Personal</span><input name="percepcionPlantaPersonal" defaultValue={emprendimiento.percepcionPlantaPersonal || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Requiere Capacitacion</span><input type="checkbox" name="requiereCapacitacion" defaultChecked={emprendimiento.requiereCapacitacion || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Tipos Capacitacion (separado por coma)</span><input name="tiposCapacitacion" defaultValue={Array.isArray(emprendimiento.tiposCapacitacion) ? emprendimiento.tiposCapacitacion.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Otros Tipos Capacitacion</span><input name="otrosTiposCapacitacion" defaultValue={emprendimiento.otrosTiposCapacitacion || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Requiere Consultoria</span><input type="checkbox" name="requiereConsultoria" defaultChecked={emprendimiento.requiereConsultoria || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Tipos Consultoria (separado por coma)</span><input name="tiposConsultoria" defaultValue={Array.isArray(emprendimiento.tiposConsultoria) ? emprendimiento.tiposConsultoria.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Otros Tipos Consultoria</span><input name="otrosTiposConsultoria" defaultValue={emprendimiento.otrosTiposConsultoria || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Requiere Herramientas Tecno</span><input type="checkbox" name="requiereHerramientasTecno" defaultChecked={emprendimiento.requiereHerramientasTecno || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Tipos Herramientas Tecno (separado por coma)</span><input name="tiposHerramientasTecno" defaultValue={Array.isArray(emprendimiento.tiposHerramientasTecno) ? emprendimiento.tiposHerramientasTecno.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Otras Herramientas Tecno</span><input name="otrasHerramientasTecno" defaultValue={emprendimiento.otrasHerramientasTecno || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Usa Redes Sociales</span><input type="checkbox" name="usaRedesSociales" defaultChecked={emprendimiento.usaRedesSociales || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Tipos Redes Sociales (separado por coma)</span><input name="tiposRedesSociales" defaultValue={Array.isArray(emprendimiento.tiposRedesSociales) ? emprendimiento.tiposRedesSociales.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Usa Medios Pago Electrónicos</span><input type="checkbox" name="usaMediosPagoElectronicos" defaultChecked={emprendimiento.usaMediosPagoElectronicos || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Canales Comercialización (separado por coma)</span><input name="canalesComercializacion" defaultValue={Array.isArray(emprendimiento.canalesComercializacion) ? emprendimiento.canalesComercializacion.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Otros Canales Comercialización</span><input name="otrosCanalesComercializacion" defaultValue={emprendimiento.otrosCanalesComercializacion || ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Posee Sucursales</span><input type="checkbox" name="poseeSucursales" defaultChecked={emprendimiento.poseeSucursales || false} /></label>
-                        <label className="block"><span className="text-sm font-medium">Cantidad Sucursales</span><input type="number" name="cantidadSucursales" defaultValue={emprendimiento.cantidadSucursales || 0} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Ubicación Sucursales (separado por coma)</span><input name="ubicacionSucursales" defaultValue={Array.isArray(emprendimiento.ubicacionSucursales) ? emprendimiento.ubicacionSucursales.join(",") : ""} className="input w-full" /></label>
-                        <label className="block"><span className="text-sm font-medium">Planea Abrir Sucursal</span><input type="checkbox" name="planeaAbrirSucursal" defaultChecked={emprendimiento.planeaAbrirSucursal || false} /></label>
-                        {/* Mapa para seleccionar ubicación */}
-                        <div className="mt-4">
-                          <span className="text-sm font-medium mb-2 block">Selecciona la ubicación en el mapa</span>
-                          <div className="h-64 rounded-lg overflow-hidden bg-gray-100 flex items-center justify-center">
-                            <MapContainer
-                              center={editUbicacion ? [editUbicacion.lat, editUbicacion.lng] : [-34.61, -58.38]}
-                              zoom={14}
-                              style={{ height: "100%", width: "100%" }}
-                              scrollWheelZoom={true}
-                            >
-                              <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                              <Marker
-                                position={editUbicacion ? [editUbicacion.lat, editUbicacion.lng] : [-34.61, -58.38]}
-                                draggable={true}
-                                icon={markerIcon}
-                                eventHandlers={{
-                                  dragend: (e) => {
-                                    const marker = e.target;
-                                    const pos = marker.getLatLng();
-                                    setEditUbicacion({ lat: pos.lat, lng: pos.lng });
-                                  },
-                                }}
-                              >
-                                <Popup>Arrastra el marcador para seleccionar la ubicación</Popup>
-                              </Marker>
-                            </MapContainer>
-                          </div>
-                          <div className="mt-2 text-xs text-gray-500">
-                            {editUbicacion
-                              ? <>Lat: {editUbicacion.lat.toFixed(6)}, Lng: {editUbicacion.lng.toFixed(6)}</>
-                              : <>No hay ubicación seleccionada</>
-                            }
-                          </div>
-                        </div>
-                      </div>
-                      {editError && <div className="text-red-500 mt-2">{editError}</div>}
-                      <div className="flex justify-end gap-2 mt-6">
-                        <button type="button" className="btn-outline" onClick={() => setShowEdit(false)} disabled={editLoading}>Cancelar</button>
-                        <button type="submit" className="btn-primary" disabled={editLoading}>{editLoading ? "Guardando..." : "Guardar Cambios"}</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>
