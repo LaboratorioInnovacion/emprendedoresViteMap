@@ -42,7 +42,7 @@ const Page = () => {
           <h1 className="text-center md:text-left">Herramientas de Apoyo</h1>
           <button className="btn btn-primary" onClick={() => router.push('/herramientas/new')}>Nueva herramienta</button>
         </div>
-        <h2 className="mb-4 text-center text-gray-700">Listado de herramientas</h2>
+        <h2 className="mb-4 text-center text-white">Listado de herramientas</h2>
         {loading ? <p className="text-center">Cargando...</p> : (
           <div className="overflow-x-auto">
             <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700">
@@ -62,7 +62,8 @@ const Page = () => {
                   <th className="px-2 py-2">Fin Vigencia</th>
                   <th className="px-2 py-2">Cupo</th>
                   <th className="px-2 py-2">Observaciones</th>
-                  <th className="px-2 py-2">Acciones</th>
+                  <th className="px-2 py-2">Eliminar</th>
+                  <th className="px-2 py-2">Editar</th>
                 </tr>
               </thead>
               <tbody>
