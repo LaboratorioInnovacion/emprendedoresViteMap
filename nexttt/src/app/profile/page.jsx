@@ -108,6 +108,9 @@ const getStatusBadgeClass = (status) => {
           setError("Error de red: " + err.message);
           setLoading(false);
         });
+    } else if (session) {
+      // Si hay sesión pero no emprendedorId, dejar de cargar y mostrar mensaje
+      setLoading(false);
     }
   }, [session]);
 

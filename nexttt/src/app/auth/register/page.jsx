@@ -1,11 +1,22 @@
 // Componente register
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterForm() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (success) {
+      const timeout = setTimeout(() => {
+        router.push('/auth/login');
+      }, 1200);
+      return () => clearTimeout(timeout);
+    }
+  }, [success, router]);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -34,7 +45,7 @@ export default function RegisterForm() {
       <input
         type="email"
         placeholder="Email"
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded text-black"
         value={form.email}
         onChange={(e) => setForm({ ...form, email: e.target.value })}
         required
@@ -42,7 +53,7 @@ export default function RegisterForm() {
       <input
         type="password"
         placeholder="Contraseña"
-        className="w-full p-2 border rounded"
+        className="w-full p-2 border rounded text-black"
         value={form.password}
         onChange={(e) => setForm({ ...form, password: e.target.value })}
         required

@@ -1,0 +1,4 @@
+primero la persona se registra en la app,
+despues modifica los datos en perfil, y crea el emprendimiento
+
+como asignamos las herramientas

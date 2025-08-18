@@ -172,7 +172,7 @@ function NuevoEmprendimientoPage() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto p-6 space-y-4">
+    <form onSubmit={handleSubmit} className="max-w-6xl mx-auto p-6 space-y-4">
       {/* Campo oculto para emprendedorId */}
       <input type="hidden" name="emprendedorId" value={user.emprendedorId} />
       <h2 className="text-xl font-bold mb-4">Nuevo Emprendimiento</h2>

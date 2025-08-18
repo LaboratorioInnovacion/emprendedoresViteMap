@@ -35,7 +35,8 @@ export default function LoginPage() {
           type="email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          style={{ width: "100%", padding: "0.5rem" }}
+          // style={{ width: "100%", padding: "0.5rem" }}
+          className="w-full p-2 border rounded text-black"
         />
       </div>
       <div style={{ marginBottom: "1rem" }}>
@@ -44,14 +45,21 @@ export default function LoginPage() {
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          style={{ width: "100%", padding: "0.5rem" }}
+          // style={{ width: "100%", padding: "0.5rem" }}
+          className="w-full p-2 border rounded text-black"
         />
       </div>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <button onClick={handleLogin} style={{ padding: "0.5rem 1rem" }}>
+      <button onClick={handleLogin} style={{ padding: "0.5rem 1rem" }} className="bg-blue-600 text-white rounded">
         Entrar
       </button>
-      <p>
+      <p className="mt-4 text-sm text-gray-500">
+        ¿No tienes cuenta?{" "}
+        <a href="/auth/register" className="text-blue-600 hover:underline">
+          Regístrate aquí
+        </a>
+      </p>
+      <p className="mt-6">
         ADMIN : asd@asd.com contra: asdasd <br />
         SUPERUSER: zxc@zxc.com contra: zxc <br />
         EMPRENDEDOR :qwerty@qwerty.com contra: qwerty

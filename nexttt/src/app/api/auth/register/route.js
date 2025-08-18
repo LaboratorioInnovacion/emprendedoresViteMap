@@ -1,5 +1,6 @@
+
 import { NextResponse } from 'next/server';
-import prisma from "../../../../lib/prisma.js";
+import prisma from "../../../../lib/prisma";
 import bcrypt from 'bcryptjs';
 
 export async function POST(req) {
@@ -9,12 +10,27 @@ export async function POST(req) {
   if (existe) return NextResponse.json({ error: 'Email ya registrado' }, { status: 400 });
 
   const hashed = await bcrypt.hash(password, 10);
+
+  // Crear el emprendedor vacío
+  const nuevoEmprendedor = await prisma.emprendedor.create({
+    data: {
+      nombre: '',
+      apellido: '',
+      dni: '',
+      cuil: '',
+      fechaNacimiento: new Date(),
+      tiposSustento: [],
+    }
+  });
+
+  // Crear el usuario y asociar el emprendedorId
   const nuevo = await prisma.usuario.create({
     data: {
       email,
       password: hashed,
       rol: 'EMPRENDEDOR',
-      activo: true
+      activo: true,
+      emprendedorId: nuevoEmprendedor.id
     }
   });
 
@@ -24,7 +40,8 @@ export async function POST(req) {
       id: nuevo.id,
       email: nuevo.email,
       rol: nuevo.rol,
-      activo: nuevo.activo
+      activo: nuevo.activo,
+      emprendedorId: nuevo.emprendedorId
     }
   });
 }
