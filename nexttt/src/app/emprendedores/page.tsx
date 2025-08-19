@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
 import { useEmpre } from "../../context/EmpreContext";
-import BusinessMap from "../../components/map/BusinessMap";
+import LeafletMapEmprendedores from "../../components/map/LeafletMapEmprendedores";
 
 const niveles = [
   "Primario",
@@ -45,12 +45,16 @@ const EmprendedoresPage = () => {
 
   // Filtrar por nombre/apellido, nivel de estudios y estado
   const filtered = emprendedores.filter((emp) => {
-    const nombreCompleto = `${emp.nombre || ""} ${emp.apellido || ""}`.toLowerCase();
+    const nombreCompleto = `${emp.nombre || ""} ${
+      emp.apellido || ""
+    }`.toLowerCase();
     const nivel = emp.nivelEstudios || "Otro";
     const estado = emp.estado || "active";
     const matchesSearch = nombreCompleto.includes(searchTerm.toLowerCase());
-    const matchesNivel = selectedNiveles.length === 0 || selectedNiveles.includes(nivel);
-    const matchesEstado = selectedEstados.length === 0 || selectedEstados.includes(estado);
+    const matchesNivel =
+      selectedNiveles.length === 0 || selectedNiveles.includes(nivel);
+    const matchesEstado =
+      selectedEstados.length === 0 || selectedEstados.includes(estado);
     return matchesSearch && matchesNivel && matchesEstado;
   });
 
@@ -62,13 +66,33 @@ const EmprendedoresPage = () => {
 
   // Definir viewport inicial para el mapa (puedes ajustar el centro y zoom según tu región)
   const defaultViewport = {
-    center: [ -28.46957, -65.78524 ] as [number, number],
+    center: [-28.46957, -65.78524] as [number, number],
     zoom: 12,
   };
 
   return (
     <div className="space-y-4">
-
+            <div className="mb-4">
+        <LeafletMapEmprendedores
+          emprendedores={emprendedores.map((emp) => ({
+            id: emp.id,
+            name: `${emp.nombre} ${emp.apellido}`,
+            type: emp.nivelEstudios || "Otro",
+            address: `${emp.departamento}, ${emp.direccion}`,
+            location:
+              emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
+                ? emp.ubicacion
+                : { lat: -32.9471, lng: -60.6306 },
+            imageUrl: emp.imageUrl,
+            status: emp.estado || "active",
+            contact: emp.contact || {},
+            description: emp.descripcion || "",
+            createdAt: emp.createdAt || null,
+            updatedAt: emp.updatedAt || null,
+          }))}
+          defaultViewport={defaultViewport}
+        />
+      </div>
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -79,7 +103,7 @@ const EmprendedoresPage = () => {
                 type="text"
                 placeholder="Buscar emprendedor..."
                 value={searchTerm}
-                onChange={e => setSearchTerm(e.target.value)}
+                onChange={(e) => setSearchTerm(e.target.value)}
                 className="input pl-9 w-full sm:w-60"
               />
               <Search
@@ -97,7 +121,7 @@ const EmprendedoresPage = () => {
                 <span className="ml-2 sm:hidden">Filtros</span>
               </button>
               <button
-                onClick={() => router.push('/emprendedores/nuevo')}
+                onClick={() => router.push("/emprendedores/nuevo")}
                 className="btn-primary flex-1 sm:flex-none justify-center"
               >
                 <Plus size={18} className="sm:mr-1" />
@@ -125,7 +149,9 @@ const EmprendedoresPage = () => {
               <h4 className="font-medium mb-2">Nivel de estudios</h4>
               <div className="flex flex-wrap gap-2">
                 {niveles.map((nivel) => {
-                  const count = emprendedores.filter((e) => (e.nivelEstudios || "Otro") === nivel).length;
+                  const count = emprendedores.filter(
+                    (e) => (e.nivelEstudios || "Otro") === nivel
+                  ).length;
                   return (
                     <button
                       key={nivel}
@@ -142,7 +168,10 @@ const EmprendedoresPage = () => {
                           : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
                       }`}
                     >
-                      {nivel} <span className="ml-1 text-xs text-gray-500">({count})</span>
+                      {nivel}{" "}
+                      <span className="ml-1 text-xs text-gray-500">
+                        ({count})
+                      </span>
                     </button>
                   );
                 })}
@@ -179,12 +208,18 @@ const EmprendedoresPage = () => {
       {/* Cards para mobile */}
       <div className="block sm:hidden space-y-4">
         {loading ? (
-          <div className="text-center py-8 text-gray-500 dark:text-gray-400">Cargando...</div>
+          <div className="text-center py-8 text-gray-500 dark:text-gray-400">
+            Cargando...
+          </div>
         ) : error ? (
           <div className="text-center py-8 text-red-500">{error}</div>
         ) : filtered.length > 0 ? (
           filtered.map((emp) => (
-            <Link key={emp.id} href={`/emprendedores/${emp.id}`} className="cardempre hover:shadow-lg transition-shadow cursor-pointer block">
+            <Link
+              key={emp.id}
+              href={`/emprendedores/${emp.id}`}
+              className="cardempre hover:shadow-lg transition-shadow cursor-pointer block"
+            >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <div className="h-16 w-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
@@ -202,16 +237,21 @@ const EmprendedoresPage = () => {
                       </span>
                     </div>
                     <span
-                      className={`badge ${getStatusBadgeClass(emp.estado || "active") } flex items-center text-xs`}
+                      className={`badge ${getStatusBadgeClass(
+                        emp.estado || "active"
+                      )} flex items-center text-xs`}
                     >
                       <Activity size={12} className="mr-1" />
-                      {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
+                      {(emp.estado || "Activo").charAt(0).toUpperCase() +
+                        (emp.estado || "Activo").slice(1)}
                     </span>
                   </div>
                   <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center">
                       <MapPin size={14} className="mr-1 flex-shrink-0" />
-                      <span className="truncate">{emp.departamento}, {emp.direccion}</span>
+                      <span className="truncate">
+                        {emp.departamento}, {emp.direccion}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -230,40 +270,81 @@ const EmprendedoresPage = () => {
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nombre</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Nivel de estudios</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Departamento</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Dirección</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Estado</th>
-              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Fecha Nacimiento</th>
-              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Acciones</th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Nombre
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Nivel de estudios
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Departamento
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Dirección
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Estado
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Fecha Nacimiento
+              </th>
+              <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                Acciones
+              </th>
             </tr>
           </thead>
           <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">Cargando...</td>
+                <td
+                  colSpan={7}
+                  className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                >
+                  Cargando...
+                </td>
               </tr>
             ) : error ? (
               <tr>
-                <td colSpan={7} className="px-6 py-4 text-center text-red-500">{error}</td>
+                <td colSpan={7} className="px-6 py-4 text-center text-red-500">
+                  {error}
+                </td>
               </tr>
             ) : filtered.length > 0 ? (
               filtered.map((emp) => (
-                <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.nombre} {emp.apellido}</td>
+                <tr
+                  key={emp.id}
+                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className="badge badge-secondary capitalize">{emp.nivelEstudios}</span>
+                    {emp.nombre} {emp.apellido}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.departamento}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.direccion}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`badge ${getStatusBadgeClass(emp.estado || "active")} flex items-center`}>
-                      <Activity size={12} className="mr-1" />
-                      {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
+                    <span className="badge badge-secondary capitalize">
+                      {emp.nivelEstudios}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.fechaNacimiento ? new Date(emp.fechaNacimiento).toLocaleDateString() : '-'}</td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {emp.departamento}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {emp.direccion}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span
+                      className={`badge ${getStatusBadgeClass(
+                        emp.estado || "active"
+                      )} flex items-center`}
+                    >
+                      <Activity size={12} className="mr-1" />
+                      {(emp.estado || "Activo").charAt(0).toUpperCase() +
+                        (emp.estado || "Activo").slice(1)}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    {emp.fechaNacimiento
+                      ? new Date(emp.fechaNacimiento).toLocaleDateString()
+                      : "-"}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link
                       href={`/emprendedores/${emp.id}`}
@@ -276,7 +357,10 @@ const EmprendedoresPage = () => {
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
+                <td
+                  colSpan={7}
+                  className="px-6 py-4 text-center text-gray-500 dark:text-gray-400"
+                >
                   No se encontraron emprendedores.
                 </td>
               </tr>
@@ -284,27 +368,8 @@ const EmprendedoresPage = () => {
           </tbody>
         </table>
       </div>
-            {/* Mapa de emprendedores */}
-      <div className="mb-4">
-        <BusinessMap
-          emprendedores={emprendedores.map(emp => ({
-            id: emp.id,
-            name: `${emp.nombre} ${emp.apellido}`,
-            type: emp.nivelEstudios || "Otro",
-            address: `${emp.departamento}, ${emp.direccion}`,
-            location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
-              ? emp.ubicacion
-              : { lat: -32.9471, lng: -60.6306 },
-            imageUrl: emp.imageUrl,
-            status: emp.estado || "active",
-            contact: emp.contact || {},
-            description: emp.descripcion || "",
-            createdAt: emp.createdAt || null,
-            updatedAt: emp.updatedAt || null,
-          }))}
-          defaultViewport={defaultViewport}
-        />
-      </div>
+      {/* Mapa de emprendedores */}
+
     </div>
   );
 };

@@ -16,6 +16,7 @@ function RecentBusinessCard({ business }) {
     }
   };
   
+  console.log(JSON.stringify(business, null, 2))
 
   return (
     <div className="card hover:shadow-lg transition-shadow">
@@ -50,6 +51,7 @@ function RecentBusinessCard({ business }) {
 
             <div className="flex items-center text-sm text-gray-600 dark:text-gray-400">
               <Phone size={14} className="mr-1 flex-shrink-0" />
+              {/* <span>{business.contact.phone}</span> */}
               <span>{business.contact.phone}</span>
             </div>
 

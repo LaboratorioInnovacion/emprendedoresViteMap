@@ -37,10 +37,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   onLocationSelect,
   selectionMode = false,
 }) => {
-  // Estado para el término de búsqueda en el input
-  const [searchTerm, setSearchTerm] = useState("");
-  // Estado para los tipos de negocio seleccionados en los filtros
-  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
+    // Este componente no tiene filtros ni buscador
   // Estado para la ubicación seleccionada (en modo selección)
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
   // Estado para la instancia de Leaflet (necesario para crear iconos personalizados)
@@ -71,16 +68,8 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
     });
   };
 
-  // Filtra los negocios según el término de búsqueda y los tipos seleccionados
-  const filteredBusinesses = emprendedores.filter((business) => {
-    const matchesSearch =
-      business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      business.address.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType =
-      selectedTypes.length === 0 || selectedTypes.includes(business.type);
-    return matchesSearch && matchesType;
-  });
+  // Mostrar todos los negocios recibidos
+  const filteredBusinesses = emprendedores;
 
   // Maneja la selección de una ubicación en el mapa (modo selección)
   const handleLocationSelect = (lat: number, lng: number) => {
@@ -114,39 +103,12 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   // Render principal del componente
   return (
     <div>
-      {/* Encabezado y barra de búsqueda */}
+      {/* Título simple */}
       <div className="p-4 bg-white dark:bg-gray-800 rounded-t-lg border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <MapPin size={20} className="text-primary-600 dark:text-primary-400" />
-          <h2 className="text-lg font-medium">Mapa Negocios</h2>
+          <h2 className="text-lg font-medium">Mapa de Emprendedores</h2>
         </div>
-        <div className="relative">
-          {/* Input de búsqueda de negocios */}
-          <input
-            type="text"
-            placeholder="Buscar negocios o ubicaciones..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input pl-9 w-full"
-          />
-          {/* Icono de búsqueda */}
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-          {/* Botón para limpiar el input */}
-          {searchTerm && (
-            <button
-              onClick={() => setSearchTerm("")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-            >
-              <X size={16} />
-            </button>
-          )}
-        </div>
-        {/* Mensaje de ayuda en modo selección de ubicación */}
-        {selectionMode && (
-          <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Click on the map to select a location for your business.
-          </div>
-        )}
       </div>
       {/* Contenedor del mapa con altura fija */}
       <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden w-full border-x border-b border-gray-200 dark:border-gray-700">
@@ -276,41 +238,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
           </DynamicMapContainer>
         )}
       </div>
-      {/* Filtros de rubros/tipos de negocio */}
-      <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-medium mb-2">Rubros</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {/* Botones de filtro por tipo de negocio, con color e indicador de selección */}
-          {Object.entries(businessTypeColors).map(([type, color]) => {
-            const isSelected = selectedTypes.includes(type);
-            return (
-              <button
-                key={type}
-                onClick={() => {
-                  setSelectedTypes((prev) =>
-                    isSelected
-                      ? prev.filter((t) => t !== type)
-                      : [...prev, type]
-                  );
-                }}
-                className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer 
-          ${
-            isSelected
-              ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-primary-400"
-              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
-          }`}
-              >
-                {/* Círculo de color del tipo */}
-                <div
-                  className="h-3 w-3 rounded-full mr-2"
-                  style={{ backgroundColor: color }}
-                ></div>
-                <span className="capitalize">{type}</span>
-              </button>
-            );
-          })}
-        </div>
-      </div>
+  {/* Sin filtros ni botones de rubros */}
     </div>
   );
 };

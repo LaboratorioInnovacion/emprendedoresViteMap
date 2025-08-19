@@ -5,12 +5,7 @@ import { useRouter } from "next/navigation";
 import dynamic from 'next/dynamic'; // Importa componentes de forma dinámica para evitar problemas de SSR
 import { useMapEvents } from 'react-leaflet';
 import { Business, BusinessType, MapViewport } from "../../types";
-// Filtros principales y colores
-const filtrosSectoriales = [
-  { key: "Produccion", label: "Producción", color: "#E11D48" },
-  { key: "Comercio", label: "Comercio", color: "#2563EB" },
-  { key: "Servicio", label: "Servicios", color: "#059669" },
-];
+import { businessTypeColors } from "../../data/mockData";
 import {
   MapPin,
   Search,
@@ -47,8 +42,8 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   const router = useRouter();
   // Estado para el término de búsqueda en el input
   const [searchTerm, setSearchTerm] = useState("");
-  // Estado para los sectores seleccionados en los filtros
-  const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
+  // Estado para los tipos de negocio seleccionados en los filtros
+  const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   // Estado para la ubicación seleccionada (en modo selección)
   const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
   // Estado para la instancia de Leaflet (necesario para crear iconos personalizados)
@@ -63,12 +58,10 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
     loadLeaflet();
   }, []);
 
-  // Crea un icono SVG personalizado para cada sector principal
-  const createBusinessIcon = (actividadPrincipal: string) => {
+  // Crea un icono SVG personalizado para cada tipo de negocio
+  const createBusinessIcon = (type: BusinessType) => {
     if (!L) return undefined; // Espera a que Leaflet esté cargado
-    // Buscar el color según el sector principal
-    const sector = filtrosSectoriales.find(f => (actividadPrincipal || "").startsWith(f.key));
-    const color = sector ? sector.color : "#4B5563";
+    const color = businessTypeColors[type]; // Color según el tipo
     // SVG como string para el icono
     const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='${color}' stroke='white' stroke-width='2'/></svg>`;
     const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
@@ -81,16 +74,15 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
     });
   };
 
-  // Filtra los negocios según el término de búsqueda y el sector principal
+  // Filtra los negocios según el término de búsqueda y los tipos seleccionados
   const filteredBusinesses = emprendedores.filter((business) => {
     const matchesSearch =
       business.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       business.type.toLowerCase().includes(searchTerm.toLowerCase()) ||
       business.address.toLowerCase().includes(searchTerm.toLowerCase());
-    // Determinar el sector principal por prefijo
-    const sector = filtrosSectoriales.find(f => (business.actividadPrincipal || "").startsWith(f.key))?.key;
-    const matchesSector = selectedSectores.length === 0 || (sector && selectedSectores.includes(sector));
-    return matchesSearch && matchesSector;
+    const matchesType =
+      selectedTypes.length === 0 || selectedTypes.includes(business.type);
+    return matchesSearch && matchesType;
   });
 
   // Maneja la selección de una ubicación en el mapa (modo selección)
@@ -196,7 +188,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
                 key={business.id}
                 position={[business.location.lat, business.location.lng]}
                 // @ts-expect-error icon es válido en react-leaflet v4
-                icon={createBusinessIcon(business.actividadPrincipal)}
+                icon={createBusinessIcon(business.type)}
               >
                 {/* Popup con detalles del negocio */}
                 <DynamicPopup>
@@ -302,20 +294,21 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
           </DynamicMapContainer>
         )}
       </div>
-      {/* Filtros visuales de sector principal */}
+      {/* Filtros de rubros/tipos de negocio */}
       <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-        <h3 className="text-sm font-medium mb-2">Sector</h3>
-        <div className="grid grid-cols-3 gap-2">
-          {filtrosSectoriales.map(({ key, label, color }) => {
-            const isSelected = selectedSectores.includes(key);
+        <h3 className="text-sm font-medium mb-2">Rubros</h3>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          {/* Botones de filtro por tipo de negocio, con color e indicador de selección */}
+          {Object.entries(businessTypeColors).map(([type, color]) => {
+            const isSelected = selectedTypes.includes(type);
             return (
               <button
-                key={key}
+                key={type}
                 onClick={() => {
-                  setSelectedSectores((prev) =>
+                  setSelectedTypes((prev) =>
                     isSelected
-                      ? prev.filter((a) => a !== key)
-                      : [...prev, key]
+                      ? prev.filter((t) => t !== type)
+                      : [...prev, type]
                   );
                 }}
                 className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer 
@@ -325,11 +318,12 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
               : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
           }`}
               >
+                {/* Círculo de color del tipo */}
                 <div
                   className="h-3 w-3 rounded-full mr-2"
-                  style={{ backgroundColor: color as string }}
+                  style={{ backgroundColor: color }}
                 ></div>
-                <span className="capitalize">{label}</span>
+                <span className="capitalize">{type}</span>
               </button>
             );
           })}

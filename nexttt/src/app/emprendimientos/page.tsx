@@ -3,19 +3,16 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Search, Filter, Plus, Activity, MapPin } from "lucide-react";
 import BusinessMap from "../../components/map/BusinessMap";
+
+// Filtros principales y colores
+const filtrosSectoriales = [
+  { key: "Produccion", label: "Producción", color: "#E11D48" },
+  { key: "Comercio", label: "Comercio", color: "#2563EB" },
+  { key: "Servicio", label: "Servicios", color: "#059669" },
+];
 import { useEmprendimientos } from "../../context/EmprendimientosContext";
 
-const rubros = [
-  "Gastronomía",
-  "Servicios",
-  "Indumentaria",
-  "Tecnología",
-  "Educación",
-  "Artesanía",
-  "Turismo",
-  "Salud",
-  "Otro",
-];
+
 
 const estados = ["active", "inactive", "pending"];
 
@@ -46,20 +43,21 @@ const EmprendimientosPage = () => {
     zoom: 12,
   };
 
-  // Filtrado de emprendimientos
+  // Filtrado de emprendimientos (por sector principal)
   const filtered = allemprendimientos.filter((emp) => {
     const nombreCompleto = `${emp.emprendedor?.nombre || ""} ${emp.emprendedor?.apellido || ""}`.toLowerCase();
     const denominacion = (emp.denominacion || "").toLowerCase();
-    const rubro = (emp.rubro || "Otro");
+    const actividad = emp.actividadPrincipal || "Otro";
     const estado = (emp.estado || "active");
     const matchesSearch =
       nombreCompleto.includes(searchTerm.toLowerCase()) ||
       denominacion.includes(searchTerm.toLowerCase());
-    const matchesRubro =
-      selectedRubros.length === 0 || selectedRubros.includes(rubro);
+    // Determinar el sector principal por prefijo
+    const sector = filtrosSectoriales.find(f => actividad.startsWith(f.key))?.key;
+    const matchesSector = selectedRubros.length === 0 || (sector && selectedRubros.includes(sector));
     const matchesEstado =
       selectedEstados.length === 0 || selectedEstados.includes(estado);
-    return matchesSearch && matchesRubro && matchesEstado;
+    return matchesSearch && matchesSector && matchesEstado;
   });
 
   const resetFilters = () => {
@@ -70,13 +68,44 @@ const EmprendimientosPage = () => {
 
   return (
     <div className="space-y-4">
-      {/* Mapa de emprendimientos */}
-      <div className="mb-4">
+      {/* Filtros visuales de sector principal */}
+      <div className="mb-2">
+        <div className="flex flex-wrap gap-2 mb-2">
+          {filtrosSectoriales.map(({ key, label, color }) => {
+            const isSelected = selectedRubros.includes(key);
+            return (
+              <button
+                key={key}
+                onClick={() =>
+                  setSelectedRubros((prev) =>
+                    isSelected
+                      ? prev.filter((a) => a !== key)
+                      : [...prev, key]
+                  )
+                }
+                className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer 
+                  ${
+                    isSelected
+                      ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-primary-400"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
+                  }`}
+              >
+                <div
+                  className="h-3 w-3 rounded-full mr-2"
+                  style={{ backgroundColor: color as string }}
+                ></div>
+                <span className="capitalize">{label}</span>
+              </button>
+            );
+          })}
+        </div>
+        {/* Mapa de emprendimientos */}
         <BusinessMap
           emprendedores={allemprendimientos.map(emp => ({
             id: emp.id,
             name: emp.denominacion,
-            type: emp.rubro || "Otro",
+            type: emp.actividadPrincipal || "Otro",
+            actividadPrincipal: emp.actividadPrincipal || "Otro",
             address: emp.direccion,
             location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
               ? emp.ubicacion
@@ -148,33 +177,7 @@ const EmprendimientosPage = () => {
             </button>
           </div>
           <div className="space-y-6">
-            <div>
-              <h4 className="font-medium mb-2">Rubro</h4>
-              <div className="flex flex-wrap gap-2">
-                {rubros.map((rubro) => {
-                  const count = allemprendimientos.filter((e) => (e.rubro || "Otro") === rubro).length;
-                  return (
-                    <button
-                      key={rubro}
-                      onClick={() =>
-                        setSelectedRubros((prev) =>
-                          prev.includes(rubro)
-                            ? prev.filter((r) => r !== rubro)
-                            : [...prev, rubro]
-                        )
-                      }
-                      className={`badge text-xs py-1.5 px-3 capitalize ${
-                        selectedRubros.includes(rubro)
-                          ? "bg-primary-100 text-primary-800 dark:bg-primary-900 dark:text-primary-300"
-                          : "bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-300"
-                      }`}
-                    >
-                      {rubro} <span className="ml-1 text-xs text-gray-500">({count})</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+
             <div>
               <h4 className="font-medium mb-2">Estado</h4>
               <div className="flex flex-wrap gap-2">
