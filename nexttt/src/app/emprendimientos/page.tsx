@@ -70,36 +70,6 @@ const EmprendimientosPage = () => {
     <div className="space-y-4">
       {/* Filtros visuales de sector principal */}
       <div className="mb-2">
-        <div className="flex flex-wrap gap-2 mb-2">
-          {filtrosSectoriales.map(({ key, label, color }) => {
-            const isSelected = selectedRubros.includes(key);
-            return (
-              <button
-                key={key}
-                onClick={() =>
-                  setSelectedRubros((prev) =>
-                    isSelected
-                      ? prev.filter((a) => a !== key)
-                      : [...prev, key]
-                  )
-                }
-                className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer 
-                  ${
-                    isSelected
-                      ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-primary-400"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
-                  }`}
-              >
-                <div
-                  className="h-3 w-3 rounded-full mr-2"
-                  style={{ backgroundColor: color as string }}
-                ></div>
-                <span className="capitalize">{label}</span>
-              </button>
-            );
-          })}
-        </div>
-        {/* Mapa de emprendimientos */}
         <BusinessMap
           emprendedores={allemprendimientos.map(emp => ({
             id: emp.id,
@@ -130,7 +100,7 @@ const EmprendimientosPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <h2 className="text-2xl font-bold">Emprendimientos</h2>
           <div className="flex flex-col sm:flex-row gap-2">
-            <div className="relative flex-1 sm:flex-none">
+            {/* <div className="relative flex-1 sm:flex-none">
               <input
                 type="text"
                 placeholder="Buscar por emprendedor o denominación..."
@@ -142,7 +112,7 @@ const EmprendimientosPage = () => {
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
-            </div>
+            </div> */}
             <div className="flex gap-2">
               <button
                 onClick={() => setShowFilters(!showFilters)}

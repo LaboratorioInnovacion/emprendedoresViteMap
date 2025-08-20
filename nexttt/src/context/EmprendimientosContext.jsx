@@ -12,7 +12,7 @@ export function EmprendimientosProvider({ children }) {
 
 		useEffect(() => {
 			fetchemprendimientosall();
-			console.log("ESTADO ALLEMPRENDIMIENTOS", allemprendimientos);
+			// console.log("ESTADO ALLEMPRENDIMIENTOS", allemprendimientos);
 		}, []);
 
 	// Obtener todos los emprendimientos de el usuario
@@ -38,7 +38,7 @@ export function EmprendimientosProvider({ children }) {
 		try {
 			const res = await fetch("/api/emprendimientos");
 			const data = await res.json();
-			console.log("data",data)
+			// console.log("data",data)
 			setAllemprendimientos(data);
 		} catch (err) {
 			setError("Error al obtener todos los emprendimientos");

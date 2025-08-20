@@ -14,6 +14,13 @@ import {
   Activity,
 } from "lucide-react";
 
+// Rubros/sectores principales (puedes ajustar los valores y colores)
+const filtrosSectoriales = [
+  { key: "Produccion", label: "Producción", color: "#E11D48" },
+  { key: "Comercio", label: "Comercio", color: "#2563EB" },
+  { key: "Servicio", label: "Servicios", color: "#059669" },
+];
+
 // Importa los componentes de react-leaflet de forma dinámica para que solo se carguen en el cliente (evita errores de SSR)
 const DynamicMapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const DynamicTileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
@@ -52,14 +59,13 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
     loadLeaflet();
   }, []);
 
-  // Crea un icono SVG personalizado para cada tipo de negocio
-  const createBusinessIcon = (type: BusinessType) => {
-    if (!L) return undefined; // Espera a que Leaflet esté cargado
-    const color = businessTypeColors[type]; // Color según el tipo
-    // SVG como string para el icono
+  // Crea un icono SVG personalizado para cada tipo/categoría de negocio (igual que en page.tsx)
+  const createBusinessIcon = (type: string) => {
+    if (!L) return undefined;
+    // Usar businessTypeColors como en page.tsx, si no existe usar gris
+    const color = businessTypeColors[type] || "#4B5563";
     const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='${color}' stroke='white' stroke-width='2'/></svg>`;
     const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
-    // Crea el icono de Leaflet
     return new L.Icon({
       iconUrl,
       iconSize: [28, 28],
@@ -68,8 +74,16 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
     });
   };
 
-  // Mostrar todos los negocios recibidos
-  const filteredBusinesses = emprendedores;
+  // Estado para los sectores seleccionados en los filtros
+  const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
+
+  // Filtrar negocios según los sectores seleccionados
+  const filteredBusinesses = emprendedores.filter((business) => {
+    // Determinar el sector principal por prefijo
+    const sector = filtrosSectoriales.find(f => (business.actividadPrincipal || "").startsWith(f.key))?.key;
+    const matchesSector = selectedSectores.length === 0 || (sector && selectedSectores.includes(sector));
+    return matchesSector;
+  });
 
   // Maneja la selección de una ubicación en el mapa (modo selección)
   const handleLocationSelect = (lat: number, lng: number) => {
@@ -110,6 +124,39 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
           <h2 className="text-lg font-medium">Mapa de Emprendedores</h2>
         </div>
       </div>
+      {/* Filtros visuales de sector principal */}
+      <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+        <h3 className="text-sm font-medium mb-2">Sector</h3>
+        <div className="grid grid-cols-3 gap-2">
+          {filtrosSectoriales.map(({ key, label, color }) => {
+            const isSelected = selectedSectores.includes(key);
+            return (
+              <button
+                key={key}
+                onClick={() => {
+                  setSelectedSectores((prev) =>
+                    isSelected
+                      ? prev.filter((a) => a !== key)
+                      : [...prev, key]
+                  );
+                }}
+                className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer 
+          ${
+            isSelected
+              ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-primary-400"
+              : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
+          }`}
+              >
+                <div
+                  className="h-3 w-3 rounded-full mr-2"
+                  style={{ backgroundColor: color as string }}
+                ></div>
+                <span className="capitalize">{label}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
       {/* Contenedor del mapa con altura fija */}
       <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden w-full border-x border-b border-gray-200 dark:border-gray-700">
         {/* Solo renderiza el mapa cuando Leaflet está cargado en el cliente */}
@@ -131,7 +178,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
               <DynamicMarker
                 key={business.id}
                 position={[business.location.lat, business.location.lng]}
-                // @ts-expect-error icon es válido en react-leaflet v4
+                // El color del marcador depende de la categoría/tipo/rubro
                 icon={createBusinessIcon(business.type)}
               >
                 {/* Popup con detalles del negocio */}

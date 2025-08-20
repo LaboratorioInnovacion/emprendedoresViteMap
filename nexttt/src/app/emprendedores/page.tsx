@@ -72,7 +72,7 @@ const EmprendedoresPage = () => {
 
   return (
     <div className="space-y-4">
-            <div className="mb-4">
+      <div className="mb-4">
         <LeafletMapEmprendedores
           emprendedores={emprendedores.map((emp) => ({
             id: emp.id,
@@ -368,8 +368,6 @@ const EmprendedoresPage = () => {
           </tbody>
         </table>
       </div>
-      {/* Mapa de emprendedores */}
-
     </div>
   );
 };

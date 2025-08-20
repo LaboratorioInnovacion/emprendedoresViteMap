@@ -16,6 +16,7 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (session?.user) {
       setRole(session.user.rol); // Asegurate que el rol esté en session.user
+      console.log(session.user)
     }
   }, [session]);
 

@@ -8,8 +8,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 
 function Header({ toggleMobileSidebar }) {
-    const { data: session, status } = useSession();
-  
+  const { data: session, status } = useSession();
+
   const { user, isAuthenticated } = useAuth();
   const isAdmin = canAccess("ADMIN", user?.rol);
   const [darkMode, setDarkMode] = useState(true);
@@ -29,8 +29,8 @@ function Header({ toggleMobileSidebar }) {
   };
 
   useEffect(() => {
-    console.log('session',session)
-    console.log('status',status)
+    // console.log('session',session)
+    // console.log('status',status)
     const savedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
@@ -115,7 +115,8 @@ function Header({ toggleMobileSidebar }) {
                 <div className="px-4 py-2 border-b border-gray-200 dark:border-gray-700">
                   <p className="text-sm font-medium">rol {session.user.rol}</p>
                   <p className="text-xs text-gray-500 dark:text-gray-400">
-                    {session.user.name || session.user.email}
+                    {/* {session.user.name || session.user.email} */}
+                    {session.user.name}
                   </p>
                 </div>
                 <a
