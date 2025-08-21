@@ -39,7 +39,7 @@ const getStatusBadgeClass = (status) => {
     actividadPrincipal: "Produccion_Alimentos_Artesanal",
     tipoEmprendimiento: "Individual",
     direccion: "",
-    ubicacion: { lat: -34.6037, lng: -58.3816 },
+    ubicacion: { lat: -28.6037, lng: -65.3816 },
     telefono: "",
     email: "",
     web: "",
@@ -144,9 +144,12 @@ const getStatusBadgeClass = (status) => {
     setSuccess("");
     const method = form?.id ? "PUT" : "POST";
     const url = form?.id ? `/api/emprendedores/${form.id}` : "/api/emprendedores";
-    // Adaptar la ubicación para Prisma (Bytes)
+    // Adaptar la ubicación para Prisma (Bytes) y convertir cantidadEmprendimientos a número
     const adaptedForm = {
       ...form,
+      cantidadEmprendimientos: form.cantidadEmprendimientos !== undefined && form.cantidadEmprendimientos !== null && form.cantidadEmprendimientos !== ""
+        ? Number(form.cantidadEmprendimientos)
+        : null,
       ubicacion: form.ubicacion ? JSON.stringify(form.ubicacion) : null,
     };
     try {
@@ -266,7 +269,7 @@ const getStatusBadgeClass = (status) => {
           actividadPrincipal: "Produccion_Alimentos_Artesanal",
           tipoEmprendimiento: "Individual",
           direccion: "",
-          ubicacion: { lat: -34.6037, lng: -58.3816 }, // Siempre valores numéricos
+          ubicacion: { lat: -28.6037, lng: -65.3816 }, // Siempre valores numéricos
           telefono: "",
           email: "",
           web: "",
@@ -318,7 +321,7 @@ const getStatusBadgeClass = (status) => {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
-      <div className="w-full max-w-6xl p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col gap-8">
+      <div className="w-full max-w-8xl p-4 sm:p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 flex flex-col gap-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {/* Panel usuario compacto */}
           <div className="flex flex-col items-center justify-center gap-4 p-6 rounded-lg bg-gray-50 dark:bg-gray-900 shadow border border-gray-200 dark:border-gray-800">
@@ -341,31 +344,32 @@ const getStatusBadgeClass = (status) => {
           <div className="flex flex-col gap-6 p-6 rounded-lg bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 justify-center">
             <h3 className="text-xl font-semibold text-primary-700 dark:text-primary-200 mb-2 text-center">{form.id ? "Editar" : "Crear"} perfil de emprendedor</h3>
             <form className="space-y-4" onSubmit={handleSubmit}>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Ingresa tu nombre completo.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="nombre" placeholder="Nombre" value={form.nombre || ""} onChange={handleChange} />
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="nombre" className="text-xs text-gray-500">Nombre</label>
+                  <input id="nombre" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="nombre" placeholder="Nombre" value={form.nombre || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Ingresa tu apellido.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="apellido" placeholder="Apellido" value={form.apellido || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="apellido" className="text-xs text-gray-500">Apellido</label>
+                  <input id="apellido" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="apellido" placeholder="Apellido" value={form.apellido || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Escribe tu número de DNI sin puntos ni espacios.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="dni" placeholder="DNI" value={form.dni || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="dni" className="text-xs text-gray-500">DNI</label>
+                  <input id="dni" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="dni" placeholder="DNI" value={form.dni || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Ingresa tu CUIL/CUIT completo.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="cuil" placeholder="CUIL" value={form.cuil || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="cuil" className="text-xs text-gray-500">CUIL/CUIT</label>
+                  <input id="cuil" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="cuil" placeholder="CUIL" value={form.cuil || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Selecciona tu fecha de nacimiento.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="fechaNacimiento" type="date" value={form.fechaNacimiento?.slice(0, 10) || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="fechaNacimiento" className="text-xs text-gray-500">Fecha de nacimiento</label>
+                  <input id="fechaNacimiento" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="fechaNacimiento" type="date" value={form.fechaNacimiento?.slice(0, 10) || ""} onChange={handleChange} />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Selecciona tu género.</p>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="genero" className="text-xs text-gray-500">Género</label>
                   <select
-                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                    id="genero"
+                    className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
                     name="genero"
                     value={form.genero || ""}
                     onChange={handleChange}
@@ -376,18 +380,19 @@ const getStatusBadgeClass = (status) => {
                     <option value="PrefieroNoDecir">Prefiero no decir</option>
                   </select>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">País de origen.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="paisOrigen" placeholder="País de origen" value={form.paisOrigen || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="paisOrigen" className="text-xs text-gray-500">País de origen</label>
+                  <input id="paisOrigen" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="paisOrigen" placeholder="País de origen" value={form.paisOrigen || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Ciudad de origen.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="ciudadOrigen" placeholder="Ciudad de origen" value={form.ciudadOrigen || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="ciudadOrigen" className="text-xs text-gray-500">Ciudad de origen</label>
+                  <input id="ciudadOrigen" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="ciudadOrigen" placeholder="Ciudad de origen" value={form.ciudadOrigen || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Nivel de estudios alcanzado.</p>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="nivelEstudios" className="text-xs text-gray-500">Nivel de estudios</label>
                   <select
-                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                    id="nivelEstudios"
+                    className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
                     name="nivelEstudios"
                     value={form.nivelEstudios || ""}
                     onChange={handleChange}
@@ -403,10 +408,11 @@ const getStatusBadgeClass = (status) => {
                     <option value="Posgrado">Posgrado</option>
                   </select>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Motivación principal para emprender.</p>
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="motivacionEmprender" className="text-xs text-gray-500">Motivación para emprender</label>
                   <select
-                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                    id="motivacionEmprender"
+                    className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
                     name="motivacionEmprender"
                     value={form.motivacionEmprender || ""}
                     onChange={handleChange}
@@ -419,27 +425,27 @@ const getStatusBadgeClass = (status) => {
                     <option value="Otro">Otro</option>
                   </select>
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Departamento o localidad donde resides.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="departamento" placeholder="Departamento" value={form.departamento || ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="departamento" className="text-xs text-gray-500">Departamento/localidad</label>
+                  <input id="departamento" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="departamento" placeholder="Departamento" value={form.departamento || ""} onChange={handleChange} autoComplete="off" />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">Cantidad de emprendimientos.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="cantidadEmprendimientos" type="number" min="0" value={form.cantidadEmprendimientos ?? ""} onChange={handleChange} />
+                <div className="flex flex-col gap-1">
+                  <label htmlFor="cantidadEmprendimientos" className="text-xs text-gray-500">Cantidad de emprendimientos</label>
+                  <input id="cantidadEmprendimientos" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="cantidadEmprendimientos" type="number" min="0" value={form.cantidadEmprendimientos ?? ""} onChange={handleChange} />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">¿Posee otros sustentos?</p>
-                  <input type="checkbox" name="poseeOtrosSustentos" checked={!!form.poseeOtrosSustentos} onChange={handleChange} className="mr-2" />
-                  <span>{form.poseeOtrosSustentos ? "Sí" : "No"}</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <input type="checkbox" id="poseeOtrosSustentos" name="poseeOtrosSustentos" checked={!!form.poseeOtrosSustentos} onChange={handleChange} className="mr-2" />
+                  <label htmlFor="poseeOtrosSustentos" className="text-xs text-gray-500">¿Posee otros sustentos?</label>
+                  <span className="text-xs">{form.poseeOtrosSustentos ? "Sí" : "No"}</span>
                 </div>
-                <div className="col-span-2">
-                  <p className="text-xs text-gray-500 mb-1">Tipos de sustento (separados por coma).</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="tiposSustento" placeholder="Ej: Trabajo, Jubilación, Otro" value={Array.isArray(form.tiposSustento) ? form.tiposSustento.join(", ") : ""} onChange={e => setForm(prev => ({ ...prev, tiposSustento: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))} />
+                <div className="flex flex-col gap-1 col-span-1 sm:col-span-2">
+                  <label htmlFor="tiposSustento" className="text-xs text-gray-500">Tipos de sustento (separados por coma)</label>
+                  <input id="tiposSustento" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="tiposSustento" placeholder="Ej: Trabajo, Jubilación, Otro" value={Array.isArray(form.tiposSustento) ? form.tiposSustento.join(", ") : ""} onChange={e => setForm(prev => ({ ...prev, tiposSustento: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))} />
                 </div>
-                <div>
-                  <p className="text-xs text-gray-500 mb-1">¿Tiene dependientes económicos?</p>
-                  <input type="checkbox" name="tieneDependientesEconomicos" checked={!!form.tieneDependientesEconomicos} onChange={handleChange} className="mr-2" />
-                  <span>{form.tieneDependientesEconomicos ? "Sí" : "No"}</span>
+                <div className="flex items-center gap-2 mt-2">
+                  <input type="checkbox" id="tieneDependientesEconomicos" name="tieneDependientesEconomicos" checked={!!form.tieneDependientesEconomicos} onChange={handleChange} className="mr-2" />
+                  <label htmlFor="tieneDependientesEconomicos" className="text-xs text-gray-500">¿Tiene dependientes económicos?</label>
+                  <span className="text-xs">{form.tieneDependientesEconomicos ? "Sí" : "No"}</span>
                 </div>
               </div>
               {/* Ubicación */}

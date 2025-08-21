@@ -112,11 +112,11 @@ enum ActividadSectorial {
 
 model Emprendedor {
   id                          Int                 @id @default(autoincrement())
-  nombre                      String
-  apellido                    String
+  nombre                      String?
+  apellido                    String?
   genero                      Genero?
-  dni                         String              @unique
-  cuil                        String              @unique
+  dni                         String?              @unique
+  cuil                        String?              @unique
   fotoDni                     String?
   fechaNacimiento             DateTime
   paisOrigen                  String?

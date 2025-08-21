@@ -220,20 +220,26 @@ const EmprendedoresPage = () => {
               href={`/emprendedores/${emp.id}`}
               className="cardempre hover:shadow-lg transition-shadow cursor-pointer block"
             >
-              <div className="flex items-start gap-4">
+              {/* <div className="flex items-start gap-4"> */}
+              <div className="flex items-start">
                 <div className="flex-shrink-0">
                   <div className="h-16 w-16 rounded-lg bg-primary-100 dark:bg-primary-900 flex items-center justify-center text-primary-600 dark:text-primary-400">
-                    {emp.nombre.charAt(0).toUpperCase()}
+                    {(emp.nombre ? emp.nombre.charAt(0) : "?").toUpperCase()}
                   </div>
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-base font-medium truncate">
-                        {emp.nombre} {emp.apellido}
+                      <h3
+                        className="text-base font-medium truncate max-w-[180px] overflow-hidden whitespace-nowrap block"
+                        title={(emp.nombre || "") + " " + (emp.apellido || "")}
+                      >
+                        {((emp.nombre || "") + " " + (emp.apellido || "")).length > 30
+                          ? ((emp.nombre || "") + " " + (emp.apellido || "")).slice(0, 30) + "..."
+                          : (emp.nombre || "") + " " + (emp.apellido || "")}
                       </h3>
                       <span className="badge badge-secondary text-xs capitalize mt-1">
-                        {emp.nivelEstudios}
+                        {emp.nivelEstudios || "Sin datos"}
                       </span>
                     </div>
                     <span
@@ -242,15 +248,19 @@ const EmprendedoresPage = () => {
                       )} flex items-center text-xs`}
                     >
                       <Activity size={12} className="mr-1" />
-                      {(emp.estado || "Activo").charAt(0).toUpperCase() +
-                        (emp.estado || "Activo").slice(1)}
+                      {(emp.estado ? emp.estado.charAt(0).toUpperCase() + emp.estado.slice(1) : "Activo")}
                     </span>
                   </div>
                   <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
                     <div className="flex items-center">
                       <MapPin size={14} className="mr-1 flex-shrink-0" />
-                      <span className="truncate">
-                        {emp.departamento}, {emp.direccion}
+                      <span
+                        className="truncate max-w-[160px] overflow-hidden whitespace-nowrap block"
+                        title={(emp.departamento || "-") + ', ' + (emp.direccion || "-")}
+                      >
+                        {((emp.departamento || "-") + ', ' + (emp.direccion || "-")).length > 32
+                          ? ((emp.departamento || "-") + ', ' + (emp.direccion || "-")).slice(0, 32) + "..."
+                          : (emp.departamento || "-") + ', ' + (emp.direccion || "-")}
                       </span>
                     </div>
                   </div>
@@ -266,7 +276,7 @@ const EmprendedoresPage = () => {
       </div>
 
       {/* Tabla para desktop */}
-      <div className="hidden sm:block overflow-x-auto rounded-md">
+  <div className="hidden sm:block rounded-md">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700 rounded-md">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>

@@ -69,11 +69,11 @@ const Page = () => {
           </p>
         </div>
         <div className="flex gap-2">
-          <Link href="/BusinessesPage" className="btn-outline">
+          <Link href="/emprendedores" className="btn-outline">
             <Building2 size={18} className="mr-1" />
             Emprendedores
           </Link>
-          <Link href="/MapPage" className="btn-primary">
+          <Link href="/emprendimientos" className="btn-primary">
             <Map size={18} className="mr-1" />
             Explorar Mapa
           </Link>
