@@ -119,17 +119,18 @@ const Page = () => {
             {/* Mapa refactorizado usando DashboardMap */}
             {filteredBusinesses.length > 0 ? (
               <DashboardMap
-                businesses={filteredBusinesses.map(business => ({
-                  ...business,
-                  // Forzar el type a Produccion, Comercio o Servicio si matchea, si no "Otro"
-                  type: (() => {
-                    const actividad = business.actividadPrincipal || business.tipoEmprendimiento || "Otro";
-                    if (actividad.startsWith("Produccion")) return "Produccion";
-                    if (actividad.startsWith("Comercio")) return "Comercio";
-                    if (actividad.startsWith("Servicio")) return "Servicio";
-                    return "Otro";
-                  })(),
-                }))}
+                businesses={filteredBusinesses.map(business => {
+                  // Detectar el sector principal a partir del valor de actividadPrincipal
+                  const actividad = business.actividadPrincipal || "";
+                  let type = "Otro";
+                  if (actividad.startsWith("Produccion")) type = "Produccion";
+                  else if (actividad.startsWith("Comercio")) type = "Comercio";
+                  else if (actividad.startsWith("Servicio")) type = "Servicio";
+                  return {
+                    ...business,
+                    type,
+                  };
+                })}
                 defaultViewport={defaultViewport}
               />
             ) : (

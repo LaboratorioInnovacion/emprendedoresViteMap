@@ -47,10 +47,16 @@ const DashboardMap = ({ businesses, defaultViewport }) => {
         } catch {}
       }
     }
+    // Detectar el sector principal a partir del valor de actividadPrincipal
+    const actividad = business.actividadPrincipal || "";
+    let type = "Otro";
+    if (actividad.startsWith("Produccion")) type = "Produccion";
+    else if (actividad.startsWith("Comercio")) type = "Comercio";
+    else if (actividad.startsWith("Servicio")) type = "Servicio";
     return {
       id: business.id,
       name: business.denominacion,
-      type: business.tipoEmprendimiento || business.actividadPrincipal || "Otro",
+      type,
       actividadPrincipal: business.actividadPrincipal || "Otro",
       address: business.direccion,
       location,

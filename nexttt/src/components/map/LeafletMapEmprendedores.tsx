@@ -62,8 +62,9 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   // Crea un icono SVG personalizado para cada tipo/categoría de negocio (igual que en page.tsx)
   const createBusinessIcon = (type: string) => {
     if (!L) return undefined;
-    // Usar businessTypeColors como en page.tsx, si no existe usar gris
-    const color = businessTypeColors[type] || "#4B5563";
+    // Buscar el color en filtrosSectoriales
+    const sector = filtrosSectoriales.find(f => type && (type === f.key || type === f.label || type === f.label.toLowerCase() || type === f.key.toLowerCase()));
+    const color = sector ? sector.color : "#4B5563";
     const svgIcon = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32' width='24' height='24'><circle cx='16' cy='16' r='10' fill='${color}' stroke='white' stroke-width='2'/></svg>`;
     const iconUrl = `data:image/svg+xml;utf8,${encodeURIComponent(svgIcon)}`;
     return new L.Icon({
