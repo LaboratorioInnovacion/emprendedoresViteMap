@@ -96,8 +96,8 @@ const EmprendimientosPage = () => {
         />
       </div>
       {/* Header Section */}
-      <div className="flex flex-col gap-4">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <div className="flex flex-col gap-4 ">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-md">
           <h2 className="text-2xl font-bold">Emprendimientos</h2>
           <div className="flex flex-col sm:flex-row gap-2">
             {/* <div className="relative flex-1 sm:flex-none">
@@ -230,7 +230,7 @@ const EmprendimientosPage = () => {
       </div>
 
       {/* Tabla para desktop */}
-      <div className="hidden sm:block overflow-x-auto">
+      <div className="hidden sm:block overflow-x-auto rounded-md">
         <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
           <thead className="bg-gray-50 dark:bg-gray-800">
             <tr>

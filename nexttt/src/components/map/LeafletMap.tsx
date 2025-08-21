@@ -143,28 +143,28 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
       <div className="p-4 bg-white dark:bg-gray-800 rounded-t-lg border border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-2 mb-2">
           <MapPin size={20} className="text-primary-600 dark:text-primary-400" />
-          <h2 className="text-lg font-medium">Mapa Negocios</h2>
+          <h2 className="text-lg font-medium">Mapa de Emprendimientos</h2>
         </div>
         <div className="relative">
           {/* Input de búsqueda de negocios */}
-          <input
+          {/* <input
             type="text"
             placeholder="Buscar negocios o ubicaciones..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input pl-9 w-full"
-          />
+          /> */}
           {/* Icono de búsqueda */}
-          <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+          {/* <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" /> */}
           {/* Botón para limpiar el input */}
-          {searchTerm && (
+          {/* {searchTerm && (
             <button
               onClick={() => setSearchTerm("")}
               className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
             >
               <X size={16} />
             </button>
-          )}
+          )} */}
         </div>
         {/* Mensaje de ayuda en modo selección de ubicación */}
         {selectionMode && (

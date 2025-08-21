@@ -329,6 +329,12 @@ const getStatusBadgeClass = (status) => {
               <span><b>ID:</b> {session.user.id}</span>
               <span><b>Emprendedor ID:</b> {session.user.emprendedorId}</span>
               <span><b>Género:</b> {form.genero}</span>
+              <span><b>País de Origen:</b> {form.paisOrigen || "-"}</span>
+              <span><b>Ciudad de Origen:</b> {form.ciudadOrigen || "-"}</span>
+              <span><b>Cantidad de Emprendimientos:</b> {form.cantidadEmprendimientos ?? "-"}</span>
+              <span><b>Posee otros sustentos:</b> {form.poseeOtrosSustentos ? "Sí" : "No"}</span>
+              <span><b>Tipos de Sustento:</b> {Array.isArray(form.tiposSustento) ? form.tiposSustento.join(", ") : "-"}</span>
+              <span><b>Tiene dependientes económicos:</b> {form.tieneDependientesEconomicos ? "Sí" : "No"}</span>
             </div>
           </div>
           {/* Panel edición perfil mejorado */}
@@ -357,16 +363,83 @@ const getStatusBadgeClass = (status) => {
                   <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="fechaNacimiento" type="date" value={form.fechaNacimiento?.slice(0, 10) || ""} onChange={handleChange} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Indica tu género (ejemplo: Masculino, Femenino, Otro).</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="genero" placeholder="Género" value={form.genero || ""} onChange={handleChange} />
+                  <p className="text-xs text-gray-500 mb-1">Selecciona tu género.</p>
+                  <select
+                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                    name="genero"
+                    value={form.genero || ""}
+                    onChange={handleChange}
+                  >
+                    <option value="">Selecciona...</option>
+                    <option value="Masculino">Masculino</option>
+                    <option value="Femenino">Femenino</option>
+                    <option value="PrefieroNoDecir">Prefiero no decir</option>
+                  </select>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">País de origen.</p>
+                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="paisOrigen" placeholder="País de origen" value={form.paisOrigen || ""} onChange={handleChange} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Ciudad de origen.</p>
+                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="ciudadOrigen" placeholder="Ciudad de origen" value={form.ciudadOrigen || ""} onChange={handleChange} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Nivel de estudios alcanzado.</p>
+                  <select
+                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                    name="nivelEstudios"
+                    value={form.nivelEstudios || ""}
+                    onChange={handleChange}
+                  >
+                    <option value="">Selecciona...</option>
+                    <option value="SinEscolarizar">Sin escolarizar</option>
+                    <option value="PrimarioIncompleto">Primario incompleto</option>
+                    <option value="PrimarioCompleto">Primario completo</option>
+                    <option value="SecundarioIncompleto">Secundario incompleto</option>
+                    <option value="SecundarioCompleto">Secundario completo</option>
+                    <option value="TerciarioUniversitarioIncompleto">Terciario/Universitario incompleto</option>
+                    <option value="TerciarioUniversitarioCompleto">Terciario/Universitario completo</option>
+                    <option value="Posgrado">Posgrado</option>
+                  </select>
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">Motivación principal para emprender.</p>
+                  <select
+                    className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                    name="motivacionEmprender"
+                    value={form.motivacionEmprender || ""}
+                    onChange={handleChange}
+                  >
+                    <option value="">Selecciona...</option>
+                    <option value="Pasion">Pasión</option>
+                    <option value="Independencia">Independencia</option>
+                    <option value="Oportunidad">Oportunidad</option>
+                    <option value="NecesidadEconomica">Necesidad económica</option>
+                    <option value="Otro">Otro</option>
+                  </select>
                 </div>
                 <div>
                   <p className="text-xs text-gray-500 mb-1">Departamento o localidad donde resides.</p>
                   <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="departamento" placeholder="Departamento" value={form.departamento || ""} onChange={handleChange} />
                 </div>
                 <div>
-                  <p className="text-xs text-gray-500 mb-1">Número de teléfono de contacto.</p>
-                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="telefono" placeholder="Teléfono" value={form.telefono || ""} onChange={handleChange} />
+                  <p className="text-xs text-gray-500 mb-1">Cantidad de emprendimientos.</p>
+                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="cantidadEmprendimientos" type="number" min="0" value={form.cantidadEmprendimientos ?? ""} onChange={handleChange} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">¿Posee otros sustentos?</p>
+                  <input type="checkbox" name="poseeOtrosSustentos" checked={!!form.poseeOtrosSustentos} onChange={handleChange} className="mr-2" />
+                  <span>{form.poseeOtrosSustentos ? "Sí" : "No"}</span>
+                </div>
+                <div className="col-span-2">
+                  <p className="text-xs text-gray-500 mb-1">Tipos de sustento (separados por coma).</p>
+                  <input className="w-full p-2 border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="tiposSustento" placeholder="Ej: Trabajo, Jubilación, Otro" value={Array.isArray(form.tiposSustento) ? form.tiposSustento.join(", ") : ""} onChange={e => setForm(prev => ({ ...prev, tiposSustento: e.target.value.split(",").map(s => s.trim()).filter(Boolean) }))} />
+                </div>
+                <div>
+                  <p className="text-xs text-gray-500 mb-1">¿Tiene dependientes económicos?</p>
+                  <input type="checkbox" name="tieneDependientesEconomicos" checked={!!form.tieneDependientesEconomicos} onChange={handleChange} className="mr-2" />
+                  <span>{form.tieneDependientesEconomicos ? "Sí" : "No"}</span>
                 </div>
               </div>
               {/* Ubicación */}

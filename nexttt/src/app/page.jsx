@@ -90,32 +90,7 @@ const Page = () => {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="lg:col-span-2 card">
-          {/* Filtros visuales de sector principal y estado */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-wrap gap-2 items-center">
-            {/* Rubros/sectores */}
-            {filtrosSectoriales.map(({ key, label, color }) => {
-              const isSelected = selectedRubros.includes(key);
-              return (
-                <button
-                  key={key}
-                  onClick={() =>
-                    setSelectedRubros((prev) =>
-                      isSelected ? prev.filter((a) => a !== key) : [...prev, key]
-                    )
-                  }
-                  className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer mr-2 mb-2 ${
-                    isSelected
-                      ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-primary-400"
-                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
-                  }`}
-                >
-                  <div className="h-3 w-3 rounded-full mr-2" style={{ backgroundColor: color }}></div>
-                  <span className="capitalize">{label}</span>
-                </button>
-              );
-            })}
-          </div>
-          <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden">
+          <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden w-full border-x border-b border-gray-200 dark:border-gray-700 z-0">
             {/* Mapa refactorizado usando DashboardMap */}
             {filteredBusinesses.length > 0 ? (
               <DashboardMap
@@ -138,6 +113,34 @@ const Page = () => {
                 No hay emprendimientos para mostrar en el mapa.
               </div>
             )}
+          </div>
+          {/* Filtros visuales de sector principal y estado (ahora debajo del mapa) */}
+          <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+            <h3 className="text-sm font-medium mb-2">Sector</h3>
+            <div className="grid grid-cols-3 gap-2">
+              {filtrosSectoriales.map(({ key, label, color }) => {
+                const isSelected = selectedRubros.includes(key);
+                return (
+                  <button
+                    key={key}
+                    onClick={() =>
+                      setSelectedRubros((prev) =>
+                        isSelected ? prev.filter((a) => a !== key) : [...prev, key]
+                      )
+                    }
+                    className={`flex items-center px-2 py-1 text-xs border rounded-full cursor-pointer 
+                  ${
+                    isSelected
+                      ? "bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300 border-primary-400"
+                      : "bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-gray-300"
+                  }`}
+                  >
+                    <div className="h-3 w-3 rounded-full mr-2" style={{ backgroundColor: color }}></div>
+                    <span className="capitalize">{label}</span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         </div>
         <div className="space-y-4">
