@@ -1,6 +1,8 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 import { Activity, MapPin, UserCircle2 } from "lucide-react";
 import PerfilForm from "../../components/profile/PerfilForm";
 import EmprendimientoForm from "../../components/profile/EmprendimientoForm";
@@ -22,7 +24,34 @@ const getStatusBadgeClass = (status) => {
   }
 };
 
- function PerfilPage() {
+function PerfilPage() {
+  const perfilRef = useRef(null);
+  // Tour de Driver.js para el perfil
+  useEffect(() => {
+    if (perfilRef.current && !localStorage.getItem("tour_perfil_done")) {
+      const tour = driver({
+        steps: [
+          {
+            element: perfilRef.current,
+            popover: {
+              title: "Completa tu perfil",
+              description: "Aquí puedes editar tus datos personales y guardar los cambios.",
+              position: "bottom"
+            }
+          }
+        ],
+        allowClose: false,
+        doneBtnText: 'Entendido',
+        nextBtnText: 'Siguiente',
+        prevBtnText: 'Anterior',
+        closeBtnText: 'Cerrar',
+      });
+      setTimeout(() => {
+        tour.drive();
+        localStorage.setItem("tour_perfil_done", "1");
+      }, 800);
+    }
+  }, []);
   const { data: session, status } = useSession();
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -342,7 +371,7 @@ const getStatusBadgeClass = (status) => {
           </div>
           {/* Panel edición perfil mejorado */}
           <div className="flex flex-col gap-6 p-6 rounded-lg bg-white dark:bg-gray-800 shadow border border-gray-200 dark:border-gray-700 justify-center">
-            <h3 className="text-xl font-semibold text-primary-700 dark:text-primary-200 mb-2 text-center">{form.id ? "Editar" : "Crear"} perfil de emprendedor</h3>
+            <h3 ref={perfilRef} className="text-xl font-semibold text-primary-700 dark:text-primary-200 mb-2 text-center">{form.id ? "Editar" : "Crear"} perfil de emprendedor</h3>
             <form className="space-y-4" onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 <div className="flex flex-col gap-1">

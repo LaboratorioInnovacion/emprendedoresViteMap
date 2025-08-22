@@ -1,5 +1,7 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import { driver } from "driver.js";
+import "driver.js/dist/driver.css";
 import { Search, Bell, User, Moon, Sun, Menu, ChevronDown } from "lucide-react";
 import { signOut } from "next-auth/react";
 import { canAccess } from "../../lib/canAcces";
@@ -11,6 +13,33 @@ function Header({ toggleMobileSidebar }) {
   const { data: session, status } = useSession();
 
   const { user, isAuthenticated } = useAuth();
+  const userBtnRef = useRef(null);
+  // Tour con Driver.js
+  useEffect(() => {
+    if (isAuthenticated && userBtnRef.current && !localStorage.getItem("tour_done")) {
+      const tour = driver({
+        allowClose: false,
+        doneBtnText: 'Entendido',
+        nextBtnText: 'Siguiente',
+        prevBtnText: 'Anterior',
+        closeBtnText: 'Cerrar',
+        steps: [
+          {
+            element: userBtnRef.current,
+            popover: {
+              title: 'Tu perfil',
+              description: 'Haz click aquí para ver tu perfil y completar los datos.',
+              position: 'bottom',
+            },
+          },
+        ],
+      });
+      setTimeout(() => {
+        tour.drive();
+        localStorage.setItem("tour_done", "1");
+      }, 800);
+    }
+  }, [isAuthenticated]);
   const isAdmin = canAccess("ADMIN", user?.rol);
   const [darkMode, setDarkMode] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -95,6 +124,7 @@ function Header({ toggleMobileSidebar }) {
 
           <div className="relative">
             <button
+              ref={userBtnRef}
               onClick={toggleDropdown}
               className="flex items-center space-x-2 p-1 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
             >
