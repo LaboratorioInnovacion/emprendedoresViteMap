@@ -115,8 +115,8 @@ model Emprendedor {
   nombre                      String?
   apellido                    String?
   genero                      Genero?
-  dni                         String?              @unique
-  cuil                        String?              @unique
+  dni                         String?              
+  cuil                        String?              
   fotoDni                     String?
   fechaNacimiento             DateTime
   paisOrigen                  String?

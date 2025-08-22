@@ -149,7 +149,7 @@ function HerramientasDesktop({ form, handleChange, handleSubmit, error, origenTi
         {loading ? <p className="text-center">Cargando...</p> : (
           <div className="overflow-x-auto">
             <table className="w-full rounded-lg">
-              <thead className="bg-gray-100">
+              <thead className="bg-gray-700">
                 <tr>
                   <th>ID</th>
                   <th>Nombre</th>
@@ -162,7 +162,7 @@ function HerramientasDesktop({ form, handleChange, handleSubmit, error, origenTi
               </thead>
               <tbody>
                 {herramientas.map((h) => (
-                  <tr key={h.id} className="hover:bg-gray-50">
+                  <tr key={h.id} className="">
                     <td>{h.id}</td>
                     <td>{h.nombre}</td>
                     <td>{Array.isArray(h.origenTipo) ? h.origenTipo.join(', ') : h.origenTipo}</td>
