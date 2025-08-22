@@ -1,0 +1,122 @@
+[
+  {
+    "email": "julieta.lópez7860@mail.com",
+    "password": "123456",
+    "nombre": "Julieta",
+    "apellido": "López"
+  },
+  {
+    "email": "martina.ruiz6702@mail.com",
+    "password": "123456",
+    "nombre": "Martina",
+    "apellido": "Ruiz"
+  },
+  {
+    "email": "valeria.acosta9266@mail.com",
+    "password": "123456",
+    "nombre": "Valeria",
+    "apellido": "Acosta"
+  },
+  {
+    "email": "mateo.herrera4921@mail.com",
+    "password": "123456",
+    "nombre": "Mateo",
+    "apellido": "Herrera"
+  },
+  {
+    "email": "juan.herrera7866@mail.com",
+    "password": "123456",
+    "nombre": "Juan",
+    "apellido": "Herrera"
+  },
+  {
+    "email": "juan.álvarez8132@mail.com",
+    "password": "123456",
+    "nombre": "Juan",
+    "apellido": "Álvarez"
+  },
+  {
+    "email": "martina.aguirre7012@mail.com",
+    "password": "123456",
+    "nombre": "Martina",
+    "apellido": "Aguirre"
+  },
+  {
+    "email": "agustín.garcía4386@mail.com",
+    "password": "123456",
+    "nombre": "Agustín",
+    "apellido": "García"
+  },
+  {
+    "email": "paula.pérez9687@mail.com",
+    "password": "123456",
+    "nombre": "Paula",
+    "apellido": "Pérez"
+  },
+  {
+    "email": "mía.herrera7225@mail.com",
+    "password": "123456",
+    "nombre": "Mía",
+    "apellido": "Herrera"
+  },
+  {
+    "email": "martina.castro4017@mail.com",
+    "password": "123456",
+    "nombre": "Martina",
+    "apellido": "Castro"
+  },
+  {
+    "email": "lucía.medina9322@mail.com",
+    "password": "123456",
+    "nombre": "Lucía",
+    "apellido": "Medina"
+  },
+  {
+    "email": "agustín.pérez2030@mail.com",
+    "password": "123456",
+    "nombre": "Agustín",
+    "apellido": "Pérez"
+  },
+  {
+    "email": "lucía.ruiz6050@mail.com",
+    "password": "123456",
+    "nombre": "Lucía",
+    "apellido": "Ruiz"
+  },
+  {
+    "email": "luis.castro3077@mail.com",
+    "password": "123456",
+    "nombre": "Luis",
+    "apellido": "Castro"
+  },
+  {
+    "email": "julieta.herrera8631@mail.com",
+    "password": "123456",
+    "nombre": "Julieta",
+    "apellido": "Herrera"
+  },
+  {
+    "email": "valeria.pérez8081@mail.com",
+    "password": "123456",
+    "nombre": "Valeria",
+    "apellido": "Pérez"
+  },
+  {
+    "email": "lucía.garcía4074@mail.com",
+    "password": "123456",
+    "nombre": "Lucía",
+    "apellido": "García"
+  },
+  {
+    "email": "joaquín.herrera3782@mail.com",
+    "password": "123456",
+    "nombre": "Joaquín",
+    "apellido": "Herrera"
+  },
+  {
+    "email": "tomás.castro7600@mail.com",
+    "password": "123456",
+    "nombre": "Tomás",
+    "apellido": "Castro"
+  }
+]
