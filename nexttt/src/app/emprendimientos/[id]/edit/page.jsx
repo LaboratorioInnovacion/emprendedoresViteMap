@@ -133,12 +133,12 @@ const EditEmprendimientoPage = () => {
           setEditLoading(true);
           setEditError("");
           try {
-            const form = e.target as HTMLFormElement;
+            const form = e.target;
             const formData = new FormData(form);
             const validFields = [
               "denominacion", "fechaInicio", "inscripcionArca", "cuit", "sector", "actividadPrincipal", "tipoEmprendimiento", "direccion", "telefono", "email", "web", "redSocial1", "redSocial2", "tienePersonal", "cantidadPersonal", "modoIncorporacionPersonal", "planeaIncorporarPersonal", "percepcionPlantaPersonal", "requiereCapacitacion", "tiposCapacitacion", "otrosTiposCapacitacion", "requiereConsultoria", "tiposConsultoria", "otrosTiposConsultoria", "requiereHerramientasTecno", "tiposHerramientasTecno", "otrasHerramientasTecno", "usaRedesSociales", "tiposRedesSociales", "usaMediosPagoElectronicos", "canalesComercializacion", "otrosCanalesComercializacion", "poseeSucursales", "cantidadSucursales", "ubicacionSucursales", "planeaAbrirSucursal"
             ];
-            const body: any = {};
+            const body = {};
             formData.forEach((value, key) => {
               if (validFields.includes(key)) {
                 if (["inscripcionArca","tienePersonal","requiereCapacitacion","requiereConsultoria","requiereHerramientasTecno","usaRedesSociales","usaMediosPagoElectronicos","poseeSucursales","planeaAbrirSucursal"].includes(key)) {
@@ -163,7 +163,7 @@ const EditEmprendimientoPage = () => {
                 } else {
                   body[key] = body[key]
                     .split(",")
-                    .map((v: string) => v.trim())
+                    .map((v) => v.trim())
                     .filter(Boolean);
                 }
               } else if (!body[key]) {

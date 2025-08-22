@@ -2,7 +2,7 @@
 import 'leaflet/dist/leaflet.css'; // Importa los estilos de Leaflet para los mapas
 import React, { useState, useEffect } from "react";
 import dynamic from 'next/dynamic'; // Importa componentes de forma dinámica para evitar problemas de SSR
-import { Business, BusinessType, MapViewport } from "../../types";
+// import de tipos eliminado para JS puro
 import { businessTypeColors } from "../../data/mockData";
 import {
   MapPin,
@@ -28,16 +28,16 @@ const DynamicMarker = dynamic(() => import('react-leaflet').then(mod => mod.Mark
 const DynamicPopup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 
 // Define las props que recibe el componente
-interface BusinessMapProps {
-  emprendedores: Business[]; // Lista de negocios a mostrar
-  defaultViewport: MapViewport; // Vista inicial del mapa (centro y zoom)
-  onBusinessSelect?: (id: string) => void; // Callback al seleccionar un negocio
-  onLocationSelect?: (lat: number, lng: number) => void; // Callback al seleccionar una ubicación en modo selección
-  selectionMode?: boolean; // Si está activo el modo de selección de ubicación
-}
+// interface BusinessMapProps {
+//   emprendedores: Business[]; // Lista de negocios a mostrar
+//   defaultViewport: MapViewport; // Vista inicial del mapa (centro y zoom)
+//   onBusinessSelect?: (id: string) => void; // Callback al seleccionar un negocio
+//   onLocationSelect?: (lat: number, lng: number) => void; // Callback al seleccionar una ubicación en modo selección
+//   selectionMode?: boolean; // Si está activo el modo de selección de ubicación
+// }
 
 // Componente principal del mapa
-const LeafletMap: React.FC<BusinessMapProps> = ({
+const LeafletMap = ({
   emprendedores,
   defaultViewport,
   onBusinessSelect,
@@ -46,9 +46,9 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
 }) => {
     // Este componente no tiene filtros ni buscador
   // Estado para la ubicación seleccionada (en modo selección)
-  const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   // Estado para la instancia de Leaflet (necesario para crear iconos personalizados)
-  const [L, setL] = useState<any>(null);
+  const [L, setL] = useState(null);
 
   // Carga dinámica de la librería Leaflet solo en el cliente
   useEffect(() => {
@@ -60,7 +60,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   }, []);
 
   // Crea un icono SVG personalizado para cada tipo/categoría de negocio (igual que en page.tsx)
-  const createBusinessIcon = (type: string) => {
+  const createBusinessIcon = (type) => {
     if (!L) return undefined;
     // Buscar el color en filtrosSectoriales
     const sector = filtrosSectoriales.find(f => type && (type === f.key || type === f.label || type === f.label.toLowerCase() || type === f.key.toLowerCase()));
@@ -76,7 +76,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   };
 
   // Estado para los sectores seleccionados en los filtros
-  const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
+  const [selectedSectores, setSelectedSectores] = useState([]);
 
   // Filtrar negocios según los sectores seleccionados
   const filteredBusinesses = emprendedores.filter((business) => {
@@ -87,7 +87,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   });
 
   // Maneja la selección de una ubicación en el mapa (modo selección)
-  const handleLocationSelect = (lat: number, lng: number) => {
+  const handleLocationSelect = (lat, lng) => {
     if (onLocationSelect) {
       setSelectedLocation([lat, lng]);
       onLocationSelect(lat, lng);
@@ -95,14 +95,14 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   };
 
   // Maneja la selección de un negocio (al hacer click en "Ver Detalles")
-  const handleBusinessSelect = (id: string) => {
+  const handleBusinessSelect = (id) => {
     if (onBusinessSelect) {
       onBusinessSelect(id);
     }
   };
 
   // Devuelve la clase CSS para el badge de estado del negocio
-  const getStatusBadgeClass = (status: 'active' | 'inactive' | 'pending') => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'active':
         return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500';
@@ -138,7 +138,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
             {filteredBusinesses.map((business) => (
               <DynamicMarker
                 key={business.id}
-                position={[business.location.lat, business.location.lng]}
+                position={[(business.location.lat), (business.location.lng)]}
                 // El color del marcador depende de la categoría/tipo/rubro
                 icon={createBusinessIcon(business.type)}
               >

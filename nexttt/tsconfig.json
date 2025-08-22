@@ -30,7 +30,7 @@
     "**/*.tsx",
     "**/*.js",
     "**/*.jsx"
-, "tailwind.config.js", "tailwind.config.mjs", "src/app/page.jsx", "../trash/AppLayout.jsx"  ],
+, "tailwind.config.js", "tailwind.config.mjs", "src/app/page.jsx", "../trash/AppLayout.jsx", "../trash/theme-provider.tsx", "../trash/utils.ts"  ],
   "exclude": [
     "node_modules"
   ]

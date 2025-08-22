@@ -1,6 +1,6 @@
 import React from "react";
 // import BusinessMap from "../components/map/BusinessMap";
-import  BusinessMapDashboard  from "../map/BusinessMapDashboard";
+import  BusinessMapDashboard  from "./BusinessMapDashboard";
 import { useRouter } from "next/navigation";
 
 /**

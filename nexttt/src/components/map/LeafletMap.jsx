@@ -28,16 +28,16 @@ const DynamicMarker = dynamic(() => import('react-leaflet').then(mod => mod.Mark
 const DynamicPopup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 
 // Define las props que recibe el componente
-interface BusinessMapProps {
-  emprendedores: Business[]; // Lista de negocios a mostrar
-  defaultViewport: MapViewport; // Vista inicial del mapa (centro y zoom)
-  onBusinessSelect?: (id: string) => void; // Callback al seleccionar un negocio
-  onLocationSelect?: (lat: number, lng: number) => void; // Callback al seleccionar una ubicación en modo selección
-  selectionMode?: boolean; // Si está activo el modo de selección de ubicación
-}
+// interface BusinessMapProps {
+//   emprendedores: Business[]; // Lista de negocios a mostrar
+//   defaultViewport: MapViewport; // Vista inicial del mapa (centro y zoom)
+//   onBusinessSelect?: (id: string) => void; // Callback al seleccionar un negocio
+//   onLocationSelect?: (lat: number, lng: number) => void; // Callback al seleccionar una ubicación en modo selección
+//   selectionMode?: boolean; // Si está activo el modo de selección de ubicación
+// }
 
 // Componente principal del mapa
-const LeafletMap: React.FC<BusinessMapProps> = ({
+const LeafletMap = ({
   emprendedores,
   defaultViewport,
   onBusinessSelect,
@@ -48,11 +48,11 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   // Estado para el término de búsqueda en el input
   const [searchTerm, setSearchTerm] = useState("");
   // Estado para los sectores seleccionados en los filtros
-  const [selectedSectores, setSelectedSectores] = useState<string[]>([]);
+  const [selectedSectores, setSelectedSectores] = useState([]);
   // Estado para la ubicación seleccionada (en modo selección)
-  const [selectedLocation, setSelectedLocation] = useState<[number, number] | null>(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   // Estado para la instancia de Leaflet (necesario para crear iconos personalizados)
-  const [L, setL] = useState<any>(null);
+  const [L, setL] = useState(null);
 
   // Carga dinámica de la librería Leaflet solo en el cliente
   useEffect(() => {
@@ -64,7 +64,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   }, []);
 
   // Crea un icono SVG personalizado para cada sector principal
-  const createBusinessIcon = (actividadPrincipal: string) => {
+  const createBusinessIcon = (actividadPrincipal) => {
     if (!L) return undefined; // Espera a que Leaflet esté cargado
     // Buscar el color según el sector principal
     const sector = filtrosSectoriales.find(f => (actividadPrincipal || "").startsWith(f.key));
@@ -94,7 +94,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   });
 
   // Maneja la selección de una ubicación en el mapa (modo selección)
-  const handleLocationSelect = (lat: number, lng: number) => {
+  const handleLocationSelect = (lat, lng) => {
     setSelectedLocation([lat, lng]);
     if (onLocationSelect) {
       onLocationSelect(lat, lng);
@@ -114,7 +114,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   }
 
   // Maneja la selección de un negocio (al hacer click en "Ver Detalles")
-  const handleBusinessSelect = (id: string) => {
+  const handleBusinessSelect = (id) => {
     if (onBusinessSelect) {
       onBusinessSelect(id);
     } else {
@@ -123,7 +123,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
   };
 
   // Devuelve la clase CSS para el badge de estado del negocio
-  const getStatusBadgeClass = (status: 'active' | 'inactive' | 'pending') => {
+  const getStatusBadgeClass = (status) => {
     switch (status) {
       case 'active':
         return 'bg-success-100 text-success-700 dark:bg-success-900/30 dark:text-success-500';
@@ -327,7 +327,7 @@ const LeafletMap: React.FC<BusinessMapProps> = ({
               >
                 <div
                   className="h-3 w-3 rounded-full mr-2"
-                  style={{ backgroundColor: color as string }}
+                  style={{ backgroundColor: color }}
                 ></div>
                 <span className="capitalize">{label}</span>
               </button>

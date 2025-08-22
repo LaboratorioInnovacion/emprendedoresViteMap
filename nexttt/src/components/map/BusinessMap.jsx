@@ -5,15 +5,15 @@ import dynamic from 'next/dynamic';
 const LeafletMap = dynamic(() => import('./LeafletMap'), { ssr: false });
 import { Business, MapViewport } from "../../types";
 
-interface BusinessMapProps {
-  emprendedores: Business[];
-  defaultViewport: MapViewport;
-  onBusinessSelect?: (id: string) => void;
-  onLocationSelect?: (lat: number, lng: number) => void;
-  selectionMode?: boolean;
-}
+// interface BusinessMapProps {
+//   emprendedores: Business[];
+//   defaultViewport: MapViewport;
+//   onBusinessSelect?: (id: string) => void;
+//   onLocationSelect?: (lat: number, lng: number) => void;
+//   selectionMode?: boolean;
+// }
 
-const BusinessMap: React.FC<BusinessMapProps> = (props) => {
+const BusinessMap = (props) => {
   // Solo renderiza el mapa real en el cliente
   return <LeafletMap {...props} />;
 };
