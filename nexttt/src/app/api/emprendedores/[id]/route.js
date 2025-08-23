@@ -12,7 +12,8 @@ export async function GET(req, context) {
       where: { id },
       include: {
         emprendimientos: true,
-        asignaciones: true,
+        // asignaciones: true,
+        asignaciones: { include: { herramienta: true } },
       },
     });
     if (!emprendedor) {
