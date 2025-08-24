@@ -84,17 +84,18 @@ const Page = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-4 animate-fadeIn">
-      <div className="card mb-8">
-        <h1 className="text-center mb-4">Asignar Herramienta a Emprendedor o Emprendimiento</h1>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block mb-1">Herramienta</label>
+    <div className="max-w-3xl mx-auto p-2 sm:p-4 animate-fadeIn">
+      {/* Formulario de asignación */}
+      <div className="card mb-6 sm:mb-8 p-3 sm:p-6 shadow-lg">
+        <h1 className="text-center mb-4 text-lg sm:text-2xl font-semibold">Asignar Herramienta</h1>
+        <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">Herramienta</label>
             <select
               name="herramientaId"
               value={form.herramientaId}
               onChange={handleChange}
-              className="input input-bordered w-full"
+              className="input input-bordered w-full text-sm"
               required
             >
               <option value="">Seleccione una herramienta</option>
@@ -103,21 +104,21 @@ const Page = () => {
               ))}
             </select>
           </div>
-          <div>
-            <label className="block mb-1">Tipo de beneficiario</label>
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">Tipo de beneficiario</label>
             <select
               name="beneficiarioTipo"
               value={form.beneficiarioTipo}
               onChange={handleChange}
-              className="input input-bordered w-full"
+              className="input input-bordered w-full text-sm"
               required
             >
               <option value="Emprendedor">Emprendedor</option>
               <option value="Emprendimiento">Emprendimiento</option>
             </select>
           </div>
-          <div>
-            <label className="block mb-1">
+          <div className="flex flex-col gap-1">
+            <label className="text-sm font-medium">
               {form.beneficiarioTipo === 'Emprendedor' ? 'Emprendedor' : 'Emprendimiento'}
             </label>
             {form.beneficiarioTipo === 'Emprendedor' ? (
@@ -125,7 +126,7 @@ const Page = () => {
                 name="beneficiarioId"
                 value={form.beneficiarioId}
                 onChange={handleChange}
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-sm"
                 required
                 disabled={loadingBenef}
               >
@@ -139,7 +140,7 @@ const Page = () => {
                 name="beneficiarioId"
                 value={form.beneficiarioId}
                 onChange={handleChange}
-                className="input input-bordered w-full"
+                className="input input-bordered w-full text-sm"
                 required
                 disabled={loadingBenef}
               >
@@ -150,32 +151,34 @@ const Page = () => {
               </select>
             )}
           </div>
-          <button type="submit" className="btn btn-primary w-full" disabled={asignando}>
+          <button type="submit" className="btn btn-primary w-full text-base sm:text-lg" disabled={asignando}>
             {asignando ? 'Asignando...' : 'Asignar herramienta'}
           </button>
-          {mensaje && <div className="text-center mt-2 text-info">{mensaje}</div>}
+          {mensaje && <div className="text-center mt-2 text-info text-sm">{mensaje}</div>}
         </form>
       </div>
-      <div className="card mb-8">
-        <h2 className="mb-4 text-center text-white">Listado de herramientas</h2>
+
+      {/* Tabla de herramientas */}
+      <div className="card mb-6 sm:mb-8 p-2 sm:p-4 shadow-lg">
+        <h2 className="mb-3 sm:mb-4 text-center text-white text-base sm:text-xl font-semibold">Listado de herramientas</h2>
         {loading ? <p className="text-center">Cargando...</p> : (
           <div className="overflow-x-auto">
-            <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full text-xs sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700">
               <thead className="bg-gray-100 dark:bg-gray-800">
                 <tr>
-                  <th className="px-2 py-2">ID</th>
-                  <th className="px-2 py-2">Nombre</th>
-                  <th className="px-2 py-2">Tipo Beneficiario</th>
-                  <th className="px-2 py-2">Cupo</th>
+                  <th className="px-1 py-2 sm:px-2">ID</th>
+                  <th className="px-1 py-2 sm:px-2">Nombre</th>
+                  <th className="px-1 py-2 sm:px-2">Tipo Beneficiario</th>
+                  <th className="px-1 py-2 sm:px-2">Cupo</th>
                 </tr>
               </thead>
               <tbody>
                 {herramientas.map((h) => (
                   <tr key={h.id} className="hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                    <td className="px-2 py-2">{h.id}</td>
-                    <td className="px-2 py-2">{h.nombre}</td>
-                    <td className="px-2 py-2">{h.tipoBeneficiario}</td>
-                    <td className="px-2 py-2">{h.cupo}</td>
+                    <td className="px-1 py-2 sm:px-2">{h.id}</td>
+                    <td className="px-1 py-2 sm:px-2">{h.nombre}</td>
+                    <td className="px-1 py-2 sm:px-2">{h.tipoBeneficiario}</td>
+                    <td className="px-1 py-2 sm:px-2">{h.cupo}</td>
                   </tr>
                 ))}
               </tbody>
@@ -184,32 +187,33 @@ const Page = () => {
         )}
       </div>
 
-      <div className="card">
-        <h2 className="mb-4 text-center text-white">Asignaciones recientes</h2>
+      {/* Tabla de asignaciones */}
+      <div className="card p-2 sm:p-4 shadow-lg">
+        <h2 className="mb-3 sm:mb-4 text-center text-white text-base sm:text-xl font-semibold">Asignaciones recientes</h2>
         {loadingAsignaciones ? <p className="text-center">Cargando...</p> : (
           <div className="overflow-x-auto">
-            <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full text-xs sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700">
               <thead className="bg-gray-100 dark:bg-gray-800">
                 <tr>
-                  <th className="px-2 py-2">ID</th>
-                  <th className="px-2 py-2">Herramienta</th>
-                  <th className="px-2 py-2">Tipo Beneficiario</th>
-                  <th className="px-2 py-2">Beneficiario</th>
-                  <th className="px-2 py-2">Fecha</th>
+                  <th className="px-1 py-2 sm:px-2">ID</th>
+                  <th className="px-1 py-2 sm:px-2">Herramienta</th>
+                  <th className="px-1 py-2 sm:px-2">Tipo Beneficiario</th>
+                  <th className="px-1 py-2 sm:px-2">Beneficiario</th>
+                  <th className="px-1 py-2 sm:px-2">Fecha</th>
                 </tr>
               </thead>
               <tbody>
                 {asignaciones.map((a) => (
                   <tr key={a.id} className="hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                    <td className="px-2 py-2">{a.id}</td>
-                    <td className="px-2 py-2">{a.herramienta?.nombre ?? '-'}</td>
-                    <td className="px-2 py-2">{a.beneficiarioTipo}</td>
-                    <td className="px-2 py-2">
+                    <td className="px-1 py-2 sm:px-2">{a.id}</td>
+                    <td className="px-1 py-2 sm:px-2">{a.herramienta?.nombre ?? '-'}</td>
+                    <td className="px-1 py-2 sm:px-2">{a.beneficiarioTipo}</td>
+                    <td className="px-1 py-2 sm:px-2">
                       {a.beneficiarioTipo === 'Emprendedor'
                         ? (a.emprendedor?.nombre ? `${a.emprendedor.nombre} ${a.emprendedor.apellido}` : a.emprendedorId)
                         : (a.emprendimiento?.denominacion ?? a.emprendimientoId)}
                     </td>
-                    <td className="px-2 py-2">{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '-'}</td>
+                    <td className="px-1 py-2 sm:px-2">{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '-'}</td>
                   </tr>
                 ))}
               </tbody>

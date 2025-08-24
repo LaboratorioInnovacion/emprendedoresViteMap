@@ -41,6 +41,7 @@ const Page = () => {
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
           <h1 className="text-center md:text-left">Herramientas de Apoyo</h1>
           <button className="btn btn-primary" onClick={() => router.push('/herramientas/new')}>Nueva herramienta</button>
+          <button className="btn btn-primary" onClick={() => router.push('/herramientas/asignar')}>Asignar herramienta</button>
         </div>
         <h2 className="mb-4 text-center text-white">Listado de herramientas</h2>
         {loading ? (
