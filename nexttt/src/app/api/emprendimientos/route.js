@@ -1,13 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 
 // Utilidad para parsear ubicación
 function parseUbicacion(ubicacion) {
-  if (!ubicacion || typeof ubicacion !== 'object') return null;
-  return Buffer.from(JSON.stringify({
-    type: 'Point',
-    coordinates: [ubicacion.lng, ubicacion.lat]
-  }));
+  if (!ubicacion || typeof ubicacion !== "object") return null;
+  return Buffer.from(
+    JSON.stringify({
+      type: "Point",
+      coordinates: [ubicacion.lng, ubicacion.lat],
+    })
+  );
 }
 
 // Utilidad para decodificar ubicacion Bytes a {lat, lng}
@@ -32,30 +34,36 @@ function decodeUbicacion(ubicacion) {
 export async function GET(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
+    const id = searchParams.get("id");
     if (id) {
       const emprendimiento = await prisma.emprendimiento.findUnique({
         where: { id: Number(id) },
-        include: { emprendedor: true, asignaciones: true }
+        // include: { emprendedor: true, asignaciones: true }
+        asignaciones: {
+          include: {
+            herramienta: true,
+          },
+        },
       });
-      if (!emprendimiento) return NextResponse.json({ error: 'No encontrado' }, { status: 404 });
+      if (!emprendimiento)
+        return NextResponse.json({ error: "No encontrado" }, { status: 404 });
       // Decodificar ubicacion
       return NextResponse.json({
         ...emprendimiento,
-        ubicacion: decodeUbicacion(emprendimiento.ubicacion)
+        ubicacion: decodeUbicacion(emprendimiento.ubicacion),
       });
     }
     // Lista filtrada por emprendedorId si existe
-    const emprendedorId = searchParams.get('emprendedorId');
+    const emprendedorId = searchParams.get("emprendedorId");
     const where = emprendedorId ? { emprendedorId: Number(emprendedorId) } : {};
     const lista = await prisma.emprendimiento.findMany({
       where,
-      include: { emprendedor: true, asignaciones: true }
+      include: { emprendedor: true, asignaciones: true },
     });
     // Decodificar ubicacion para todos
-    const listaConUbicacion = lista.map(emp => ({
+    const listaConUbicacion = lista.map((emp) => ({
       ...emp,
-      ubicacion: decodeUbicacion(emp.ubicacion)
+      ubicacion: decodeUbicacion(emp.ubicacion),
     }));
     return NextResponse.json(listaConUbicacion);
   } catch (error) {
@@ -67,10 +75,13 @@ export async function GET(req) {
 export async function POST(req) {
   try {
     const body = await req.json();
-    console.log(body)
+    console.log(body);
     // Validación básica
     if (!body.denominacion || !body.emprendedorId) {
-      return NextResponse.json({ error: 'Faltan campos obligatorios' }, { status: 400 });
+      return NextResponse.json(
+        { error: "Faltan campos obligatorios" },
+        { status: 400 }
+      );
     }
     // Si recibes fechaInicio como "2025-08-12"
     if (body.fechaInicio) {
@@ -82,10 +93,14 @@ export async function POST(req) {
     const nuevo = await prisma.emprendimiento.create({
       data: {
         ...body,
-        cantidadPersonal: body.cantidadPersonal ? Number(body.cantidadPersonal) : 0,
-        cantidadSucursales: body.cantidadSucursales ? Number(body.cantidadSucursales) : 0,
-        ubicacion: parseUbicacion(body.ubicacion)
-      }
+        cantidadPersonal: body.cantidadPersonal
+          ? Number(body.cantidadPersonal)
+          : 0,
+        cantidadSucursales: body.cantidadSucursales
+          ? Number(body.cantidadSucursales)
+          : 0,
+        ubicacion: parseUbicacion(body.ubicacion),
+      },
     });
     return NextResponse.json(nuevo);
   } catch (error) {
@@ -97,7 +112,8 @@ export async function POST(req) {
 export async function PUT(req) {
   try {
     const body = await req.json();
-    if (!body.id) return NextResponse.json({ error: 'Falta id' }, { status: 400 });
+    if (!body.id)
+      return NextResponse.json({ error: "Falta id" }, { status: 400 });
     // Si recibes fechaInicio como "2025-08-12"
     if (body.fechaInicio) {
       body.fechaInicio = new Date(body.fechaInicio).toISOString();
@@ -106,10 +122,14 @@ export async function PUT(req) {
       where: { id: Number(body.id) },
       data: {
         ...body,
-        cantidadPersonal: body.cantidadPersonal ? Number(body.cantidadPersonal) : 0,
-        cantidadSucursales: body.cantidadSucursales ? Number(body.cantidadSucursales) : 0,
-        ubicacion: parseUbicacion(body.ubicacion)
-      }
+        cantidadPersonal: body.cantidadPersonal
+          ? Number(body.cantidadPersonal)
+          : 0,
+        cantidadSucursales: body.cantidadSucursales
+          ? Number(body.cantidadSucursales)
+          : 0,
+        ubicacion: parseUbicacion(body.ubicacion),
+      },
     });
     return NextResponse.json(actualizado);
   } catch (error) {
@@ -121,8 +141,8 @@ export async function PUT(req) {
 export async function DELETE(req) {
   try {
     const { searchParams } = new URL(req.url);
-    const id = searchParams.get('id');
-    if (!id) return NextResponse.json({ error: 'Falta id' }, { status: 400 });
+    const id = searchParams.get("id");
+    if (!id) return NextResponse.json({ error: "Falta id" }, { status: 400 });
     await prisma.emprendimiento.delete({ where: { id: Number(id) } });
     return NextResponse.json({ ok: true });
   } catch (error) {

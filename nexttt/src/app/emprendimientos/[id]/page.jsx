@@ -386,6 +386,54 @@ const EmprendimientoPage = () => {
               </div>
             </div>
           </div>
+          {/* Herramientas / Asignaciones */}
+          <div className="card">
+            <h2 className="text-xl font-semibold mb-4">Herramientas / Asignaciones</h2>
+            {Array.isArray(emprendimiento.asignaciones) && emprendimiento.asignaciones.length > 0 ? (
+              <div className="overflow-x-auto">
+                <table className="min-w-[600px] w-full text-sm">
+                  <thead>
+                    <tr className="bg-gray-100 dark:bg-gray-800">
+                      <th className="py-2 px-3 text-left">Herramienta</th>
+                      <th className="py-2 px-3 text-left">Tipo</th>
+                      <th className="py-2 px-3 text-left">Monto</th>
+                      <th className="py-2 px-3 text-left">Fecha Asignación</th>
+                      <th className="py-2 px-3 text-left">Observaciones</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {emprendimiento.asignaciones.map((asig) => (
+                      <tr key={asig.id} className="border-b last:border-b-0">
+                        <td className="py-2 px-3 font-medium truncate max-w-[120px]">
+                          {asig.herramienta?.nombre || "-"}
+                        </td>
+                        <td className="py-2 px-3 truncate max-w-[120px]">
+                          {Array.isArray(asig.herramienta?.tipoHerramientaEmprendimiento)
+                            ? asig.herramienta.tipoHerramientaEmprendimiento.join(", ")
+                            : "-"}
+                        </td>
+                        <td className="py-2 px-3">
+                          {asig.herramienta?.montoPorBeneficiario
+                            ? `$${asig.herramienta.montoPorBeneficiario}`
+                            : "-"}
+                        </td>
+                        <td className="py-2 px-3">
+                          {asig.fechaAsignacion
+                            ? new Date(asig.fechaAsignacion).toLocaleDateString()
+                            : "-"}
+                        </td>
+                        <td className="py-2 px-3 truncate max-w-[120px]">
+                          {asig.observaciones || "-"}
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : (
+              <p className="text-gray-500">No hay herramientas asignadas a este emprendimiento.</p>
+            )}
+          </div>
         </div>
         {/* Right column - Map and actions */}
         <div className="space-y-6">

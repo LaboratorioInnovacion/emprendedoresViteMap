@@ -18,8 +18,8 @@ const Page = () => {
   const fetchBeneficiarios = async () => {
     setLoadingBenef(true);
     const [resEmpre, resEmprend] = await Promise.all([
-      fetch('/api/emprendedor'),
-      fetch('/api/emprendimiento')
+      fetch('/api/emprendedores'),
+      fetch('/api/emprendimientos')
     ]);
     const emprendedores = await resEmpre.json();
     const emprendimientos = await resEmprend.json();

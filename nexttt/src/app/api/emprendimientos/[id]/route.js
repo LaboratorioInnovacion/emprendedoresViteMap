@@ -1,22 +1,30 @@
-import { NextResponse } from 'next/server';
-import prisma from '../../../../lib/prisma';
+import { NextResponse } from "next/server";
+import prisma from "../../../../lib/prisma";
 
 export async function GET(req, context) {
   try {
     const params = await context.params;
     const id = Number(params.id);
     if (!id) {
-      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
     const emprendimiento = await prisma.emprendimiento.findUnique({
       where: { id },
       include: {
         emprendedor: true,
-        asignaciones: true,
+        // asignaciones: true,
+        asignaciones: {
+          include: {
+            herramienta: true,
+          },
+        },
       },
     });
     if (!emprendimiento) {
-      return NextResponse.json({ error: 'Emprendimiento no encontrado' }, { status: 404 });
+      return NextResponse.json(
+        { error: "Emprendimiento no encontrado" },
+        { status: 404 }
+      );
     }
     // Decodificar ubicacion si existe
     if (emprendimiento.ubicacion) {
@@ -26,7 +34,10 @@ export async function GET(req, context) {
           : String.fromCharCode(...emprendimiento.ubicacion);
         const obj = JSON.parse(str);
         if (obj.type === "Point" && Array.isArray(obj.coordinates)) {
-          emprendimiento.ubicacion = { lng: obj.coordinates[0], lat: obj.coordinates[1] };
+          emprendimiento.ubicacion = {
+            lng: obj.coordinates[0],
+            lat: obj.coordinates[1],
+          };
         } else if (typeof obj.lat === "number" && typeof obj.lng === "number") {
           emprendimiento.ubicacion = obj;
         } else {
@@ -47,7 +58,7 @@ export async function PUT(req, context) {
     const params = await context.params;
     const numId = Number(params.id);
     if (!numId) {
-      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
     const data = await req.json();
     // Si fechaInicio existe, conviértelo a Date
@@ -55,7 +66,7 @@ export async function PUT(req, context) {
       data.fechaInicio = new Date(data.fechaInicio);
     }
     // Si ubicacion es objeto, conviértelo a Bytes
-    if (data.ubicacion && typeof data.ubicacion === 'object') {
+    if (data.ubicacion && typeof data.ubicacion === "object") {
       data.ubicacion = { set: Buffer.from(JSON.stringify(data.ubicacion)) };
     }
     // Eliminar relaciones del objeto data
@@ -76,7 +87,7 @@ export async function DELETE(req, context) {
     const params = await context.params;
     const id = Number(params.id);
     if (!id) {
-      return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
+      return NextResponse.json({ error: "ID inválido" }, { status: 400 });
     }
     await prisma.emprendimiento.delete({
       where: { id },
