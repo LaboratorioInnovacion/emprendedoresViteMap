@@ -58,16 +58,16 @@ export default function ClientLayout({ children }) {
             <EmprendimientosProvider>
               <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <EmprendedoresProvider>
-                  <div className="flex h-screen bg-gray-50 dark:bg-gray-900">
+                  <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
                     {!isMobile && (
                       <Sidebar isMobile={false} toggleMobileSidebar={toggleMobileSidebar} />
                     )}
                     {isMobile && isMobileSidebarOpen && (
                       <Sidebar isMobile={true} toggleMobileSidebar={toggleMobileSidebar} />
                     )}
-                    <div className="flex-1 flex flex-col ml-0 md:ml-64 transition-all duration-300">
+                    <div className="flex-1 flex flex-col ml-0 md:ml-64 transition-all duration-300 min-w-0 w-full">
                       <Header toggleMobileSidebar={toggleMobileSidebar} />
-                      <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
+                      <main className="flex-1 p-2 sm:p-4 md:p-6 overflow-y-auto min-w-0 w-full">{children}</main>
                     </div>
                   </div>
                 </EmprendedoresProvider>

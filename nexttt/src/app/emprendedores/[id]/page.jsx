@@ -6,7 +6,7 @@ import dynamic from "next/dynamic";
 import Image from "next/image";
 const MapContainer = dynamic(() => import('react-leaflet').then(mod => mod.MapContainer), { ssr: false });
 const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLayer), { ssr: false });
-const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
+const Marker = dynamic<any>(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 import 'leaflet/dist/leaflet.css';
 
@@ -117,9 +117,9 @@ const EmprendedorPage = ({ params }) => {
   };
 
   return (
-    <div className="space-y-6">
+  <div className="space-y-4 sm:space-y-6 px-2 sm:px-0">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
         <div className="flex items-center">
           <button
             onClick={() => window.history.back()}
@@ -127,21 +127,21 @@ const EmprendedorPage = ({ params }) => {
           >
             <ChevronLeft size={20} className="text-gray-600 dark:text-gray-400" />
           </button>
-          <div className="flex items-center gap-4">
-            <div className="relative w-16 h-16 rounded-full overflow-hidden border-4 border-primary shadow">
+          <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
+            <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-4 border-primary shadow">
               <Image src={avatarUrl} alt="Avatar" width={64} height={64} className="object-cover w-full h-full" />
             </div>
-            <div>
-              <h1 className="text-2xl font-bold flex items-center gap-2">
-                <User className="w-7 h-7 text-primary" />
-                {emprendedor.nombre} {emprendedor.apellido}
+            <div className="min-w-0">
+              <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2 flex-wrap">
+                <User className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
+                <span className="truncate max-w-[160px] sm:max-w-none block">{emprendedor.nombre} {emprendedor.apellido}</span>
                 {emprendedor.verificado && <BadgeCheck className="ml-2 w-5 h-5 text-green-500" />}
               </h1>
-              <div className="flex items-center mt-1">
-                <span className="badge badge-secondary capitalize mr-2">
+              <div className="flex items-center mt-1 flex-wrap">
+                <span className="badge badge-secondary capitalize mr-2 mb-1">
                   {emprendedor.genero}
                 </span>
-                <span className={`badge ${getStatusBadgeClass()} flex items-center`}>
+                <span className={`badge ${getStatusBadgeClass()} flex items-center mb-1`}>
                   <Rocket size={12} className="mr-1" />
                   {(emprendedor.estado || emprendedor.status || "Activo").charAt(0).toUpperCase() + (emprendedor.estado || emprendedor.status || "Activo").slice(1)}
                 </span>
@@ -161,13 +161,13 @@ const EmprendedorPage = ({ params }) => {
         </div>
       </div>
       {/* Main layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left column - Info */}
-        <div className="lg:col-span-2 space-y-6">
+  <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-6">
+        {/* Columna izquierda (info y emprendimientos) */}
+  <div className="xl:col-span-2 space-y-4 xl:space-y-6 min-w-0">
           {/* Info card */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4">Información del Emprendedor</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="card p-3 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">Información del Emprendedor</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div className="space-y-3">
                 <div className="flex items-start">
                   <MapPin size={18} className="text-gray-500 mt-0.5 mr-2 flex-shrink-0" />
@@ -220,12 +220,12 @@ const EmprendedorPage = ({ params }) => {
             </div>
           </div>
           {/* Emprendimientos */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4 flex items-center gap-2"><Rocket className="w-6 h-6 text-primary" /> Emprendimientos</h2>
+          <div className="card p-3 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2"><Rocket className="w-6 h-6 text-primary" /> Emprendimientos</h2>
             {emprendedor.emprendimientos && emprendedor.emprendimientos.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
                 {emprendedor.emprendimientos.map((emp) => (
-                  <div key={emp.id} className="p-4 border rounded-lg bg-white dark:bg-gray-800 shadow flex flex-col gap-2">
+                  <div key={emp.id} className="p-2 sm:p-4 border rounded-lg bg-white dark:bg-gray-800 shadow flex flex-col gap-2 min-w-0">
                     <h4 className="font-bold text-lg mb-1 flex items-center gap-2">
                       <Rocket className="w-5 h-5 text-primary" />
                       {emp.denominacion}
@@ -250,25 +250,25 @@ const EmprendedorPage = ({ params }) => {
             )}
           </div>
         </div>
-        {/* Right column - Map and actions */}
-        <div className="space-y-6">
-          {/* Map card */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4">Ubicación</h2>
-            <div className="h-64 rounded-lg overflow-hidden">
+        {/* Columna derecha (mapa y acciones) */}
+  <div className="space-y-4 xl:space-y-6 min-w-0">
+          {/* Mapa */}
+          <div className="card p-3 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">Ubicación</h2>
+            <div className="h-48 sm:h-64 rounded-lg overflow-hidden">
               {L && markerIcon && ubicacion && (
                 <MapContainer
-                                  center={[ubicacion.lat, ubicacion.lng]}
-                                  zoom={14}
-                                  style={{ height: "100%", width: "100%" }}
-                                >
+                  center={[ubicacion.lat, ubicacion.lng]}
+                  zoom={14}
+                  style={{ height: "100%", width: "100%" }}
+                >
                   <TileLayer
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                   />
                   <Marker
-                                      position={[ubicacion.lat, ubicacion.lng]}
-                                      icon={markerIcon}
-                                    >
+                    position={[ubicacion.lat, ubicacion.lng]}
+                    icon={markerIcon}
+                  >
                     <Popup>{emprendedor.direccion}</Popup>
                   </Marker>
                 </MapContainer>
@@ -287,10 +287,10 @@ const EmprendedorPage = ({ params }) => {
               </div>
             )}
           </div>
-          {/* Quick actions card */}
-          <div className="card">
-            <h2 className="text-xl font-semibold mb-4">Acciones Rápidas</h2>
-            <div className="space-y-3">
+          {/* Acciones rápidas */}
+          <div className="card p-4 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4">Acciones Rápidas</h2>
+            <div className="space-y-2 sm:space-y-3">
               <button className="btn-primary w-full justify-center">
                 <Mail size={18} className="mr-2" />
                 Contactar
