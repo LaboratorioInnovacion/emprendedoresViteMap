@@ -25,7 +25,7 @@ function StatCard({ cantidad, empre }) {
       <div className="card hover:shadow-lg transition-shadow">
         <div className="flex justify-between items-start">
           <div className="space-y-2">
-            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total de emprendedores</p>
+            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">Total de Emprendimientos</p>
             <p className="text-2xl font-bold">{cantidad}</p>
           </div>
           <div className="rounded-full p-2 bg-primary-50 dark:bg-primary-900/30">

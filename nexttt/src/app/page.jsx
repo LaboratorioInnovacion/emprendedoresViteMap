@@ -6,6 +6,7 @@ import StatCard from "../components/dashboard/StatCard";
 import RecentBusinessCard from "../components/dashboard/RecentBusinessCard";
 import { businessTypeColors, calculateMapCenter } from "../data/mockData";
 import { useEmprendimientos } from "../context/EmprendimientosContext";
+import { useAuth } from "../context/AuthContext";
 import Link from "next/link";
 import {
   Building2,
@@ -25,6 +26,7 @@ const filtrosSectoriales = [
 const estados = ["active", "inactive", "pending"];
 
 const Page = () => {
+  const { user, isAuthenticated } = useAuth();
   const { allemprendimientos, fetchemprendimientosall, loading, error } = useEmprendimientos();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedRubros, setSelectedRubros] = useState([]);
@@ -89,7 +91,7 @@ const Page = () => {
         ))}
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="lg:col-span-2 card">
+        <div className="lg:col-span-2 cardmapa">
           <div className="h-80 lg:h-[500px] rounded-lg overflow-hidden w-full border-x border-b border-gray-200 dark:border-gray-700 z-0">
             {/* Mapa refactorizado usando DashboardMap */}
             {filteredBusinesses.length > 0 ? (
