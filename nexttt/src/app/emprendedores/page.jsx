@@ -91,6 +91,7 @@ const EmprendedoresPage = () => {
             updatedAt: emp.updatedAt || null,
           }))}
           defaultViewport={defaultViewport}
+          onBusinessSelect={(id) => router.push(`/emprendedores/${id}`)}
         />
       </div>
       {/* Header Section */}
