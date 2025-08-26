@@ -249,6 +249,35 @@ const EmprendedorPage = ({ params }) => {
               <p className="text-gray-500">No tiene emprendimientos registrados.</p>
             )}
           </div>
+          {/* Asignaciones */}
+          <div className="card p-3 sm:p-6">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2">
+              <Landmark className="w-6 h-6 text-primary" /> Asignaciones
+            </h2>
+            {emprendedor.asignaciones && emprendedor.asignaciones.length > 0 ? (
+              <div className="flex flex-col gap-3">
+                {emprendedor.asignaciones.map((asig) => (
+                  <div key={asig.id} className="border rounded-lg p-3 bg-gray-50 dark:bg-gray-900/40 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+                    <div className="flex-1 min-w-0">
+                      <div className="font-semibold text-primary text-base flex items-center gap-2">
+                        {asig.herramienta?.nombre || 'Herramienta'}
+                        <span className="ml-2 px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-semibold">
+                          {asig.herramienta?.tipoHerramientaEmprendedor?.join(', ') || '-'}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                        <span className="font-medium">Fecha asignación:</span> {asig.fechaAsignacion ? new Date(asig.fechaAsignacion).toLocaleDateString() : '-'}<br />
+                        <span className="font-medium">Monto:</span> ${asig.herramienta?.montoPorBeneficiario?.toLocaleString('es-AR') || '-'}<br />
+                        <span className="font-medium">Observaciones:</span> {asig.observaciones || 'Sin observaciones'}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-gray-500">No tiene asignaciones registradas.</p>
+            )}
+          </div>
         </div>
         {/* Columna derecha (mapa y acciones) */}
   <div className="space-y-4 xl:space-y-6 min-w-0">
