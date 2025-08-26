@@ -66,6 +66,7 @@ const EmprendimientoPage = () => {
               ubicacion = JSON.parse(ubicacion);
             } catch {}
           }
+          console.log(emprendimiento)
           setEmprendimiento({ ...data, ubicacion });
         } else {
           setError(data.error || "Error al cargar el emprendimiento");
