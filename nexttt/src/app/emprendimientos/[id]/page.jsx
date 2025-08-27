@@ -17,6 +17,7 @@ import {
 import dynamic from "next/dynamic";
 import BusinessMap from "../../../components/map/BusinessMap";
 import React, { useMemo, useState, useEffect } from "react";
+import { useExportEmprendimientoPDF } from '../../../hooks/useExportEmprendimientoPDF';
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
@@ -33,6 +34,7 @@ const EmprendimientoPage = () => {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
   const [editUbicacion, setEditUbicacion] = useState(null);
+  const exportPDF = useExportEmprendimientoPDF();
 
   // Inicializa editUbicacion al abrir el modal
   useEffect(() => {
@@ -509,6 +511,13 @@ const EmprendimientoPage = () => {
               >
                 <Pencil size={18} className="mr-2" />
                 Editar Detalles
+              </button>
+              <button
+                className="btn-outline w-full justify-center"
+                onClick={() => exportPDF(emprendimiento)}
+                disabled={!emprendimiento}
+              >
+                Exportar PDF
               </button>
             </div>
           </div>

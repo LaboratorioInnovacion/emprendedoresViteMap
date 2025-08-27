@@ -9,6 +9,7 @@ const TileLayer = dynamic(() => import('react-leaflet').then(mod => mod.TileLaye
 const Marker = dynamic(() => import('react-leaflet').then(mod => mod.Marker), { ssr: false });
 const Popup = dynamic(() => import('react-leaflet').then(mod => mod.Popup), { ssr: false });
 import 'leaflet/dist/leaflet.css';
+import { useExportPDF } from '../../../hooks/useExportPDF';
 
 // Oculta el warning de Next.js sobre acceso directo a params (migración)
 if (typeof window !== "undefined") {
@@ -25,6 +26,8 @@ if (typeof window !== "undefined") {
 }
 
 const EmprendedorPage = ({ params }) => {
+  // Hook para exportar PDF
+  const exportPDF = useExportPDF();
   const { fetchEmprendedorById } = useEmpre();
   const [emprendedor, setEmprendedor] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -320,14 +323,17 @@ const EmprendedorPage = ({ params }) => {
           <div className="card p-4 sm:p-6">
             <h2 className="text-lg sm:text-xl font-semibold mb-4">Acciones Rápidas</h2>
             <div className="space-y-2 sm:space-y-3">
-              <button className="btn-primary w-full justify-center">
-                <Mail size={18} className="mr-2" />
-                Contactar
-              </button>
-              <button className="btn-outline w-full justify-center">
-                <Pencil size={18} className="mr-2" />
-                Editar Perfil
-              </button>
+                <button className="btn-primary w-full justify-center">
+                  <Mail size={18} className="mr-2" />
+                  Contactar
+                </button>
+                <button className="btn-outline w-full justify-center">
+                  <Pencil size={18} className="mr-2" />
+                  Editar Perfil
+                </button>
+                <button className="btn-outline w-full justify-center" onClick={() => exportPDF(emprendedor)}>
+                  Exportar PDF
+                </button>
             </div>
           </div>
         </div>
