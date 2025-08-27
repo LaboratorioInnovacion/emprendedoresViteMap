@@ -48,9 +48,11 @@ export function useExportPDF() {
   y += Math.max(nivelEstudios.length, motivacion.length) * 6;
   // Sexta fila
   let tiposSustento = (emprendedor.tiposSustento && emprendedor.tiposSustento.length > 0) ? emprendedor.tiposSustento.join(', ') : '-';
+//   doc.text(`Tipos de sustento: ${tiposSustento}`, 15, y);
+  doc.text(`Dependientes económicos: ${emprendedor.tieneDependientesEconomicos === true ? 'Sí' : emprendedor.tieneDependientesEconomicos === false ? 'No' : '-'}`, 15, y);
+  doc.text(`Otros sustentos: ${emprendedor.poseeOtrosSustentos === true ? 'Sí' : emprendedor.poseeOtrosSustentos === false ? 'No' : '-'}`, 75, y);
+  y += 7;
   doc.text(`Tipos de sustento: ${tiposSustento}`, 15, y);
-  doc.text(`Dependientes económicos: ${emprendedor.tieneDependientesEconomicos === true ? 'Sí' : emprendedor.tieneDependientesEconomicos === false ? 'No' : '-'}`, 75, y);
-  doc.text(`Otros sustentos: ${emprendedor.poseeOtrosSustentos === true ? 'Sí' : emprendedor.poseeOtrosSustentos === false ? 'No' : '-'}`, 135, y);
   y += 10;
     // Emprendimientos
     doc.setFontSize(14);
@@ -99,7 +101,7 @@ export function useExportPDF() {
         // doc.text(`Herramientas tecno: ${emp.tiposHerramientasTecno ? emp.tiposHerramientasTecno.join(', ') : '-'}`, 90, y);
         doc.text(`Web: ${emp.web || '-'}`, 22, y);
         y += 6;
-        doc.text(`Redes sociales: ${[emp.redSocial1].filter(Boolean).join(', ') || '-'}`, 90, y);
+        doc.text(`Redes sociales: ${[emp.redSocial1].filter(Boolean).join(', ') || '-'}`, 22, y);
         y += 10;
       });
     } else {
