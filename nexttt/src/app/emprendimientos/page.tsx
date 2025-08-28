@@ -100,10 +100,10 @@ const EmprendimientosPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-md">
           <h2 className="text-2xl font-bold">Emprendimientos</h2>
           <div className="flex flex-col sm:flex-row gap-2">
-            {/* <div className="relative flex-1 sm:flex-none">
+            <div className="relative flex-1 sm:flex-none">
               <input
                 type="text"
-                placeholder="Buscar por emprendedor o denominación..."
+                placeholder="Buscar por emprendimiento..."
                 value={searchTerm}
                 onChange={e => setSearchTerm(e.target.value)}
                 className="input pl-9 w-full sm:w-60"
@@ -112,7 +112,7 @@ const EmprendimientosPage = () => {
                 size={16}
                 className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
               />
-            </div> */}
+            </div>
             <div className="flex gap-2">
               <button
                 onClick={() => setShowFilters(!showFilters)}
@@ -123,7 +123,7 @@ const EmprendimientosPage = () => {
                 <span className="ml-2 sm:hidden">Filtros</span>
               </button>
               <button
-                onClick={() => router.push('/emprendimientos/new')}
+                onClick={() => router.push('/emprendimientos/nuevo')}
                 className="btn-primary flex-1 sm:flex-none justify-center"
               >
                 <Plus size={18} className="sm:mr-1" />

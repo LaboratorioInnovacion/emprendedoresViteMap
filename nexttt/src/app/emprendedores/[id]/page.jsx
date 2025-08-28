@@ -327,10 +327,10 @@ const EmprendedorPage = ({ params }) => {
                   <Mail size={18} className="mr-2" />
                   Contactar
                 </button>
-                <button className="btn-outline w-full justify-center">
+                <a href={`/emprendedores/${emprendedor.id}/edit`} className="btn-outline w-full justify-center flex items-center">
                   <Pencil size={18} className="mr-2" />
                   Editar Perfil
-                </button>
+                </a>
                 <button className="btn-outline w-full justify-center" onClick={() => exportPDF(emprendedor)}>
                   Exportar PDF
                 </button>

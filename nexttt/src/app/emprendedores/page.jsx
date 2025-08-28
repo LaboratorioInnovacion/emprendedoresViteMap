@@ -122,7 +122,7 @@ const EmprendedoresPage = () => {
                 <span className="ml-2 sm:hidden">Filtros</span>
               </button>
               <button
-                onClick={() => router.push("/emprendedores/nuevo")}
+                onClick={() => router.push("/emprendedores/new")}
                 className="btn-primary flex-1 sm:flex-none justify-center"
               >
                 <Plus size={18} className="sm:mr-1" />

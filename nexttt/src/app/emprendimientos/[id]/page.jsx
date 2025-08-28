@@ -180,14 +180,17 @@ const EmprendimientoPage = () => {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="btn-outline">
+          <button
+            onClick={() => router.push(`/emprendimientos/${id}/edit`)}
+            className="btn-outline"
+          >
             <Pencil size={18} className="mr-1" />
             Editar
           </button>
-          <button className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500">
+          {/* <button className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500">
             <Trash2 size={18} className="mr-1" />
             Borrar
-          </button>
+          </button> */}
           <button
             className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500"
             onClick={async () => {
