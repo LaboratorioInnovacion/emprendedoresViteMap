@@ -60,9 +60,11 @@ export default function LoginPage() {
         </a>
       </p>
       <p className="mt-6">
-        ADMIN : asd@asd.com contra: asdasd <br />
+        User: administrador@administrador.com <br />
+        Pass: administrador <br />
+        {/* ADMIN : asd@asd.com contra: asdasd <br />
         SUPERUSER: zxc@zxc.com contra: zxc <br />
-        EMPRENDEDOR :qwerty@qwerty.com contra: qwerty
+        EMPRENDEDOR :qwerty@qwerty.com contra: qwerty */}
       </p>
     </div>
   );

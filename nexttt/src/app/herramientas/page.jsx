@@ -1,5 +1,6 @@
 'use client'
 import React, { useEffect, useState } from 'react';
+import { FaTrash, FaEdit, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
 
 
@@ -37,20 +38,26 @@ const Page = () => {
 
   return (
     <div className="max-w-8xl mx-auto p-4 animate-fadeIn">
-      <div className="card mb-8">
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-4">
-          <h1 className="text-center md:text-left">Herramientas de Apoyo</h1>
-          <button className="btn btn-primary" onClick={() => router.push('/herramientas/new')}>Nueva herramienta</button>
-          <button className="btn btn-primary" onClick={() => router.push('/herramientas/asignar')}>Asignar herramienta</button>
+      <div className="card mb-8 shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 mb-6">
+          <h1 className="text-center md:text-left text-3xl font-bold tracking-tight text-primary-700 dark:text-primary-300">Herramientas de Apoyo</h1>
+          <div className="flex gap-2 justify-center md:justify-end">
+            <button className="btn btn-primary flex items-center gap-2" onClick={() => router.push('/herramientas/new')}>
+              <FaPlus className="text-white" /> Nueva herramienta
+            </button>
+            <button className="btn btn-primary flex items-center gap-2" onClick={() => router.push('/herramientas/asignar')}>
+              <FaUserPlus className="text-white" /> Asignar herramienta
+            </button>
+          </div>
         </div>
-        <h2 className="mb-4 text-center text-white">Listado de herramientas</h2>
+        <h2 className="mb-6 text-center text-xl font-semibold text-gray-800 dark:text-white">Listado de herramientas</h2>
         {loading ? (
-          <p className="text-center">Cargando...</p>
+          <p className="text-center text-lg text-gray-500">Cargando...</p>
         ) : (
           <>
             {/* Desktop: tabla, Mobile: tarjetas */}
-            <div className="hidden md:block overflow-x-auto">
-              <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700">
+            <div className="hidden md:block overflow-x-auto animate-fadeIn">
+              <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                 <thead className="bg-gray-100 dark:bg-gray-800">
                   <tr>
                     <th className="px-2 py-2">ID</th>
@@ -72,9 +79,9 @@ const Page = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {herramientas.map((h) => (
-                    <tr key={h.id} className="hover:bg-gray-50 dark:hover:bg-gray-900 transition-colors">
-                      <td className="px-2 py-2">{h.id}</td>
+                  {herramientas.map((h, idx) => (
+                    <tr key={h.id} className={`transition-colors ${idx % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : 'bg-white dark:bg-gray-800'} hover:bg-primary-50 dark:hover:bg-primary-900`}>
+                      <td className="px-2 py-2 font-mono text-xs text-gray-500">{h.id}</td>
                       <td className="px-2 py-2">
                         <button
                           className="text-primary-700 underline hover:text-primary-900 font-semibold"
@@ -97,10 +104,14 @@ const Page = () => {
                       <td className="px-2 py-2">{h.cupo}</td>
                       <td className="px-2 py-2">{h.observaciones ?? '-'}</td>
                       <td className="px-2 py-2">
-                        <button onClick={() => handleDelete(h.id)} className="btn btn-error btn-xs">Eliminar</button>
+                        <button onClick={() => handleDelete(h.id)} className="btn btn-error btn-xs flex items-center gap-1" title="Eliminar">
+                          <FaTrash />
+                        </button>
                       </td>
                       <td className="px-2 py-2">
-                        <button onClick={() => router.push(`/herramientas/${h.id}/edit`)} className="btn btn-error btn-xs">Editar</button>
+                        <button onClick={() => router.push(`/herramientas/${h.id}/edit`)} className="btn btn-primary btn-xs flex items-center gap-1" title="Editar">
+                          <FaEdit />
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -108,14 +119,18 @@ const Page = () => {
               </table>
             </div>
             {/* Mobile: tarjetas */}
-            <div className="md:hidden space-y-4">
+            <div className="md:hidden space-y-6 animate-fadeIn">
               {herramientas.map((h) => (
-                <div key={h.id} className="rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-4 shadow-card">
+                <div key={h.id} className="rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 p-5 shadow-lg transition-transform hover:scale-[1.01]">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="font-bold text-primary-700 dark:text-primary-300">{h.nombre}</span>
+                    <span className="font-bold text-primary-700 dark:text-primary-300 text-lg">{h.nombre}</span>
                     <div className="flex gap-2">
-                      <button onClick={() => router.push(`/herramientas/${h.id}/edit`)} className="btn btn-xs btn-primary">Editar</button>
-                      <button onClick={() => handleDelete(h.id)} className="btn btn-xs btn-error">Eliminar</button>
+                      <button onClick={() => router.push(`/herramientas/${h.id}/edit`)} className="btn btn-xs btn-primary flex items-center gap-1" title="Editar">
+                        <FaEdit />
+                      </button>
+                      <button onClick={() => handleDelete(h.id)} className="btn btn-xs btn-error flex items-center gap-1" title="Eliminar">
+                        <FaTrash />
+                      </button>
                     </div>
                   </div>
                   <div className="text-xs text-gray-600 dark:text-gray-300 mb-1"><b>ID:</b> {h.id}</div>

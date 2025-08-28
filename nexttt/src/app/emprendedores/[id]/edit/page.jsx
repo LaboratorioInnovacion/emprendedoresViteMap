@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use as usePromise } from "react";
 import { useRouter } from "next/navigation";
 import BusinessMap from "../../../../components/map/BusinessMap";
 
@@ -22,14 +22,10 @@ const motivaciones = [
   "Otro",
 ];
 
-import { use as usePromise } from "react";
 export default function EditarEmprendedorPage({ params }) {
   const router = useRouter();
-  // Next.js 14+: params puede ser promesa
-  let id = params.id;
-  if (typeof id === "undefined" && typeof params.then === "function") {
-    id = usePromise(params).id;
-  }
+  // Next.js 14+: params es promesa, usar use(params)
+  const { id } = usePromise(params);
   const [form, setForm] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -190,6 +186,10 @@ export default function EditarEmprendedorPage({ params }) {
             <div className="flex flex-col gap-1">
               <label htmlFor="departamento" className="text-xs text-gray-500">Departamento/localidad</label>
               <input id="departamento" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="departamento" value={form.departamento || ""} onChange={handleChange} autoComplete="off" />
+            </div>
+            <div className="flex flex-col gap-1">
+              <label htmlFor="direccion" className="text-xs text-gray-500">Dirección</label>
+              <input id="direccion" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="direccion" value={form.direccion || ""} onChange={handleChange} autoComplete="off" />
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="telefono" className="text-xs text-gray-500">Teléfono</label>

@@ -84,7 +84,7 @@ const Page = () => {
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-2 sm:p-4 animate-fadeIn">
+    <div className="max-w-6xl mx-auto p-2 sm:p-4 animate-fadeIn">
       {/* Formulario de asignación */}
       <div className="card mb-6 sm:mb-8 p-3 sm:p-6 shadow-lg">
         <h1 className="text-center mb-4 text-lg sm:text-2xl font-semibold">Asignar Herramienta</h1>

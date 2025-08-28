@@ -36,7 +36,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
     { path: '/emprendimientos', label: 'Emprendimientos', icon: <Building2 size={20} /> },
     // { path: '/admin', label: 'Admin', icon: <HelpCircle size={20} /> },
     { path: '/herramientas', label: 'Herramientas', icon: <HelpCircle size={20} /> },
-    { path: '/analytics', label: 'Analiticas', icon: <PieChart size={20} /> },
+    { path: '/analiticas', label: 'Analiticas', icon: <PieChart size={20} /> },
     // { path: '/ajustes', label: 'Ajustes', icon: <Settings size={20} /> },
 
   ];

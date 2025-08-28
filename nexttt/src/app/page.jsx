@@ -61,21 +61,20 @@ const Page = () => {
     setSearchTerm("");
   };
 
-  if (!isAuthenticated) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="bg-white dark:bg-gray-900 p-8 rounded shadow text-center">
-          <h2 className="text-2xl font-bold mb-4">Acceso restringido</h2>
-          <p className="text-gray-600 dark:text-gray-300 mb-4">Debes iniciar sesión para ver el contenido.</p>
-          <Link href="/login" className="btn-primary">Iniciar sesión</Link>
-        </div>
-      </div>
-    );
-  }
+  // if (!isAuthenticated) {
+  //   return (
+  //     <div className="flex items-center justify-center min-h-screen">
+  //       <div className="bg-white dark:bg-gray-900 p-8 rounded shadow text-center">
+  //         <h2 className="text-2xl font-bold mb-4">Acceso restringido</h2>
+  //         <p className="text-gray-600 dark:text-gray-300 mb-4">Debes iniciar sesión para ver el contenido.</p>
+  //         <Link href="/login" className="btn-primary">Iniciar sesión</Link>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="space-y-6">
-      {/* ...existing code... */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold mb-2">Dashboard</h1>

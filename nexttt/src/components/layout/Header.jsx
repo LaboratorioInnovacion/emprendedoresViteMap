@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
+import { useEmprendimientos } from "../../context/EmprendimientosContext";
 import { driver } from "driver.js";
 import "driver.js/dist/driver.css";
 import { Search, Bell, User, Moon, Sun, Menu, ChevronDown } from "lucide-react";
@@ -44,6 +45,8 @@ function Header({ toggleMobileSidebar }) {
   const [darkMode, setDarkMode] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState([]);
+  const { allemprendimientos } = useEmprendimientos();
 
   const toggleDarkMode = () => {
     const newMode = !darkMode;
@@ -77,8 +80,33 @@ function Header({ toggleMobileSidebar }) {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    console.log("Searching for:", searchTerm);
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const term = searchTerm.toLowerCase();
+    const results = allemprendimientos.filter((emp) =>
+      (emp.denominacion || "").toLowerCase().includes(term) ||
+      (emp.sector || "").toLowerCase().includes(term) ||
+      (emp.actividadPrincipal || "").toLowerCase().includes(term)
+    );
+    setSearchResults(results);
   };
+
+  // Buscar en tiempo real
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setSearchResults([]);
+      return;
+    }
+    const term = searchTerm.toLowerCase();
+    const results = allemprendimientos.filter((emp) =>
+      (emp.denominacion || "").toLowerCase().includes(term) ||
+      (emp.sector || "").toLowerCase().includes(term) ||
+      (emp.actividadPrincipal || "").toLowerCase().includes(term)
+    );
+    setSearchResults(results);
+  }, [searchTerm, allemprendimientos]);
 
   return (
     <header className="bg-white dark:bg-gray-800 shadow-sm border-b border-gray-200 dark:border-gray-700 py-3 px-4 md:px-6">
@@ -90,19 +118,36 @@ function Header({ toggleMobileSidebar }) {
           >
             <Menu size={24} />
           </button>
-          <form
-            onSubmit={handleSearch}
-            className="hidden md:flex items-center relative"
-          >
-            <input
-              type="text"
-              placeholder="Buscar Negocio..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="input pl-10 w-64 lg:w-80"
-            />
-            <Search size={18} className="absolute left-3 text-gray-400" />
-          </form>
+          <div className="hidden md:flex items-center relative">
+            <form onSubmit={handleSearch} className="w-full">
+              <input
+                type="text"
+                placeholder="Buscar Negocio..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="input pl-10 w-64 lg:w-80"
+                autoComplete="off"
+              />
+              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            </form>
+            {searchTerm && searchResults.length > 0 && (
+              <div className="absolute top-12 left-0 w-64 lg:w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-20 animate-fadeIn max-h-72 overflow-y-auto">
+                {searchResults.map((emp) => (
+                  <a
+                    key={emp.id}
+                    href={`/emprendimientos/${emp.id}`}
+                    className="block px-4 py-2 hover:bg-primary-50 dark:hover:bg-primary-900 cursor-pointer text-sm text-gray-700 dark:text-gray-200"
+                  >
+                    <span className="font-semibold">{emp.denominacion || 'Sin nombre'}</span>
+                    <span className="ml-2 text-xs text-gray-500">{emp.sector}</span>
+                  </a>
+                ))}
+                {searchResults.length === 0 && (
+                  <div className="px-4 py-2 text-gray-500 text-sm">Sin resultados</div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="flex items-center space-x-2">
@@ -177,18 +222,18 @@ function Header({ toggleMobileSidebar }) {
             )}
             {!isAuthenticated && dropdownOpen && (
               <div
-                className="absolute right-0 mt-2 w-48 bg-white dark
-              :bg-gray-800 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn"
+                // className="absolute right-0 mt-2 w-48 bg-white dark
+                className="absolute right-0 mt-2 w-48  dark:bg-gray-700 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn"
               >
                 <Link
                   href="/auth/login"
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Iniciar sesión
                 </Link>
                 <a
                   href="/auth/register"
-                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Registrarse
                 </a>
@@ -198,21 +243,39 @@ function Header({ toggleMobileSidebar }) {
         </div>
       </div>
 
-      <form onSubmit={handleSearch} className="mt-3 flex md:hidden">
-        <div className="relative w-full">
+      <div className="mt-3 flex md:hidden relative w-full">
+        <form onSubmit={handleSearch} className="w-full">
           <input
             type="text"
             placeholder="Buscar Negocio..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="input pl-10 w-full"
+            autoComplete="off"
           />
           <Search
             size={18}
             className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
           />
-        </div>
-      </form>
+        </form>
+        {searchTerm && searchResults.length > 0 && (
+          <div className="absolute top-12 left-0 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-20 animate-fadeIn max-h-72 overflow-y-auto">
+            {searchResults.map((emp) => (
+              <a
+                key={emp.id}
+                href={`/emprendimientos/${emp.id}`}
+                className="block px-4 py-2 hover:bg-primary-50 dark:hover:bg-primary-900 cursor-pointer text-sm text-gray-700 dark:text-gray-200"
+              >
+                <span className="font-semibold">{emp.denominacion || 'Sin nombre'}</span>
+                <span className="ml-2 text-xs text-gray-500">{emp.sector}</span>
+              </a>
+            ))}
+            {searchResults.length === 0 && (
+              <div className="px-4 py-2 text-gray-500 text-sm">Sin resultados</div>
+            )}
+          </div>
+        )}
+      </div>
     </header>
   );
 }

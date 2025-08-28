@@ -63,7 +63,7 @@ export default function RegisterForm() {
         Crear cuenta
       </button>
 
-      {success && <p className="text-green-600 text-sm">Registro exitoso 🎉, redirigiendo...</p>}
+      {success && <p className="text-green-600 text-sm">Registro exitoso 🎉, Redirigiendo...</p>}
       {error && <p className="text-red-600 text-sm">{error}</p>}
     </form>
   );

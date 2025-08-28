@@ -186,6 +186,10 @@ export default function CrearEmprendedorPage() {
               <input id="departamento" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="departamento" placeholder="Departamento" value={form.departamento} onChange={handleChange} autoComplete="off" />
             </div>
             <div className="flex flex-col gap-1">
+              <label htmlFor="direccion" className="text-xs text-gray-500">Dirección</label>
+              <input id="direccion" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="direccion" placeholder="Dirección" value={form.direccion} onChange={handleChange} autoComplete="off" />
+            </div>
+            <div className="flex flex-col gap-1">
               <label htmlFor="telefono" className="text-xs text-gray-500">Teléfono</label>
               <input id="telefono" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="telefono" placeholder="Teléfono" value={form.telefono} onChange={handleChange} autoComplete="off" />
             </div>
