@@ -10,7 +10,9 @@ import {
   ChevronLeft,
   ChevronRight,
   LogIn,
-  UsersRound 
+  UsersRound,
+  BookUser,
+  BookOpenText 
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -35,10 +37,11 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
     { path: '/emprendedores', label: 'Emprendedores', icon: <UsersRound  size={20} /> },
     { path: '/emprendimientos', label: 'Emprendimientos', icon: <Building2 size={20} /> },
     // { path: '/admin', label: 'Admin', icon: <HelpCircle size={20} /> },
-    { path: '/herramientas', label: 'Herramientas', icon: <HelpCircle size={20} /> },
+    // { path: '/herramientas', label: 'Herramientas', icon: <HelpCircle size={20} /> },
+    { path: '/herramientas', label: 'Herramientas', icon: <BookOpenText size={20} /> },
+    { path: '/capacitaciones', label: 'Capacitaciones', icon: <BookUser size={20} /> },
     { path: '/analiticas', label: 'Analiticas', icon: <PieChart size={20} /> },
     // { path: '/ajustes', label: 'Ajustes', icon: <Settings size={20} /> },
-
   ];
 
   if (isMobile) {
