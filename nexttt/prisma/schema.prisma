@@ -239,6 +239,7 @@ model Usuario {
   updatedAt DateTime @updatedAt
   emprendedorId Int?         @unique
   emprendedor   Emprendedor? @relation("UsuarioEmprendedor", fields: [emprendedorId], references: [id])
+  logsAccion    LogAccion[]
 }
 
 
@@ -271,5 +272,17 @@ model AsignacionCapacitacion {
   observaciones     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+}
+
+
+model LogAccion {
+  id           Int       @id @default(autoincrement())
+  usuarioId    Int?
+  usuario      Usuario?  @relation(fields: [usuarioId], references: [id])
+  entidad      String    // Ejemplo: "Emprendedor", "Emprendimiento"
+  entidadId    Int       // ID del registro afectado
+  accion       String    // "CREAR", "ACTUALIZAR", etc.
+  descripcion  String?
+  fecha        DateTime  @default(now())
 }
 

@@ -105,6 +105,7 @@ export default function CrearEmprendedorPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(adaptedForm),
+        credentials: "include", // Esto asegura que la cookie de sesión viaje
       });
       const data = await res.json();
       setLoading(false);

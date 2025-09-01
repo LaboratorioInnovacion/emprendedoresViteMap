@@ -16,7 +16,7 @@ function RecentBusinessCard({ business }) {
     }
   };
   
-  console.log(JSON.stringify(business, null, 2))
+  // console.log(JSON.stringify(business, null, 2))
 
   return (
     <div className="card hover:shadow-lg transition-shadow">
