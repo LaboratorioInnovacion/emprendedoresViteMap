@@ -40,7 +40,7 @@ export async function POST(req) {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
-      cookieName: "__Secure-next-auth.session-token",
+      cookieName: "next-auth.session-token",
     });
 
     console.log("🔐 Token recibido en API:", token);

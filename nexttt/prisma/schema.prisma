@@ -12,6 +12,24 @@ enum Genero {
   Femenino
   PrefieroNoDecir
 }
+enum Departamentos {
+Ambato
+Ancasti
+Andalgala
+AntofagastaDelaSierra
+Belen
+Capayan
+Capital
+ElAlto
+FrayMamertoEsquiu
+LaPaz
+Paclin
+Poman
+SantaMaria
+SantaRosa
+Tinogasta
+ValleViejo
+}
 
 enum NivelEstudios {
   SinEscolarizar
