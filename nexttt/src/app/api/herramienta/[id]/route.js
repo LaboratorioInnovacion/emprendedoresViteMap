@@ -3,7 +3,8 @@ import prisma from "../../../../lib/prisma";
 import { registrarLogAccionDesdeRequest } from "../../../../lib/logAccion";
 
 // params: { params: { id: string } }
-export async function GET(req, { params }) {
+export async function GET(req, context) {
+  const params = await context.params;
   const { id } = params;
   if (!id) {
     return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
@@ -58,6 +59,7 @@ export async function PUT(req, context) {
   }
   try {
     const data = await req.json();
+    delete data.asignaciones;
     const updated = await prisma.herramienta.update({
       where: { id: Number(id) },
       data,
