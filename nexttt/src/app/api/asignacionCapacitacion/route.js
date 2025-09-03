@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
 
 const prisma = new PrismaClient();
 
@@ -39,6 +40,16 @@ export async function POST(request) {
         fechaAsignacion: new Date(),
       },
     });
+
+    // Registrar log de creación
+    await registrarLogAccionDesdeRequest(
+      request,
+      nueva,
+      "AsignacionCapacitacion",
+      "CREAR",
+      `Creación de asignación de capacitación (ID: ${nueva.id})`
+    );
+
     return new Response(JSON.stringify(nueva), {
       status: 201,
       headers: { 'Content-Type': 'application/json' },

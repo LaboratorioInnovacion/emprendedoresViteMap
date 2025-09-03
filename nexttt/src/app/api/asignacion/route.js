@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../lib/prisma';
+import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
 
 // Listar todas las asignaciones
 export async function GET() {
@@ -29,6 +30,16 @@ export async function POST(req) {
         emprendimiento: true
       }
     });
+
+    // Registrar log de creación
+    await registrarLogAccionDesdeRequest(
+      req,
+      nueva,
+      "Asignacion",
+      "CREAR",
+      `Creación de asignación (ID: ${nueva.id})`
+    );
+
     return NextResponse.json(nueva);
   } catch (error) {
     // Prisma error
@@ -47,7 +58,21 @@ export async function DELETE(req) {
     return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
   }
   try {
+    // Obtener el objeto antes de eliminar para loguear
+    const eliminada = await prisma.asignacion.findUnique({ where: { id: Number(id) } });
     await prisma.asignacion.delete({ where: { id: Number(id) } });
+
+    // Registrar log de eliminación
+    if (eliminada) {
+      await registrarLogAccionDesdeRequest(
+        req,
+        eliminada,
+        "Asignacion",
+        "ELIMINAR",
+        `Eliminación de asignación (ID: ${eliminada.id})`
+      );
+    }
+
     return NextResponse.json({ success: true });
   } catch (error) {
     return NextResponse.json({ error: 'No se pudo eliminar' }, { status: 500 });

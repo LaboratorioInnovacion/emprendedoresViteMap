@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '../../../../lib/prisma';
+import { registrarLogAccionDesdeRequest } from "../../../../lib/logAccion";
 
 export async function GET(req, context) {
   try {
@@ -67,6 +68,16 @@ export async function PUT(req, context) {
       where: { id: numId },
       data,
     });
+
+    // Registrar log de actualización
+    await registrarLogAccionDesdeRequest(
+      req,
+      updated,
+      "Emprendedor",
+      "ACTUALIZAR",
+      `Actualización de emprendedor (ID: ${updated.id})`
+    );
+
     return NextResponse.json(updated);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -80,9 +91,24 @@ export async function DELETE(req, context) {
     if (!id) {
       return NextResponse.json({ error: 'ID inválido' }, { status: 400 });
     }
+
+    // Obtener el objeto antes de eliminar para loguear
+    const eliminado = await prisma.emprendedor.findUnique({ where: { id } });
     await prisma.emprendedor.delete({
       where: { id },
     });
+
+    // Registrar log de eliminación
+    if (eliminado) {
+      await registrarLogAccionDesdeRequest(
+        req,
+        eliminado,
+        "Emprendedor",
+        "ELIMINAR",
+        `Eliminación de emprendedor (ID: ${eliminado.id})`
+      );
+    }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

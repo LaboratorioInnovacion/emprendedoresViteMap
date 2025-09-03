@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
+import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
 
 // Utilidad para decodificar ubicacion Bytes a {lat, lng}
 function decodeUbicacion(ubicacion) {
@@ -76,19 +77,13 @@ export async function POST(req) {
     });
 
     // Registrar log de creación
-    try {
-      await prisma.logAccion.create({
-        data: {
-          usuarioId: token && token.id ? Number(token.id) : null,
-          entidad: "Emprendedor",
-          entidadId: nuevo.id,
-          accion: "CREAR",
-          descripcion: `Creación de emprendedor (ID: ${nuevo.id})`,
-        },
-      });
-    } catch (logErr) {
-      console.error("❌ Error registrando log de creación:", logErr);
-    }
+    await registrarLogAccionDesdeRequest(
+      req,
+      nuevo,
+      "Emprendedor",
+      "CREAR",
+      `Creación de emprendedor (ID: ${nuevo.id})`
+    );
 
     return NextResponse.json(nuevo);
   } catch (err) {
@@ -106,30 +101,14 @@ export async function PUT(req, context) {
     fechaNacimiento: new Date(data.fechaNacimiento),
   });
 
-  // Obtener token para saber quién actualiza
-  let token = null;
-  try {
-    token = await getToken({
-      req,
-      secret: process.env.NEXTAUTH_SECRET,
-      cookieName: "__Secure-next-auth.session-token",
-    });
-  } catch {}
-
   // Registrar log de actualización
-  try {
-    await prisma.logAccion.create({
-      data: {
-        usuarioId: token && token.id ? token.id : null,
-        entidad: "Emprendedor",
-        entidadId: updated.id,
-        accion: "ACTUALIZAR",
-        descripcion: `Actualización de emprendedor (ID: ${updated.id})`,
-      },
-    });
-  } catch (logErr) {
-    console.error("❌ Error registrando log de actualización:", logErr);
-  }
+  await registrarLogAccionDesdeRequest(
+    req,
+    updated,
+    "Emprendedor",
+    "ACTUALIZAR",
+    `Actualización de emprendedor (ID: ${updated.id})`
+  );
 
   return NextResponse.json(updated);
 }

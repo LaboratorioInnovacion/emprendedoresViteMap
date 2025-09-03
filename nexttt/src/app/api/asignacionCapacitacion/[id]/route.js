@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
 
 const prisma = new PrismaClient();
 
@@ -40,6 +41,16 @@ export async function PUT(request, { params }) {
         emprendimientoId: data.emprendimientoId ? Number(data.emprendimientoId) : null,
       },
     });
+
+    // Registrar log de actualización
+    await registrarLogAccionDesdeRequest(
+      request,
+      updated,
+      "AsignacionCapacitacion",
+      "ACTUALIZAR",
+      `Actualización de asignación de capacitación (ID: ${updated.id})`
+    );
+
     return new Response(JSON.stringify(updated), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
@@ -53,7 +64,21 @@ export async function PUT(request, { params }) {
 export async function DELETE(request, { params }) {
   const { id } = params;
   try {
+    // Obtener el objeto antes de eliminar para loguear
+    const eliminada = await prisma.asignacionCapacitacion.findUnique({ where: { id: Number(id) } });
     await prisma.asignacionCapacitacion.delete({ where: { id: Number(id) } });
+
+    // Registrar log de eliminación
+    if (eliminada) {
+      await registrarLogAccionDesdeRequest(
+        request,
+        eliminada,
+        "AsignacionCapacitacion",
+        "ELIMINAR",
+        `Eliminación de asignación de capacitación (ID: ${eliminada.id})`
+      );
+    }
+
     return new Response(null, { status: 204 });
   } catch (error) {
     return new Response(JSON.stringify({ error: error.message }), { status: 400 });

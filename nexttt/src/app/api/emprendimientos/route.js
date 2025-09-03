@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
+import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
 
 // Utilidad para parsear ubicación
 function parseUbicacion(ubicacion) {
@@ -102,6 +103,16 @@ export async function POST(req) {
         ubicacion: parseUbicacion(body.ubicacion),
       },
     });
+
+    // Registrar log de creación usando la función refactorizada
+    await registrarLogAccionDesdeRequest(
+      req,
+      nuevo,
+      "Emprendimiento",
+      "CREAR",
+      `Creación de emprendimiento (ID: ${nuevo.id})`
+    );
+
     return NextResponse.json(nuevo);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -131,6 +142,16 @@ export async function PUT(req) {
         ubicacion: parseUbicacion(body.ubicacion),
       },
     });
+
+    // Registrar log de actualización
+    await registrarLogAccionDesdeRequest(
+      req,
+      actualizado,
+      "Emprendimiento",
+      "ACTUALIZAR",
+      `Actualización de emprendimiento (ID: ${actualizado.id})`
+    );
+
     return NextResponse.json(actualizado);
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
@@ -143,7 +164,22 @@ export async function DELETE(req) {
     const { searchParams } = new URL(req.url);
     const id = searchParams.get("id");
     if (!id) return NextResponse.json({ error: "Falta id" }, { status: 400 });
+
+    // Obtener el objeto antes de eliminar para loguear
+    const eliminado = await prisma.emprendimiento.findUnique({ where: { id: Number(id) } });
     await prisma.emprendimiento.delete({ where: { id: Number(id) } });
+
+    // Registrar log de eliminación
+    if (eliminado) {
+      await registrarLogAccionDesdeRequest(
+        req,
+        eliminado,
+        "Emprendimiento",
+        "ELIMINAR",
+        `Eliminación de emprendimiento (ID: ${eliminado.id})`
+      );
+    }
+
     return NextResponse.json({ ok: true });
   } catch (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });

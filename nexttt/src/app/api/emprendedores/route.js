@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import prisma from "../../../lib/prisma";
 import { getToken } from "next-auth/jwt";
-import { useSession } from "next-auth/react";
+import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
 
 // Utilidad para decodificar ubicacion Bytes a {lat, lng}
 function decodeUbicacion(ubicacion) {
@@ -45,23 +45,24 @@ export async function POST(req) {
 
     console.log("🔐 Token recibido en API:", token);
 
-    // if (!token) {
-    //   return NextResponse.json({ error: "No autorizado" }, { status: 403 });
-    // }
-
-    // if (token.rol !== "EMPRENDEDOR") {
-    //   return NextResponse.json({ error: "Rol no permitido" }, { status: 403 });
-    // }
-
     const data = await req.json();
 
     const nuevo = await prisma.emprendedor.create({
       data: {
         ...data,
-        fechaNacimiento: new Date(data.fechaNacimiento), // 👈 esto es clave
+        fechaNacimiento: new Date(data.fechaNacimiento),
         usuario: { connect: { id: token.id } },
       },
     });
+
+    // Registrar log de creación
+    await registrarLogAccionDesdeRequest(
+      req,
+      nuevo,
+      "Emprendedor",
+      "CREAR",
+      `Creación de emprendedor (ID: ${nuevo.id})`
+    );
 
     return NextResponse.json(nuevo);
   } catch (err) {
@@ -78,6 +79,15 @@ export async function PUT(req, context) {
     data,
     fechaNacimiento: new Date(data.fechaNacimiento),
   });
+
+  // Registrar log de actualización
+  await registrarLogAccionDesdeRequest(
+    req,
+    updated,
+    "Emprendedor",
+    "ACTUALIZAR",
+    `Actualización de emprendedor (ID: ${updated.id})`
+  );
 
   return NextResponse.json(updated);
 }
