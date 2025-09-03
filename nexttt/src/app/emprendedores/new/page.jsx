@@ -184,7 +184,32 @@ export default function CrearEmprendedorPage() {
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="departamento" className="text-xs text-gray-500">Departamento/localidad</label>
-              <input id="departamento" className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" name="departamento" placeholder="Departamento" value={form.departamento} onChange={handleChange} autoComplete="off" />
+              <select
+                id="departamento"
+                className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700"
+                name="departamento"
+                value={form.departamento}
+                onChange={handleChange}
+                required
+              >
+                <option value="">Selecciona un departamento</option>
+                <option value="Ambato">Ambato</option>
+                <option value="Ancasti">Ancasti</option>
+                <option value="Andalgalá">Andalgalá</option>
+                <option value="Antofagasta de la Sierra">Antofagasta de la Sierra</option>
+                <option value="Belén">Belén</option>
+                <option value="Capayán">Capayán</option>
+                <option value="Capital">Capital</option>
+                <option value="El Alto">El Alto</option>
+                <option value="Fray Mamerto Esquiú">Fray Mamerto Esquiú</option>
+                <option value="La Paz">La Paz</option>
+                <option value="Paclín">Paclín</option>
+                <option value="Pomán">Pomán</option>
+                <option value="Santa María">Santa María</option>
+                <option value="Santa Rosa">Santa Rosa</option>
+                <option value="Tinogasta">Tinogasta</option>
+                <option value="Valle Viejo">Valle Viejo</option>
+              </select>
             </div>
             <div className="flex flex-col gap-1">
               <label htmlFor="direccion" className="text-xs text-gray-500">Dirección</label>
