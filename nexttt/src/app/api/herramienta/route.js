@@ -11,7 +11,15 @@ export async function GET() {
 
 export async function POST(req) {
   const body = await req.json();
-  const nueva = await prisma.herramienta.create({ data: body });
+  // Adaptar los campos para que sean arrays
+  const adaptArray = (val) => Array.isArray(val) ? val : val ? [val] : [];
+  const data = {
+    ...body,
+    origenTipo: adaptArray(body.origenTipo),
+    tipoHerramientaEmprendimiento: adaptArray(body.tipoHerramientaEmprendimiento),
+    tipoHerramientaEmprendedor: adaptArray(body.tipoHerramientaEmprendedor),
+  };
+  const nueva = await prisma.herramienta.create({ data });
 
   // Registrar log de creación
   await registrarLogAccionDesdeRequest(
@@ -50,4 +58,31 @@ export async function DELETE(req) {
   } catch (error) {
     return NextResponse.json({ error: 'No se pudo eliminar' }, { status: 500 });
   }
+}
+
+export async function PUT(req) {
+  const body = await req.json();
+  // Adaptar los campos para que sean arrays
+  const adaptArray = (val) => Array.isArray(val) ? val : val ? [val] : [];
+  const data = {
+    ...body,
+    origenTipo: adaptArray(body.origenTipo),
+    tipoHerramientaEmprendimiento: adaptArray(body.tipoHerramientaEmprendimiento),
+    tipoHerramientaEmprendedor: adaptArray(body.tipoHerramientaEmprendedor),
+  };
+  const actualizada = await prisma.herramienta.update({
+    where: { id: Number(body.id) },
+    data,
+  });
+
+  // Registrar log de edición
+  await registrarLogAccionDesdeRequest(
+    req,
+    actualizada,
+    "Herramienta",
+    "EDITAR",
+    `Edición de herramienta (ID: ${actualizada.id})`
+  );
+
+  return NextResponse.json(actualizada);
 }

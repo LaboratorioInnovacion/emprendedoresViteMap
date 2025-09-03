@@ -54,6 +54,8 @@ function NuevoEmprendimientoPage() {
   });
   const [emprendedores, setEmprendedores] = useState([]);
 
+    const [busquedaEmp, setBusquedaEmp] = useState("");
+
   // Obtener lista de emprendedores para el select
   useEffect(() => {
     const fetchEmprendedores = async () => {
@@ -67,6 +69,13 @@ function NuevoEmprendimientoPage() {
     };
     fetchEmprendedores();
   }, []);
+
+    // Filtrar emprendedores por nombre/apellido
+    const emprendedoresFiltrados = busquedaEmp.trim() === ""
+      ? emprendedores
+      : emprendedores.filter(emp =>
+          (emp.nombre + " " + emp.apellido).toLowerCase().includes(busquedaEmp.toLowerCase())
+        );
   const [ubicacion, setUbicacion] = useState({ lat: -34.61, lng: -58.38 });
   // Importar MapSelector dinámicamente para SSR
   const MapSelector = dynamic(() => import("../../../components/MapSelector"), { ssr: false });
@@ -180,23 +189,39 @@ function NuevoEmprendimientoPage() {
 
   return (
     <form onSubmit={handleSubmit} className="max-w-6xl mx-auto p-6 space-y-4">
-      {/* Selector de emprendedor */}
-      <p>Emprendedor</p>
-      <select
-        name="emprendedorId"
-        value={form.emprendedorId}
-        onChange={handleChange}
-        className="input w-full"
-        required
-      >
-        <option value="">Selecciona un emprendedor</option>
-        {emprendedores.map((emp) => (
-          <option key={emp.id} value={emp.id}>
-            {emp.nombre} {emp.apellido} (ID: {emp.id})
-          </option>
-        ))}
-      </select>
       <h2 className="text-xl font-bold mb-4">Nuevo Emprendimiento</h2>
+
+      {/* Selector de emprendedor */}
+        <p>Buscar emprendedor por nombre o apellido</p>
+        <input
+          type="text"
+          value={busquedaEmp}
+          onChange={e => setBusquedaEmp(e.target.value)}
+          placeholder="Buscar emprendedor..."
+          className="input w-full mb-2"
+        />
+        {busquedaEmp.trim() !== "" && (
+          <ul className=" rounded bg-slate-700 max-h-48 overflow-y-auto mb-2">
+            {emprendedoresFiltrados.map((emp) => (
+              <li
+                key={emp.id}
+                className={`px-3 py-2 cursor-pointer hover:bg-blue-700 ${form.emprendedorId === emp.id ? 'bg-blue-700' : ''}`}
+                onMouseDown={() => setForm(prev => ({ ...prev, emprendedorId: emp.id }))}
+              >
+                {emp.nombre} {emp.apellido} (ID: {emp.id})
+              </li>
+            ))}
+            {emprendedoresFiltrados.length === 0 && (
+              <li className="px-3 py-2 text-gray-400">No se encontraron emprendedores</li>
+            )}
+          </ul>
+        )}
+        {form.emprendedorId && (
+          <div className="mb-2 text-sm text-green-700">Seleccionado: {(() => {
+            const emp = emprendedores.find(e => e.id === form.emprendedorId);
+            return emp ? `${emp.nombre} ${emp.apellido} (ID: ${emp.id})` : form.emprendedorId;
+          })()}</div>
+        )}
       {/* <p>ID Emprendedor</p> */}
       {/* <input name="emprendedorId" value={form.emprendedorId} onChange={handleChange} placeholder="ID Emprendedor" className="input w-full" /> */}
       <p>Etapa</p>
@@ -210,7 +235,7 @@ function NuevoEmprendimientoPage() {
       <input name="denominacion" value={form.denominacion} onChange={handleChange} placeholder="Denominación" className="input w-full" />
       <p>Fecha Inicio (obligatorio)</p>
       <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleChange} className="input w-full" />
-      <label><input type="checkbox" name="inscripcionArca" checked={form.inscripcionArca} onChange={handleChange} /> Inscripción Arca (obligatorio)</label>
+      <label><input type="checkbox" name="inscripcionArca" checked={form.inscripcionArca} onChange={handleChange} className="mt-4" /> ¿Inscripto en Arca? (obligatorio)</label>
       <p>CUIT (obligatorio)</p>
       <input name="cuit" value={form.cuit} onChange={handleChange} placeholder="CUIT" className="input w-full" />
       <p>Sector (obligatorio)</p>
@@ -246,7 +271,7 @@ function NuevoEmprendimientoPage() {
       <input name="redSocial1" value={form.redSocial1} onChange={handleChange} placeholder="Red Social 1" className="input w-full" />
       <p>Red Social 2 (opcional)</p>
       <input name="redSocial2" value={form.redSocial2} onChange={handleChange} placeholder="Red Social 2" className="input w-full" />
-      <label><input type="checkbox" name="tienePersonal" checked={form.tienePersonal} onChange={handleChange} /> ¿Tiene Personal? (obligatorio)</label>
+      <label><input type="checkbox" name="tienePersonal" checked={form.tienePersonal} onChange={handleChange} className="mt-4"/> ¿Tiene Personal? </label>
       <p>Cantidad Personal (opcional)</p>
       <input type="number" name="cantidadPersonal" value={form.cantidadPersonal} onChange={handleChange} placeholder="Cantidad Personal" className="input w-full" />
       <p>Modo Incorporación Personal (opcional)</p>
@@ -265,34 +290,34 @@ function NuevoEmprendimientoPage() {
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <label><input type="checkbox" name="requiereCapacitacion" checked={form.requiereCapacitacion} onChange={handleChange} /> Requiere Capacitacion</label>
+      <label><input type="checkbox" name="requiereCapacitacion" checked={form.requiereCapacitacion} onChange={handleChange} className="mt-4" /> Requiere Capacitacion</label>
       <p>Tipos Capacitacion (opcional)</p>
       <input name="tiposCapacitacion" value={form.tiposCapacitacion} onChange={handleChange} placeholder="Tipos Capacitacion (separado por coma)" className="input w-full" />
       <p>Otros Tipos Capacitacion (opcional)</p>
       <input name="otrosTiposCapacitacion" value={form.otrosTiposCapacitacion} onChange={handleChange} placeholder="Otros Tipos Capacitacion" className="input w-full" />
-      <label><input type="checkbox" name="requiereConsultoria" checked={form.requiereConsultoria} onChange={handleChange} /> Requiere Consultoria</label>
+      <label><input type="checkbox" name="requiereConsultoria" checked={form.requiereConsultoria} onChange={handleChange} className="mt-4" /> Requiere Consultoria</label>
       <p>Tipos Consultoria (opcional)</p>
       <input name="tiposConsultoria" value={form.tiposConsultoria} onChange={handleChange} placeholder="Tipos Consultoria (separado por coma)" className="input w-full" />
       <p>Otros Tipos Consultoria (opcional)</p>
       <input name="otrosTiposConsultoria" value={form.otrosTiposConsultoria} onChange={handleChange} placeholder="Otros Tipos Consultoria" className="input w-full" />
-      <label><input type="checkbox" name="requiereHerramientasTecno" checked={form.requiereHerramientasTecno} onChange={handleChange} /> Requiere Herramientas Tecno</label>
+      <label><input type="checkbox" name="requiereHerramientasTecno" checked={form.requiereHerramientasTecno} onChange={handleChange} className="mt-4" /> Requiere Herramientas Tecno</label>
       <p>Tipos Herramientas Tecno (opcional)</p>
       <input name="tiposHerramientasTecno" value={form.tiposHerramientasTecno} onChange={handleChange} placeholder="Tipos Herramientas Tecno (separado por coma)" className="input w-full" />
       <p>Otras Herramientas Tecno (opcional)</p>
       <input name="otrasHerramientasTecno" value={form.otrasHerramientasTecno} onChange={handleChange} placeholder="Otras Herramientas Tecno" className="input w-full" />
-      <label><input type="checkbox" name="usaRedesSociales" checked={form.usaRedesSociales} onChange={handleChange} /> Usa Redes Sociales</label>
+      <label><input type="checkbox" name="usaRedesSociales" checked={form.usaRedesSociales} onChange={handleChange} className="mt-4" /> Usa Redes Sociales</label>
       <input name="tiposRedesSociales" value={form.tiposRedesSociales} onChange={handleChange} placeholder="Tipos Redes Sociales (separado por coma)" className="input w-full" />
-      <label><input type="checkbox" name="usaMediosPagoElectronicos" checked={form.usaMediosPagoElectronicos} onChange={handleChange} /> Usa Medios Pago Electrónicos</label>
+      <label><input type="checkbox" name="usaMediosPagoElectronicos" checked={form.usaMediosPagoElectronicos} onChange={handleChange} className="mt-4" /> Usa Medios Pago Electrónicos</label>
       <p>Canales Comercialización (opcional)</p>
       <input name="canalesComercializacion" value={form.canalesComercializacion} onChange={handleChange} placeholder="Canales Comercialización (separado por coma)" className="input w-full" />
       <p>Otros Canales Comercialización (opcional)</p>
       <input name="otrosCanalesComercializacion" value={form.otrosCanalesComercializacion} onChange={handleChange} placeholder="Otros Canales Comercialización" className="input w-full" />
-      <label><input type="checkbox" name="poseeSucursales" checked={form.poseeSucursales} onChange={handleChange} /> Posee Sucursales</label>
+      <label><input type="checkbox" name="poseeSucursales" checked={form.poseeSucursales} onChange={handleChange} className="mt-4" /> Posee Sucursales</label>
       <p>Cantidad Sucursales (opcional)</p>
       <input type="number" name="cantidadSucursales" value={form.cantidadSucursales} onChange={handleChange} placeholder="Cantidad Sucursales" className="input w-full" />
       <p>Ubicación Sucursales (opcional)</p>
       <input name="ubicacionSucursales" value={form.ubicacionSucursales} onChange={handleChange} placeholder="Ubicación Sucursales (separado por coma)" className="input w-full" />
-      <label><input type="checkbox" name="planeaAbrirSucursal" checked={form.planeaAbrirSucursal} onChange={handleChange} /> Planea Abrir Sucursal</label>
+      <label><input type="checkbox" name="planeaAbrirSucursal" checked={form.planeaAbrirSucursal} onChange={handleChange} className="mt-4" /> Planea Abrir Sucursal</label>
       {/* Mapa para seleccionar ubicación */}
       <div className="mt-4">
         <span className="text-sm font-medium mb-2 block">Selecciona la ubicación en el mapa</span>

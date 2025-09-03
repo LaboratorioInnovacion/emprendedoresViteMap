@@ -73,11 +73,11 @@ const Page = () => {
                 </thead>
                 <tbody>
                   {capacitaciones.map((c, idx) => (
-                    <tr key={c.id} className={`transition-colors ${idx % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : 'bg-white dark:bg-gray-800'} hover:bg-primary-50 dark:hover:bg-primary-900`}>
+                    <tr key={c.id} className={`transition-colors ${idx % 2 === 0 ? 'bg-gray-50 dark:bg-gray-900' : 'bg-white dark:bg-gray-800'}`}>
                       <td className="px-2 py-2 font-mono text-xs text-gray-500">{c.id}</td>
                       <td className="px-2 py-2">
                         <button
-                          className="text-primary-700 underline hover:text-primary-900 font-semibold"
+                          className="text-white text-base underline hover:text-primary-900 font-semibold"
                           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
                           onClick={() => router.push(`/capacitaciones/${c.id}`)}
                         >

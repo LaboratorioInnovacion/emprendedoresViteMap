@@ -1,4 +1,3 @@
-
 "use client";
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -14,6 +13,8 @@ const Page = () => {
 	const [emprendedores, setEmprendedores] = useState([]);
 	const [emprendimientos, setEmprendimientos] = useState([]);
 	const [loadingBenef, setLoadingBenef] = useState(false);
+	const [busquedaBenef, setBusquedaBenef] = useState("");
+	const [showListaBenef, setShowListaBenef] = useState(false);
 
 	// Cargar emprendedores y emprendimientos
 	const fetchBeneficiarios = async () => {
@@ -85,6 +86,14 @@ const Page = () => {
 		setAsignando(false);
 	};
 
+	const beneficiariosFiltrados = form.beneficiarioTipo === 'Emprendedor'
+		? (busquedaBenef.trim() === ""
+				? emprendedores
+				: emprendedores.filter(e => (`${e.nombre} ${e.apellido}`).toLowerCase().includes(busquedaBenef.toLowerCase())))
+		: (busquedaBenef.trim() === ""
+				? emprendimientos
+				: emprendimientos.filter(e => (e.denominacion || "").toLowerCase().includes(busquedaBenef.toLowerCase())));
+
 	return (
 		<div className="max-w-6xl mx-auto p-2 sm:p-4 animate-fadeIn">
 			{/* Formulario de asignación */}
@@ -124,33 +133,93 @@ const Page = () => {
 							{form.beneficiarioTipo === 'Emprendedor' ? 'Emprendedor' : 'Emprendimiento'}
 						</label>
 						{form.beneficiarioTipo === 'Emprendedor' ? (
-							<select
-								name="beneficiarioId"
-								value={form.beneficiarioId}
-								onChange={handleChange}
-								className="input input-bordered w-full text-sm"
-								required
-								disabled={loadingBenef}
-							>
-								<option value="">Seleccione un emprendedor</option>
-								{emprendedores.map((e) => (
-									<option key={e.id} value={e.id}>{e.nombre} {e.apellido} (ID: {e.id})</option>
-								))}
-							</select>
+							<div className="relative">
+								<input
+									type="text"
+									value={busquedaBenef}
+									onFocus={() => setShowListaBenef(true)}
+									onChange={e => {
+										setBusquedaBenef(e.target.value);
+										setShowListaBenef(true);
+									}}
+									placeholder="Buscar emprendedor..."
+									className={`input input-bordered w-full text-sm mb-2 ${form.beneficiarioId ? 'border-green-500 ring-2 ring-green-400' : ''}`}
+									disabled={loadingBenef}
+									autoComplete="off"
+								/>
+								{form.beneficiarioId && (
+									<div className="mb-2 text-xs text-green-700 font-semibold flex items-center gap-2">
+										<span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+										Seleccionado: {(() => {
+											const emp = emprendedores.find(e => e.id === form.beneficiarioId);
+											return emp ? `${emp.nombre} ${emp.apellido} (ID: ${emp.id})` : form.beneficiarioId;
+										})()}
+									</div>
+								)}
+								{showListaBenef && (
+									<ul className="absolute left-0 right-0 rounded bg-slate-700 max-h-48 overflow-y-auto mb-2 z-10">
+										{beneficiariosFiltrados.map((e) => (
+											<li
+												key={e.id}
+												className={`px-3 py-2 cursor-pointer hover:bg-blue-700 ${form.beneficiarioId === e.id ? 'bg-green-700 text-white font-bold' : ''}`}
+												onMouseDown={() => {
+													setForm(prev => ({ ...prev, beneficiarioId: e.id }));
+													setShowListaBenef(false);
+												}}
+											>
+												{e.nombre} {e.apellido} (ID: {e.id})
+											</li>
+										))}
+										{beneficiariosFiltrados.length === 0 && (
+											<li className="px-3 py-2 text-gray-400">No se encontraron emprendedores</li>
+										)}
+									</ul>
+								)}
+							</div>
 						) : (
-							<select
-								name="beneficiarioId"
-								value={form.beneficiarioId}
-								onChange={handleChange}
-								className="input input-bordered w-full text-sm"
-								required
-								disabled={loadingBenef}
-							>
-								<option value="">Seleccione un emprendimiento</option>
-								{emprendimientos.map((e) => (
-									<option key={e.id} value={e.id}>{e.denominacion} (ID: {e.id})</option>
-								))}
-							</select>
+							<div className="relative">
+								<input
+									type="text"
+									value={busquedaBenef}
+									onFocus={() => setShowListaBenef(true)}
+									onChange={e => {
+										setBusquedaBenef(e.target.value);
+										setShowListaBenef(true);
+									}}
+									placeholder="Buscar emprendimiento..."
+									className={`input input-bordered w-full text-sm mb-2 ${form.beneficiarioId ? 'border-green-500 ring-2 ring-green-400' : ''}`}
+									disabled={loadingBenef}
+									autoComplete="off"
+								/>
+								{form.beneficiarioId && (
+									<div className="mb-2 text-xs text-green-700 font-semibold flex items-center gap-2">
+										<span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+										Seleccionado: {(() => {
+											const emp = emprendimientos.find(e => e.id === form.beneficiarioId);
+											return emp ? `${emp.denominacion} (ID: ${emp.id})` : form.beneficiarioId;
+										})()}
+									</div>
+								)}
+								{showListaBenef && (
+									<ul className="absolute left-0 right-0 rounded bg-slate-700 max-h-48 overflow-y-auto mb-2 z-10">
+										{beneficiariosFiltrados.map((e) => (
+											<li
+												key={e.id}
+												className={`px-3 py-2 cursor-pointer hover:bg-blue-700 ${form.beneficiarioId === e.id ? 'bg-green-700 text-white font-bold' : ''}`}
+												onMouseDown={() => {
+													setForm(prev => ({ ...prev, beneficiarioId: e.id }));
+													setShowListaBenef(false);
+												}}
+											>
+												{e.denominacion} (ID: {e.id})
+											</li>
+										))}
+										{beneficiariosFiltrados.length === 0 && (
+											<li className="px-3 py-2 text-gray-400">No se encontraron emprendimientos</li>
+										)}
+									</ul>
+								)}
+							</div>
 						)}
 					</div>
 					<button type="submit" className="btn btn-primary w-full text-base sm:text-lg" disabled={asignando}>

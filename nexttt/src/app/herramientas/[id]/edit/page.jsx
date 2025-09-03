@@ -33,11 +33,11 @@ const tipoHerramientaEmprendedorOptions = [
 
 const initialState = {
   nombre: '',
-  origenTipo: [],
+  origenTipo: '',
   origenOrganismo: '',
   tipoBeneficiario: '',
-  tipoHerramientaEmprendimiento: [],
-  tipoHerramientaEmprendedor: [],
+  tipoHerramientaEmprendimiento: '',
+  tipoHerramientaEmprendedor: '',
   montoTotal: '',
   montoPorBeneficiario: '',
   poseeVencimiento: false,
@@ -64,9 +64,9 @@ const Page = () => {
         if (res.ok) {
           setForm({
             ...data,
-            origenTipo: data.origenTipo || [],
-            tipoHerramientaEmprendimiento: data.tipoHerramientaEmprendimiento || [],
-            tipoHerramientaEmprendedor: data.tipoHerramientaEmprendedor || [],
+            origenTipo: Array.isArray(data.origenTipo) ? data.origenTipo[0] || '' : data.origenTipo || '',
+            tipoHerramientaEmprendimiento: Array.isArray(data.tipoHerramientaEmprendimiento) ? data.tipoHerramientaEmprendimiento[0] || '' : data.tipoHerramientaEmprendimiento || '',
+            tipoHerramientaEmprendedor: Array.isArray(data.tipoHerramientaEmprendedor) ? data.tipoHerramientaEmprendedor[0] || '' : data.tipoHerramientaEmprendedor || '',
             fechaInicioVigencia: data.fechaInicioVigencia ? data.fechaInicioVigencia.slice(0, 10) : '',
             fechaFinVigencia: data.fechaFinVigencia ? data.fechaFinVigencia.slice(0, 10) : '',
           });
@@ -82,16 +82,11 @@ const Page = () => {
   }, [params.id]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked, multiple, options } = e.target;
-    if (multiple) {
-      const values = Array.from(options).filter(o => o.selected).map(o => o.value);
-      setForm((prev) => ({ ...prev, [name]: values }));
-    } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
-    }
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -116,7 +111,7 @@ const Page = () => {
         body: JSON.stringify(payload),
       });
       if (!res.ok) throw new Error('Error al actualizar herramienta');
-      setSuccess('Herramienta actualizada correctamente');
+      setSuccess('Herramienta actualizada correctamente, reasigna los beneficiarios.');
     } catch (err) {
       setError(err.message);
     }
@@ -130,15 +125,16 @@ const Page = () => {
   }
 
   return (
-    <div className="max-w-2xl mx-auto p-6 animate-fadeIn">
+    <div className="max-w-7xl mx-auto p-6 animate-fadeIn">
       <div className="card">
         <h1 className="mb-4 text-center">Editar Herramienta</h1>
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre" required className="input w-full" />
 
           <label className="flex flex-col">
-            <span className="mb-1">Origen Tipo (puedes seleccionar varios):</span>
-            <select name="origenTipo" multiple value={form.origenTipo} onChange={handleChange} className="input w-full h-28">
+            <span className="mb-1">Origen Tipo:</span>
+            <select name="origenTipo" value={form.origenTipo} onChange={handleChange} className="input w-full">
+              <option value="">Seleccionar tipo</option>
               {origenTipoOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -157,8 +153,9 @@ const Page = () => {
           </label>
 
           <label className="flex flex-col">
-            <span className="mb-1">Tipo Herramienta Emprendimiento (puedes seleccionar varios):</span>
-            <select name="tipoHerramientaEmprendimiento" multiple value={form.tipoHerramientaEmprendimiento} onChange={handleChange} className="input w-full h-28">
+            <span className="mb-1">Tipo Herramienta Emprendimiento:</span>
+            <select name="tipoHerramientaEmprendimiento" value={form.tipoHerramientaEmprendimiento} onChange={handleChange} className="input w-full">
+              <option value="">Seleccionar tipo</option>
               {tipoHerramientaEmprendimientoOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -166,8 +163,9 @@ const Page = () => {
           </label>
 
           <label className="flex flex-col">
-            <span className="mb-1">Tipo Herramienta Emprendedor (puedes seleccionar varios):</span>
-            <select name="tipoHerramientaEmprendedor" multiple value={form.tipoHerramientaEmprendedor} onChange={handleChange} className="input w-full h-28">
+            <span className="mb-1">Tipo Herramienta Emprendedor:</span>
+            <select name="tipoHerramientaEmprendedor" value={form.tipoHerramientaEmprendedor} onChange={handleChange} className="input w-full">
+              <option value="">Seleccionar tipo</option>
               {tipoHerramientaEmprendedorOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -188,9 +186,14 @@ const Page = () => {
             <input name="fechaInicioVigencia" value={form.fechaInicioVigencia} onChange={handleChange} placeholder="Fecha Inicio Vigencia" type="date" className="input w-full" />
             <input name="fechaFinVigencia" value={form.fechaFinVigencia} onChange={handleChange} placeholder="Fecha Fin Vigencia" type="date" className="input w-full" />
           </div>
-
-          <input name="cupo" value={form.cupo} onChange={handleChange} placeholder="Cupo" type="number" className="input w-full" />
-          <input name="observaciones" value={form.observaciones} onChange={handleChange} placeholder="Observaciones" className="input w-full" />
+              <label htmlFor="">
+                <span className="mb-1">Cupo:</span>
+                <input name="cupo" value={form.cupo} onChange={handleChange} placeholder="Cupo" type="number" className="input w-full" />
+              </label>
+              <label htmlFor="">
+                <span className="mb-1">Observaciones:</span>
+                <input name="observaciones" value={form.observaciones} onChange={handleChange} placeholder="Observaciones" className="input w-full" />
+              </label>
           <button type="submit" className="btn btn-primary w-full mt-2">Guardar cambios</button>
           {success && <div className="text-green-600 font-semibold text-center mt-2">{success}</div>}
           {error && <div className="text-red-600 font-semibold text-center mt-2">{error}</div>}

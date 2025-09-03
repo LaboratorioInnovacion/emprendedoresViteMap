@@ -102,7 +102,7 @@ const Page = () => {
 					</div>
 					<div>
 						<label className="block font-semibold mb-1">Descripción</label>
-						<textarea name="descripcion" value={form.descripcion} onChange={handleChange} className="textarea textarea-bordered w-full" />
+						<textarea name="descripcion" value={form.descripcion} onChange={handleChange} className="textarea bg-slate-700 textarea-bordered w-full" />
 					</div>
 					<div className="flex gap-4">
 						<div className="flex-1">
@@ -120,7 +120,7 @@ const Page = () => {
 					</div>
 					<div>
 						<label className="block font-semibold mb-1">Observaciones</label>
-						<textarea name="observaciones" value={form.observaciones} onChange={handleChange} className="textarea textarea-bordered w-full" />
+						<textarea name="observaciones" value={form.observaciones} onChange={handleChange} className="textarea bg-slate-700 textarea-bordered w-full" />
 					</div>
 					{error && <div className="text-red-600 font-semibold">{error}</div>}
 					<div className="flex gap-2 justify-end mt-4">

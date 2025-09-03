@@ -34,11 +34,11 @@ const tipoHerramientaEmprendedorOptions = [
 
 const initialState = {
   nombre: '',
-  origenTipo: [],
+  origenTipo: '',
   origenOrganismo: '',
   tipoBeneficiario: '',
-  tipoHerramientaEmprendimiento: [],
-  tipoHerramientaEmprendedor: [],
+  tipoHerramientaEmprendimiento: '',
+  tipoHerramientaEmprendedor: '',
   montoTotal: '',
   montoPorBeneficiario: '',
   poseeVencimiento: false,
@@ -63,7 +63,7 @@ function useIsMobile(breakpoint = 768) {
 
 function HerramientasDesktop({ form, handleChange, handleSubmit, error, origenTipoOptions, tipoBeneficiarioOptions, tipoHerramientaEmprendimientoOptions, tipoHerramientaEmprendedorOptions, herramientas, loading, handleDelete }) {
   return (
-    <div className="max-w-8xl mx-auto p-4 animate-fadeIn">
+    <div className="max-w-7xl mx-auto p-4 animate-fadeIn">
       <div className="mb-8 card">
         <h1 className="mb-2 text-center">Herramientas de Apoyo</h1>
         <h2 className="mb-4 text-center text-gray-700">Agregar nueva herramienta</h2>
@@ -73,8 +73,9 @@ function HerramientasDesktop({ form, handleChange, handleSubmit, error, origenTi
             <input name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre" required className="input w-full" />
           </label>
           <label className="flex flex-col">
-            <span className="mb-1">Origen Tipo (puedes seleccionar varios):</span>
-            <select name="origenTipo" multiple value={form.origenTipo} onChange={handleChange} className="input w-full h-28">
+            <span className="mb-1">Origen Tipo:</span>
+            <select name="origenTipo" value={form.origenTipo} onChange={handleChange} className="input w-full">
+              <option value="">Seleccionar tipo</option>
               {origenTipoOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -93,16 +94,18 @@ function HerramientasDesktop({ form, handleChange, handleSubmit, error, origenTi
             </select>
           </label>
           <label className="flex flex-col">
-            <span className="mb-1">Tipo Herramienta Emprendimiento (puedes seleccionar varios):</span>
-            <select name="tipoHerramientaEmprendimiento" multiple value={form.tipoHerramientaEmprendimiento} onChange={handleChange} className="input w-full h-28">
+            <span className="mb-1">Tipo Herramienta Emprendimiento:</span>
+            <select name="tipoHerramientaEmprendimiento" value={form.tipoHerramientaEmprendimiento} onChange={handleChange} className="input w-full">
+              <option value="">Seleccionar tipo</option>
               {tipoHerramientaEmprendimientoOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
           </label>
           <label className="flex flex-col">
-            <span className="mb-1">Tipo Herramienta Emprendedor (puedes seleccionar varios):</span>
-            <select name="tipoHerramientaEmprendedor" multiple value={form.tipoHerramientaEmprendedor} onChange={handleChange} className="input w-full h-28">
+            <span className="mb-1">Tipo Herramienta Emprendedor:</span>
+            <select name="tipoHerramientaEmprendedor" value={form.tipoHerramientaEmprendedor} onChange={handleChange} className="input w-full">
+              <option value="">Seleccionar tipo</option>
               {tipoHerramientaEmprendedorOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -195,8 +198,9 @@ function HerramientasMobile({ form, handleChange, handleSubmit, error, origenTip
             <input name="nombre" value={form.nombre} onChange={handleChange} placeholder="Nombre" required className="input w-full text-sm" />
           </label>
           <label className="flex flex-col">
-            <span className="mb-1 text-xs">Origen Tipo (varios):</span>
-            <select name="origenTipo" multiple value={form.origenTipo} onChange={handleChange} className="input w-full h-20 text-xs">
+            <span className="mb-1 text-xs">Origen Tipo:</span>
+            <select name="origenTipo" value={form.origenTipo} onChange={handleChange} className="input w-full text-xs">
+              <option value="">Selecciona una opción</option>
               {origenTipoOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -215,16 +219,18 @@ function HerramientasMobile({ form, handleChange, handleSubmit, error, origenTip
             </select>
           </label>
           <label className="flex flex-col">
-            <span className="mb-1 text-xs">Tipo Herramienta Emprendimiento (varios):</span>
-            <select name="tipoHerramientaEmprendimiento" multiple value={form.tipoHerramientaEmprendimiento} onChange={handleChange} className="input w-full h-20 text-xs">
+            <span className="mb-1 text-xs">Tipo Herramienta Emprendimiento:</span>
+            <select name="tipoHerramientaEmprendimiento" value={form.tipoHerramientaEmprendimiento} onChange={handleChange} className="input w-full text-xs">
+              <option value="">Selecciona una opción</option>
               {tipoHerramientaEmprendimientoOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
             </select>
           </label>
           <label className="flex flex-col">
-            <span className="mb-1 text-xs">Tipo Herramienta Emprendedor (varios):</span>
-            <select name="tipoHerramientaEmprendedor" multiple value={form.tipoHerramientaEmprendedor} onChange={handleChange} className="input w-full h-20 text-xs">
+            <span className="mb-1 text-xs">Tipo Herramienta Emprendedor:</span>
+            <select name="tipoHerramientaEmprendedor" value={form.tipoHerramientaEmprendedor} onChange={handleChange} className="input w-full text-xs">
+              <option value="">Selecciona una opción</option>
               {tipoHerramientaEmprendedorOptions.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
               ))}
@@ -304,16 +310,11 @@ const Page = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, checked, multiple, options } = e.target;
-    if (multiple) {
-      const values = Array.from(options).filter(o => o.selected).map(o => o.value);
-      setForm((prev) => ({ ...prev, [name]: values }));
-    } else {
-      setForm((prev) => ({
-        ...prev,
-        [name]: type === 'checkbox' ? checked : value,
-      }));
-    }
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const handleSubmit = async (e) => {

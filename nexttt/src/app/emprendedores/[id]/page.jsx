@@ -48,6 +48,7 @@ const EmprendedorPage = ({ params }) => {
       setLoading(true);
       setError("");
       const data = await fetchEmprendedorById(id);
+      console.log("Emprendedor data:", data);
       if (isMounted) {
         if (data && !data.error) {
           setEmprendedor(data);

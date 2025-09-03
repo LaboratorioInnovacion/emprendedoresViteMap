@@ -60,9 +60,17 @@ export async function PUT(req, context) {
   try {
     const data = await req.json();
     delete data.asignaciones;
+    // Adaptar los campos para que sean arrays
+    const adaptArray = (val) => Array.isArray(val) ? val : val ? [val] : [];
+    const updateData = {
+      ...data,
+      origenTipo: adaptArray(data.origenTipo),
+      tipoHerramientaEmprendimiento: adaptArray(data.tipoHerramientaEmprendimiento),
+      tipoHerramientaEmprendedor: adaptArray(data.tipoHerramientaEmprendedor),
+    };
     const updated = await prisma.herramienta.update({
       where: { id: Number(id) },
-      data,
+      data: updateData,
     });
 
     // Registrar log de actualización
