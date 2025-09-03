@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client';
-import { registrarLogAccionDesdeRequest } from "../../../lib/logAccion";
+import { registrarLogAccionDesdeRequest } from "../../../../lib/logAccion";
 
 const prisma = new PrismaClient();
 
