@@ -15,6 +15,7 @@ export async function GET(req, context) {
         emprendimientos: true,
         // asignaciones: true,
         asignaciones: { include: { herramienta: true } },
+    asignacionesCapacitacion: { include: { capacitacion: true } },
       },
     });
     if (!emprendedor) {

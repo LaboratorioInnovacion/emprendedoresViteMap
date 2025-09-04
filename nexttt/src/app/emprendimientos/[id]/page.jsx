@@ -392,6 +392,50 @@ const EmprendimientoPage = () => {
               </div>
             </div>
           </div>
+          <div className="card">
+            <h2 className="text-xl font-semibold mb-4">Capacitación</h2>
+            <div className="overflow-x-auto">
+              <table className="min-w-[600px] w-full text-sm">
+                <thead>
+                  <tr className="bg-gray-100 dark:bg-gray-800">
+                    <th className="py-2 px-3 text-left">Capacitación</th>
+                    <th className="py-2 px-3 text-left">Fecha</th>
+                    <th className="py-2 px-3 text-left">Duración</th>
+                    <th className="py-2 px-3 text-left">Observaciones</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {Array.isArray(emprendimiento.asignacionesCapacitacion) &&
+                    emprendimiento.asignacionesCapacitacion.length > 0 ? (
+                    emprendimiento.asignacionesCapacitacion.map((asig) => (
+                      <tr key={asig.id} className="border-b last:border-b-0">
+                        <td className="py-2 px-3 font-medium truncate max-w-[120px]">
+                          {asig.capacitacion?.nombre || "-"}
+                        </td>
+                        <td className="py-2 px-3">
+                          {asig.fecha
+                            ? new Date(asig.fecha).toLocaleDateString()
+                            : "-"}
+                        </td>
+                        <td className="py-2 px-3">
+                          {asig.duracion || "-"}
+                        </td>
+                        <td className="py-2 px-3 truncate max-w-[120px]">
+                          {asig.observaciones || "-"}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan={4} className="py-2 px-3 text-gray-500">
+                        No hay capacitaciones asignadas a este emprendimiento.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
           {/* Herramientas / Asignaciones */}
           <div className="card">
             <h2 className="text-xl font-semibold mb-4">Herramientas / Asignaciones</h2>

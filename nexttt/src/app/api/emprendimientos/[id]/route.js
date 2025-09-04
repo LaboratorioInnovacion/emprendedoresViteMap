@@ -19,6 +19,7 @@ export async function GET(req, context) {
             herramienta: true,
           },
         },
+            asignacionesCapacitacion: { include: { capacitacion: true } },
       },
     });
     if (!emprendimiento) {
