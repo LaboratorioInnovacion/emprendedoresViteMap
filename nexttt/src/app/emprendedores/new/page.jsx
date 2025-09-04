@@ -12,6 +12,7 @@ const niveles = [
   "SecundarioCompleto",
   "TerciarioUniversitarioIncompleto",
   "TerciarioUniversitarioCompleto",
+  "Universitario",
   "Posgrado",
 ];
 
