@@ -77,7 +77,7 @@ const Page = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold mb-2">Dashboard</h1>
+          <h1 className="text-2xl font-bold mb-2 dark:text-gray-100">Dashboard</h1>
           <p className="text-gray-600 dark:text-gray-400">
             Bienvenido al Sistema de Emprendimientos
           </p>
@@ -164,7 +164,7 @@ const Page = () => {
                 size={20}
                 className="text-primary-600 dark:text-primary-400 mr-2"
               />
-              <h2 className="text-xl font-semibold">
+              <h2 className="text-xl dark:text-white font-semibold">
                 Emprendimientos Recientes
               </h2>
             </div>

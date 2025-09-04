@@ -34,8 +34,8 @@ function RecentBusinessCard({ business }) {
         <div className="flex-1">
           <div className="flex justify-between items-start">
             <div>
-              <h3 className="text-lg font-medium mb-1">{business.name}</h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{business.description}</p>
+              <h3 className="text-lg dark:text-white font-medium mb-1">{business.name}</h3>
+              <p className="text-sm text-gray-600 dark:text-white mb-2">{business.description}</p>
             </div>
             <span className={`badge ${getStatusBadgeClass()} flex items-center`}>
               <Activity size={12} className="mr-1" />

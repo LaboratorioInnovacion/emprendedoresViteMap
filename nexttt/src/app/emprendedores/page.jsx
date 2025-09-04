@@ -97,7 +97,7 @@ const EmprendedoresPage = () => {
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h2 className="text-2xl font-bold">Emprendedores</h2>
+          <h2 className="text-2xl font-bold dark:text-white">Emprendedores</h2>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1 sm:flex-none">
               <input
@@ -170,7 +170,7 @@ const EmprendedoresPage = () => {
                       }`}
                     >
                       {nivel}{" "}
-                      <span className="ml-1 text-xs text-gray-500">
+                      <span className="ml-1 text-xs  text-gray-500">
                         ({count})
                       </span>
                     </button>
@@ -326,21 +326,21 @@ const EmprendedoresPage = () => {
                   key={emp.id}
                   className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.nombre} {emp.apellido}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     <span className="badge badge-secondary capitalize">
                       {emp.nivelEstudios}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.departamento}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.direccion}
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     <span
                       className={`badge ${getStatusBadgeClass(
                         emp.estado || "active"
@@ -351,7 +351,7 @@ const EmprendedoresPage = () => {
                         (emp.estado || "Activo").slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.fechaNacimiento
                       ? new Date(emp.fechaNacimiento).toLocaleDateString()
                       : "-"}

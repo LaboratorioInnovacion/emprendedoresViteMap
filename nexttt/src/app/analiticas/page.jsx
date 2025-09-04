@@ -157,12 +157,12 @@ export default function AnaliticasPage() {
         {metrics.map((m) => (
           <div
             key={m.label}
-            className="bg-slate-800 rounded-xl shadow p-6 flex flex-col gap-2 items-start border border-gray-700"
+            className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 flex flex-col gap-2 items-start border border-gray-700"
           >
             <div className="flex items-center gap-2">
               {m.icon}
               <span
-                className={`ml-2 text-xs font-semibold text-white ${m.changeColor}`}
+                className={`ml-2 text-xs font-semibold dartext-gray-800 dark:text-white ${m.changeColor}`}
               >
                 ↗ {m.change}
               </span>
@@ -174,7 +174,7 @@ export default function AnaliticasPage() {
       </div>
       {/* Primera fila de gráficos */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full max-w-7xl mb-8">
-        <div className="bg-slate-800 rounded-xl shadow p-2 border border-gray-700 flex flex-col justify-center col-span-2">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-2 border border-gray-700 flex flex-col justify-center col-span-2">
           <div className="mb-2 font-semibold text-gray-700">
             Monthly Revenue
           </div>

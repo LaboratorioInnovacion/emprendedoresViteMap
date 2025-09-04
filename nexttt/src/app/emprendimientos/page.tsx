@@ -98,7 +98,7 @@ const EmprendimientosPage = () => {
       {/* Header Section */}
       <div className="flex flex-col gap-4 ">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-md">
-          <h2 className="text-2xl font-bold">Emprendimientos</h2>
+          <h2 className="dark:text-white text-2xl font-bold">Emprendimientos</h2>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1 sm:flex-none">
               <input
@@ -119,7 +119,7 @@ const EmprendimientosPage = () => {
                 className="btn-outline px-3 flex-1 sm:flex-none justify-center"
                 title="Filtros"
               >
-                <Filter size={18} />
+                <Filter size={18} className="dark:text-white" />
                 <span className="ml-2 sm:hidden">Filtros</span>
               </button>
               <button
@@ -198,10 +198,10 @@ const EmprendimientosPage = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="text-base font-medium truncate">
+                      <h3 className="dark:text-white text-base font-medium truncate">
                         {emp.denominacion}
                       </h3>
-                      <span className="badge badge-secondary text-xs capitalize mt-1">
+                      <span className="dark:text-white badge badge-secondary text-xs capitalize mt-1">
                         {emp.rubro || "Otro"}
                       </span>
                     </div>
@@ -256,13 +256,13 @@ const EmprendimientosPage = () => {
             ) : filtered.length > 0 ? (
               filtered.map((emp) => (
                 <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.denominacion}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">{emp.denominacion}</td>
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
                     <span className="badge badge-secondary capitalize">{emp.rubro || "Otro"}</span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.emprendedor?.nombre} {emp.emprendedor?.apellido}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">{emp.emprendedor?.departamento}</td>
-                  <td className="px-6 py-4 whitespace-nowrap">
+                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">{emp.emprendedor?.nombre} {emp.emprendedor?.apellido}</td>
+                  <td className=" dark:text-white px-6 py-4 whitespace-nowrap">{emp.emprendedor?.departamento}</td>
+                  <td className=" dark:text-white px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <MapPin size={14} className="mr-1 flex-shrink-0" />
                       <span className="truncate max-w-[200px]">{emp.direccion}</span>

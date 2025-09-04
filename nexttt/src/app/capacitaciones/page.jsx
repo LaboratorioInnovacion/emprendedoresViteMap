@@ -57,18 +57,18 @@ const Page = () => {
               <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                 <thead className="bg-gray-100 dark:bg-gray-800">
                   <tr>
-                    <th className="px-2 py-2">ID</th>
-                    <th className="px-2 py-2">Nombre</th>
-                    <th className="px-2 py-2">Tipo</th>
-                    <th className="px-2 py-2">Organismo</th>
-                    <th className="px-2 py-2">Modalidad</th>
-                    <th className="px-2 py-2">Descripción</th>
-                    <th className="px-2 py-2">Inicio</th>
-                    <th className="px-2 py-2">Fin</th>
-                    <th className="px-2 py-2">Cupo</th>
-                    <th className="px-2 py-2">Observaciones</th>
-                    <th className="px-2 py-2">Eliminar</th>
-                    <th className="px-2 py-2">Editar</th>
+                    <th className="dark:text-white px-2 py-2">ID</th>
+                    <th className="dark:text-white px-2 py-2">Nombre</th>
+                    <th className="dark:text-white px-2 py-2">Tipo</th>
+                    <th className="dark:text-white px-2 py-2">Organismo</th>
+                    <th className="dark:text-white px-2 py-2">Modalidad</th>
+                    <th className="dark:text-white px-2 py-2">Descripción</th>
+                    <th className="dark:text-white px-2 py-2">Inicio</th>
+                    <th className="dark:text-white px-2 py-2">Fin</th>
+                    <th className="dark:text-white px-2 py-2">Cupo</th>
+                    <th className="dark:text-white px-2 py-2">Observaciones</th>
+                    <th className="dark:text-white px-2 py-2">Eliminar</th>
+                    <th className="dark:text-white px-2 py-2">Editar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -77,22 +77,22 @@ const Page = () => {
                       <td className="px-2 py-2 font-mono text-xs text-gray-500">{c.id}</td>
                       <td className="px-2 py-2">
                         <button
-                          className="text-white text-base underline hover:text-primary-900 font-semibold"
+                          className="dark:text-white text-base underline hover:text-primary-900 font-semibold"
                           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
                           onClick={() => router.push(`/capacitaciones/${c.id}`)}
                         >
                           {c.nombre}
                         </button>
                       </td>
-                      <td className="px-2 py-2">{Array.isArray(c.tipo) ? c.tipo.join(', ') : c.tipo}</td>
-                      <td className="px-2 py-2">{c.organismo}</td>
-                      <td className="px-2 py-2">{c.modalidad ?? '-'}</td>
-                      <td className="px-2 py-2">{c.descripcion ?? '-'}</td>
-                      <td className="px-2 py-2">{c.fechaInicio ? new Date(c.fechaInicio).toLocaleDateString() : '-'}</td>
-                      <td className="px-2 py-2">{c.fechaFin ? new Date(c.fechaFin).toLocaleDateString() : '-'}</td>
-                      <td className="px-2 py-2">{c.cupo ?? '-'}</td>
-                      <td className="px-2 py-2">{c.observaciones ?? '-'}</td>
-                      <td className="px-2 py-2">
+                      <td className="dark:text-white px-2 py-2">{Array.isArray(c.tipo) ? c.tipo.join(', ') : c.tipo}</td>
+                      <td className="dark:text-white px-2 py-2">{c.organismo}</td>
+                      <td className="dark:text-white px-2 py-2">{c.modalidad ?? '-'}</td>
+                      <td className="dark:text-white px-2 py-2">{c.descripcion ?? '-'}</td>
+                      <td className="dark:text-white px-2 py-2">{c.fechaInicio ? new Date(c.fechaInicio).toLocaleDateString() : '-'}</td>
+                      <td className="dark:text-white px-2 py-2">{c.fechaFin ? new Date(c.fechaFin).toLocaleDateString() : '-'}</td>
+                      <td className="dark:text-white px-2 py-2">{c.cupo ?? '-'}</td>
+                      <td className="dark:text-white px-2 py-2">{c.observaciones ?? '-'}</td>
+                      <td className="dark:text-white px-2 py-2">
                         <button onClick={() => handleDelete(c.id)} className="btn btn-error btn-xs flex items-center gap-1" title="Eliminar">
                           <FaTrash />
                         </button>
