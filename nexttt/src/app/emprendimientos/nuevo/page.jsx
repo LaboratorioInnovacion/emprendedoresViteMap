@@ -224,9 +224,9 @@ function NuevoEmprendimientoPage() {
         )}
       {/* <p>ID Emprendedor</p> */}
       {/* <input name="emprendedorId" value={form.emprendedorId} onChange={handleChange} placeholder="ID Emprendedor" className="input w-full" /> */}
-      <p>Etapa</p>
+      <p>Etapa de el Emprendimiento</p>
       <select name="etapa" value={form.etapa} onChange={handleChange} className="input w-full">
-        <option value="">Selecciona etapa</option>
+        <option value="">Selecciona la etapa de el Emprendimiento</option>
         {etapaOptions.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
