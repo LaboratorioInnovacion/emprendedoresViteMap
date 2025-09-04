@@ -223,7 +223,8 @@ function Header({ toggleMobileSidebar }) {
             {!isAuthenticated && dropdownOpen && (
               <div
                 // className="absolute right-0 mt-2 w-48 bg-white dark
-                className="absolute right-0 mt-2 w-48  dark:bg-gray-700 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn"
+                // className="absolute right-0 mt-2 w-48  dark:bg-gray-700 shadow-dropdown rounded-md py-1 z-10 animate-fadeIn"
+                className="absolute right-0 mt-2 w-48  dark:bg-gray-700 bg-slate-200 rounded-md py-1 z-10 animate-fadeIn"
               >
                 <Link
                   href="/auth/login"
