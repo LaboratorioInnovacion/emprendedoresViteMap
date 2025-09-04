@@ -155,6 +155,7 @@ model Emprendedor {
   emprendimientos Emprendimiento[]
   asignaciones    Asignacion[]
   asignacionesCapacitacion AsignacionCapacitacion[]
+  fotoPerfil String? 
 }
 
 model Emprendimiento {
@@ -203,6 +204,7 @@ model Emprendimiento {
   updatedAt                    DateTime?            @updatedAt
   asignaciones                 Asignacion[]
   asignacionesCapacitacion     AsignacionCapacitacion[]
+  fotoPerfil String? 
 }
 
 model Herramienta {
