@@ -84,7 +84,7 @@ const Page = () => {
                       <td className="px-2 py-2 font-mono text-xs text-gray-500">{h.id}</td>
                       <td className="px-2 py-2">
                         <button
-                          className="text-slate-200 text-base underline hover:text-primary-900 font-semibold"
+                          className="dark:text-slate-200 text-base underline hover:text-primary-900 font-semibold"
                           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
                           onClick={() => router.push(`/herramientas/${h.id}`)}
                         >
