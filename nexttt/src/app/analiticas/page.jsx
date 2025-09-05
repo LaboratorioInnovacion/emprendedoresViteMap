@@ -454,7 +454,7 @@ export default function AnaliticasPage() {
                 ↗ {m.change}
               </span>
             </div>
-            <div className="text-gray-500 text-sm font-medium">{m.label}</div>
+            <div className="text-gray-600 text-sm font-medium dark:text-white">{m.label}</div>
             <div className="text-3xl font-bold text-gray-900 dark:text-white">{m.value}</div>
           </div>
         ))}
@@ -487,8 +487,8 @@ export default function AnaliticasPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-300 flex flex-col justify-center col-span-1">
-          <div className="mb-2 font-semibold text-gray-700 text-center">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow border dark:border-gray-700 border-gray-300 flex flex-col justify-center col-span-1">
+          <div className="mb-2 font-semibold text-gray-700 text-center dark:text-white">
             Distribución por Origen
           </div>
           <ResponsiveContainer width="100%" height={180}>
@@ -516,8 +516,8 @@ export default function AnaliticasPage() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 w-full max-w-7xl mb-8">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
-          <div className="mb-2 font-semibold text-gray-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300 flex flex-col justify-between">
+          <div className="mb-2 font-semibold text-gray-700 dark:text-white">
             Emprendedores por Género
           </div>
           <ResponsiveContainer width="100%" height={220}>
@@ -543,8 +543,8 @@ export default function AnaliticasPage() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-whitedark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
-          <div className="mb-2 font-semibold text-gray-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300 flex flex-col justify-between">
+          <div className="mb-2 font-semibold text-gray-700 dark:text-white">
             Emprendimientos por Sector
           </div>
           <ResponsiveContainer width="100%" height={220}>
@@ -573,8 +573,8 @@ export default function AnaliticasPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 w-full max-w-7xl mb-8">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
-          <div className="mb-2 font-semibold text-gray-700">Emprendimientos por Etapa</div>
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300 flex flex-col justify-between">
+          <div className="mb-2 font-semibold text-gray-700 dark:text-white">Emprendimientos por Etapa</div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={emprendimientosPorEtapaData}>
               <XAxis dataKey="name" tick={{ fontSize: 13 }} />
@@ -592,8 +592,8 @@ export default function AnaliticasPage() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
-          <div className="mb-2 font-semibold text-gray-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300 flex flex-col justify-between">
+          <div className="mb-2 font-semibold text-gray-700 dark:text-white">
             Top 5 Departamentos
           </div>
           <ResponsiveContainer width="100%" height={220}>
@@ -615,8 +615,8 @@ export default function AnaliticasPage() {
 
       {/* Nueva fila para actividades principales */}
       <div className="grid grid-cols-1 w-full max-w-7xl mb-8">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300">
-          <div className="mb-2 font-semibold text-gray-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300">
+          <div className="mb-2 font-semibold text-gray-700 dark:text-white">
             Top 8 Actividades Principales
           </div>
           <ResponsiveContainer width="100%" height={300}>
@@ -645,8 +645,8 @@ export default function AnaliticasPage() {
       {/* Fila final con capacitaciones y resumen */}
       <div className="w-full max-w-7xl flex justify-center items-center mt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300">
-            <div className="mb-2 font-semibold text-gray-700">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300">
+            <div className="mb-2 font-semibold text-gray-700 dark:text-white">
               Capacitaciones por Tipo
             </div>
             <ResponsiveContainer width="100%" height={320}>
@@ -673,8 +673,8 @@ export default function AnaliticasPage() {
             </ResponsiveContainer>
           </div>
           
-          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300">
-            <div className="mb-2 font-semibold text-gray-700">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border dark:border-gray-700 border-gray-300">
+            <div className="mb-2 font-semibold text-gray-700 dark:text-white">
               Proporción de Montos
             </div>
             <ResponsiveContainer width="100%" height={320}>
