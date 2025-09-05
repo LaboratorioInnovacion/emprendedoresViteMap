@@ -15,6 +15,21 @@ const Page = () => {
   const [emprendimientos, setEmprendimientos] = useState([]);
   const [loadingBenef, setLoadingBenef] = useState(false);
   const [searchBenef, setSearchBenef] = useState('');
+
+  // Eliminar asignación
+  const handleEliminarAsignacion = async (id) => {
+    if (!window.confirm('¿Seguro que deseas eliminar esta asignación?')) return;
+    try {
+      const res = await fetch(`/api/asignacion/${id}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Error al eliminar asignación');
+      setMensaje('Asignación eliminada correctamente');
+      await fetchAsignaciones();
+    } catch (err) {
+      setMensaje(err.message);
+    }
+  };
   // Cargar emprendedores y emprendimientos
   const fetchBeneficiarios = async () => {
     setLoadingBenef(true);
@@ -243,6 +258,7 @@ const Page = () => {
                   <th className="px-1 py-2 sm:px-2">Tipo Beneficiario</th>
                   <th className="px-1 py-2 sm:px-2">Beneficiario</th>
                   <th className="px-1 py-2 sm:px-2">Fecha</th>
+                  <th className="px-1 py-2 sm:px-2">Eliminar</th>
                 </tr>
               </thead>
               <tbody>
@@ -257,6 +273,15 @@ const Page = () => {
                         : (a.emprendimiento?.denominacion ?? a.emprendimientoId)}
                     </td>
                     <td className="px-1 py-2 sm:px-2">{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '-'}</td>
+                    <td className="px-1 py-2 sm:px-2">
+                      <button
+                        className="btn btn-xs btn-error"
+                        title="Eliminar asignación"
+                        onClick={() => handleEliminarAsignacion(a.id)}
+                      >
+                        Eliminar
+                      </button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
