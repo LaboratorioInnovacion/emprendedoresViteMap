@@ -206,12 +206,12 @@ function Header({ toggleMobileSidebar }) {
                 >
                   Ajustes
                 </a> */}
-                <a
+                {/* <a
                   href="/emprendimientos/new"
                   className="cursor-pointer block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Crear emprendimiento
-                </a>
+                </a> */}
                 <button
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => signOut({ callbackUrl: "/auth/login" })}

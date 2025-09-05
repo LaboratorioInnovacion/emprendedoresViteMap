@@ -14,6 +14,7 @@ const Page = () => {
   const [emprendedores, setEmprendedores] = useState([]);
   const [emprendimientos, setEmprendimientos] = useState([]);
   const [loadingBenef, setLoadingBenef] = useState(false);
+  const [searchBenef, setSearchBenef] = useState('');
   // Cargar emprendedores y emprendimientos
   const fetchBeneficiarios = async () => {
     setLoadingBenef(true);
@@ -58,11 +59,22 @@ const Page = () => {
     e.preventDefault();
     setAsignando(true);
     setMensaje('');
+    // Validar si ya está asignada la herramienta al beneficiario y tipo
+    const yaAsignado = asignaciones.some(a =>
+      a.herramientaId == form.herramientaId &&
+      a.beneficiarioTipo === form.beneficiarioTipo &&
+      ((form.beneficiarioTipo === 'Emprendedor' && a.emprendedorId == form.beneficiarioId) ||
+       (form.beneficiarioTipo === 'Emprendimiento' && a.emprendimientoId == form.beneficiarioId))
+    );
+    if (yaAsignado) {
+      setMensaje('Este beneficiario ya tiene asignada esta herramienta.');
+      setAsignando(false);
+      return;
+    }
     // Construir el body según el tipo de beneficiario
     const body = {
       herramientaId: Number(form.herramientaId),
       beneficiarioTipo: form.beneficiarioTipo,
-      // Solo uno de los dos:
       ...(form.beneficiarioTipo === 'Emprendedor'
         ? { emprendedorId: Number(form.beneficiarioId) }
         : { emprendimientoId: Number(form.beneficiarioId) })
@@ -121,35 +133,66 @@ const Page = () => {
             <label className="text-sm font-medium">
               {form.beneficiarioTipo === 'Emprendedor' ? 'Emprendedor' : 'Emprendimiento'}
             </label>
-            {form.beneficiarioTipo === 'Emprendedor' ? (
-              <select
-                name="beneficiarioId"
-                value={form.beneficiarioId}
-                onChange={handleChange}
-                className="input input-bordered w-full text-sm"
-                required
-                disabled={loadingBenef}
-              >
-                <option value="">Seleccione un emprendedor</option>
-                {emprendedores.map((e) => (
-                  <option key={e.id} value={e.id}>{e.nombre} {e.apellido} (ID: {e.id})</option>
-                ))}
-              </select>
-            ) : (
-              <select
-                name="beneficiarioId"
-                value={form.beneficiarioId}
-                onChange={handleChange}
-                className="input input-bordered w-full text-sm"
-                required
-                disabled={loadingBenef}
-              >
-                <option value="">Seleccione un emprendimiento</option>
-                {emprendimientos.map((e) => (
-                  <option key={e.id} value={e.id}>{e.denominacion} (ID: {e.id})</option>
-                ))}
-              </select>
-            )}
+              {/* Search input y dropdown para seleccionar beneficiario */}
+              <div className="relative">
+                <input
+                  type="text"
+                  className="input input-bordered w-full text-sm"
+                  placeholder={form.beneficiarioTipo === 'Emprendedor' ? 'Buscar emprendedor...' : 'Buscar emprendimiento...'}
+                  value={searchBenef !== ''
+                    ? searchBenef
+                    : (form.beneficiarioTipo === 'Emprendedor'
+                        ? (emprendedores.find(e => e.id == form.beneficiarioId) ? `${emprendedores.find(e => e.id == form.beneficiarioId).nombre} ${emprendedores.find(e => e.id == form.beneficiarioId).apellido}` : '')
+                        : (emprendimientos.find(e => e.id == form.beneficiarioId)?.denominacion || '')
+                      )
+                  }
+                  onChange={e => {
+                    setSearchBenef(e.target.value);
+                    setForm({ ...form, beneficiarioId: '' });
+                  }}
+                  disabled={loadingBenef}
+                  required
+                  autoComplete="off"
+                />
+                {/* Dropdown de resultados filtrados */}
+                {searchBenef && !form.beneficiarioId && (
+                  <div className="absolute z-10 w-full bg-slate-700 border border-gray-200 rounded shadow max-h-56 overflow-y-auto">
+                    {(form.beneficiarioTipo === 'Emprendedor'
+                      ? emprendedores.filter(e =>
+                          (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                        )
+                      : emprendimientos.filter(e =>
+                          (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                        )
+                    ).map(e => (
+                      <div
+                        key={e.id}
+                        className="px-3 py-2 cursor-pointer hover:bg-gray-500 text-sm"
+                        onClick={() => {
+                          setForm({ ...form, beneficiarioId: e.id });
+                          setSearchBenef('');
+                        }}
+                      >
+                        {form.beneficiarioTipo === 'Emprendedor'
+                          ? `${e.nombre} ${e.apellido} (ID: ${e.id})`
+                          : `${e.denominacion} (ID: ${e.id})`}
+                      </div>
+                    ))}
+                    {((form.beneficiarioTipo === 'Emprendedor'
+                      ? emprendedores.filter(e =>
+                          (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                        )
+                      : emprendimientos.filter(e =>
+                          (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                        )
+                    ).length === 0) && (
+                      <div className="px-3 py-2 text-gray-400 text-sm">Sin resultados</div>
+                    )}
+                  </div>
+                )}
+              </div>
+              {/* Oculto el input real para enviar el id seleccionado */}
+              <input type="hidden" name="beneficiarioId" value={form.beneficiarioId} required />
           </div>
           <button type="submit" className="btn btn-primary w-full text-base sm:text-lg" disabled={asignando}>
             {asignando ? 'Asignando...' : 'Asignar herramienta'}
