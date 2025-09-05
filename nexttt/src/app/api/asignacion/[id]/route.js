@@ -3,8 +3,8 @@ import prisma from '../../../../lib/prisma';
 import { registrarLogAccionDesdeRequest } from "../../../../lib/logAccion";
 
 // Eliminar una asignación por id
-export async function DELETE(request, { params }) {
-  const { id } = params;
+export async function DELETE(request, context) {
+  const { id } = context.params;
   if (!id) {
     return NextResponse.json({ error: 'ID requerido' }, { status: 400 });
   }
