@@ -440,29 +440,29 @@ export default function AnaliticasPage() {
     <div className="min-h-screen flex flex-col items-center">
       {/* <h2 className="text-2xl font-bold mb-6 justify-start">Dashboard de Analíticas</h2> */}
       {/* Métricas */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-7xl mb-8 text-white">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full max-w-7xl mb-8 dark:text-white  ">
         {metrics.map((m) => (
           <div
             key={m.label}
-            className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 flex flex-col gap-2 items-start border border-gray-700"
+            className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 flex flex-col gap-2 items-start border dark:border-gray-700 border-gray-300"
           >
             <div className="flex items-center gap-2">
               {m.icon}
               <span
-                className={`ml-2 text-xs font-semibold dartext-gray-800 dark:text-white ${m.changeColor}`}
+                className={`ml-2 text-xs font-semibold dark:text-white ${m.changeColor}`}
               >
                 ↗ {m.change}
               </span>
             </div>
             <div className="text-gray-500 text-sm font-medium">{m.label}</div>
-            <div className="text-3xl font-bold text-white">{m.value}</div>
+            <div className="text-3xl font-bold text-gray-900 dark:text-white">{m.value}</div>
           </div>
         ))}
       </div>
       {/* Primera fila de gráficos */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-2 w-full max-w-7xl mb-8">
-        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-2 border border-gray-700 flex flex-col justify-center col-span-2">
-          <div className="mb-2 font-semibold text-gray-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-2 border dark:border-gray-700 border-gray-300 flex flex-col justify-center col-span-2">
+          <div className="mb-2 font-semibold text-gray-700 dark:text-white">
             Análisis de Montos: Otorgados vs Disponibles (en millones)
           </div>
           <ResponsiveContainer width="100%" height={260}>
@@ -487,7 +487,7 @@ export default function AnaliticasPage() {
             </BarChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-slate-800 rounded-xl shadow border border-gray-700 flex flex-col justify-center col-span-1">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow border border-gray-300 flex flex-col justify-center col-span-1">
           <div className="mb-2 font-semibold text-gray-700 text-center">
             Distribución por Origen
           </div>
@@ -516,7 +516,7 @@ export default function AnaliticasPage() {
         </div>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 w-full max-w-7xl mb-8">
-        <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700 flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
           <div className="mb-2 font-semibold text-gray-700">
             Emprendedores por Género
           </div>
@@ -543,7 +543,7 @@ export default function AnaliticasPage() {
             </PieChart>
           </ResponsiveContainer>
         </div>
-        <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700 flex flex-col justify-between">
+        <div className="bg-whitedark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
           <div className="mb-2 font-semibold text-gray-700">
             Emprendimientos por Sector
           </div>
@@ -573,7 +573,7 @@ export default function AnaliticasPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-2 w-full max-w-7xl mb-8">
-        <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700 flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
           <div className="mb-2 font-semibold text-gray-700">Emprendimientos por Etapa</div>
           <ResponsiveContainer width="100%" height={220}>
             <BarChart data={emprendimientosPorEtapaData}>
@@ -592,7 +592,7 @@ export default function AnaliticasPage() {
           </ResponsiveContainer>
         </div>
 
-        <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700 flex flex-col justify-between">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300 flex flex-col justify-between">
           <div className="mb-2 font-semibold text-gray-700">
             Top 5 Departamentos
           </div>
@@ -615,7 +615,7 @@ export default function AnaliticasPage() {
 
       {/* Nueva fila para actividades principales */}
       <div className="grid grid-cols-1 w-full max-w-7xl mb-8">
-        <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300">
           <div className="mb-2 font-semibold text-gray-700">
             Top 8 Actividades Principales
           </div>
@@ -645,7 +645,7 @@ export default function AnaliticasPage() {
       {/* Fila final con capacitaciones y resumen */}
       <div className="w-full max-w-7xl flex justify-center items-center mt-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-          <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300">
             <div className="mb-2 font-semibold text-gray-700">
               Capacitaciones por Tipo
             </div>
@@ -673,7 +673,7 @@ export default function AnaliticasPage() {
             </ResponsiveContainer>
           </div>
           
-          <div className="bg-slate-800 rounded-xl shadow p-6 border border-gray-700">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow p-6 border border-gray-300">
             <div className="mb-2 font-semibold text-gray-700">
               Proporción de Montos
             </div>
