@@ -60,7 +60,8 @@ const DashboardMap = ({ businesses, defaultViewport }) => {
       actividadPrincipal: business.actividadPrincipal || "Otro",
       address: business.direccion,
       location,
-      imageUrl: business.imageUrl,
+      // imageUrl: business.imageUrl,
+      imageUrl: business.fotoPerfil,
       status: business.etapa ? business.etapa.toLowerCase() : "active",
       contact: {
         phone: business.telefono || business.contact?.phone || "",

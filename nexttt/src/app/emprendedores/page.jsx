@@ -70,6 +70,9 @@ const EmprendedoresPage = () => {
     zoom: 12,
   };
 
+  useEffect(() => {
+    console.log("emprendedores cargados:", emprendedores);
+  }, []);
   return (
     <div className="space-y-4">
       <div className="mb-4">
@@ -83,7 +86,8 @@ const EmprendedoresPage = () => {
               emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
                 ? emp.ubicacion
                 : { lat: -32.9471, lng: -60.6306 },
-            imageUrl: emp.imageUrl,
+            // imageUrl: emp.imageUrl,
+            imageUrl: emp.fotoDni,
             status: emp.estado || "active",
             contact: emp.contact || {},
             description: emp.descripcion || "",

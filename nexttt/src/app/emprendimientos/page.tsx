@@ -80,7 +80,7 @@ const EmprendimientosPage = () => {
             location: emp.ubicacion && emp.ubicacion.lat && emp.ubicacion.lng
               ? emp.ubicacion
               : { lat: -32.9471, lng: -60.6306 },
-            imageUrl: emp.imageUrl,
+            imageUrl: emp.fotoPerfil,
             status: emp.estado || "active",
             contact: {
               phone: emp.contact?.phone || emp.telefono || "",
