@@ -62,6 +62,27 @@ const EmprendedorPage = ({ params }) => {
   const [error, setError] = useState("");
   const [L, setL] = useState(null);
   const [markerIcon, setMarkerIcon] = useState(null);
+  const [deleting, setDeleting] = useState(false);
+  const handleDelete = async () => {
+    if (!emprendedor?.id) return;
+    if (!window.confirm("¿Estás seguro de que deseas borrar este emprendedor? Esta acción no se puede deshacer.")) return;
+    setDeleting(true);
+    setError("");
+    try {
+      const res = await fetch(`/api/emprendedores/${emprendedor.id}`, {
+        method: "DELETE",
+      });
+      if (res.ok) {
+        window.location.href = "/emprendedores";
+      } else {
+        const data = await res.json();
+        setError(data.error || "Error al borrar el emprendedor");
+      }
+    } catch (err) {
+      setError("Error de red: " + err.message);
+    }
+    setDeleting(false);
+  };
   // ...existing code...
   useEffect(() => {
     // Soporte para Next.js 14+ donde params es una promesa
@@ -222,15 +243,24 @@ const EmprendedorPage = ({ params }) => {
           </div>
         </div>
         <div className="flex gap-2">
-          <button className="btn-outline">
+          <button className="btn-outline" onClick={() => window.location.href = `/emprendedores/${emprendedor.id}/edit`}>
             <Pencil size={18} className="mr-1" />
             Editar
           </button>
-          <button className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500">
+          <button
+            className="btn bg-error-600 text-white hover:bg-error-700 focus:ring-error-500"
+            onClick={handleDelete}
+            disabled={deleting}
+          >
             <Trash2 size={18} className="mr-1" />
-            Borrar
+            {deleting ? "Borrando..." : "Borrar"}
           </button>
         </div>
+      {error && (
+        <div className="mt-4 p-2 bg-red-100 text-red-700 rounded text-center font-semibold shadow">
+          {error}
+        </div>
+      )}
       </div>
       {/* Main layout */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4 xl:gap-6">
