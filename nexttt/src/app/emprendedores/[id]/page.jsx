@@ -133,7 +133,7 @@ const EmprendedorPage = ({ params }) => {
     );
 
   // Avatar por defecto si no hay foto
-  const avatarUrl = emprendedor.fotoUrl || "/profile-default.png";
+  const avatarUrl = emprendedor.fotoDni && emprendedor.fotoDni.trim() !== "" ? emprendedor.fotoDni : null;
 
   // La API ya devuelve ubicacion como objeto {lat, lng} o null
   const ubicacion =
@@ -176,13 +176,19 @@ const EmprendedorPage = ({ params }) => {
           </button>
           <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
             <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-full overflow-hidden border-4 border-primary shadow">
-              <Image
-                src={avatarUrl}
-                alt="Avatar"
-                width={64}
-                height={64}
-                className="object-cover w-full h-full"
-              />
+              {avatarUrl ? (
+                <Image
+                  src={avatarUrl}
+                  alt="Avatar"
+                  width={64}
+                  height={64}
+                  className="object-cover w-full h-full"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-gray-200 text-gray-500">
+                  <User size={40} />
+                </div>
+              )}
             </div>
             <div className="min-w-0">
               <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2 flex-wrap">

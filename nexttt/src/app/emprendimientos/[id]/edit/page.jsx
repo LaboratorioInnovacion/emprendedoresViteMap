@@ -26,6 +26,7 @@ const EditEmprendimientoPage = () => {
   const [editLoading, setEditLoading] = useState(false);
   const [editError, setEditError] = useState("");
   const [editUbicacion, setEditUbicacion] = useState(null);
+  const [file, setFile] = useState(null);
 
   // Inicializar editUbicacion con la ubicación real del emprendimiento al cargar los datos
   useEffect(() => {
@@ -132,13 +133,36 @@ const EditEmprendimientoPage = () => {
           e.preventDefault();
           setEditLoading(true);
           setEditError("");
+          let fotoPerfilUrl = emprendimiento.fotoPerfil || "";
+          if (file) {
+            const formData = new FormData();
+            formData.append("file", file);
+            try {
+              const uploadRes = await fetch("/api/upload", {
+                method: "POST",
+                body: formData,
+              });
+              const uploadData = await uploadRes.json();
+              if (uploadRes.ok && uploadData.url) {
+                fotoPerfilUrl = uploadData.url;
+              } else {
+                setEditError(uploadData.error || "Error al subir la imagen");
+                setEditLoading(false);
+                return;
+              }
+            } catch (err) {
+              setEditError("Error de red al subir imagen: " + err.message);
+              setEditLoading(false);
+              return;
+            }
+          }
           try {
             const form = e.target;
             const formData = new FormData(form);
             const validFields = [
               "denominacion", "fechaInicio", "inscripcionArca", "cuit", "sector", "actividadPrincipal", "tipoEmprendimiento", "direccion", "telefono", "email", "web", "redSocial1", "redSocial2", "tienePersonal", "cantidadPersonal", "modoIncorporacionPersonal", "planeaIncorporarPersonal", "percepcionPlantaPersonal", "requiereCapacitacion", "tiposCapacitacion", "otrosTiposCapacitacion", "requiereConsultoria", "tiposConsultoria", "otrosTiposConsultoria", "requiereHerramientasTecno", "tiposHerramientasTecno", "otrasHerramientasTecno", "usaRedesSociales", "tiposRedesSociales", "usaMediosPagoElectronicos", "canalesComercializacion", "otrosCanalesComercializacion", "poseeSucursales", "cantidadSucursales", "ubicacionSucursales", "planeaAbrirSucursal"
             ];
-            const body = {};
+            const body = { fotoPerfil: fotoPerfilUrl };
             formData.forEach((value, key) => {
               if (validFields.includes(key)) {
                 if (["inscripcionArca","tienePersonal","requiereCapacitacion","requiereConsultoria","requiereHerramientasTecno","usaRedesSociales","usaMediosPagoElectronicos","poseeSucursales","planeaAbrirSucursal"].includes(key)) {
@@ -208,6 +232,14 @@ const EditEmprendimientoPage = () => {
         }}
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Imagen de perfil */}
+          <div className="block col-span-2">
+            <span className="text-xs text-gray-500">Foto de perfil (opcional)</span>
+            <input id="fotoPerfil" name="fotoPerfil" type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} className="w-full p-2 text-sm border border-gray-300 rounded" />
+            {emprendimiento.fotoPerfil && (
+              <div className="mt-1"><img src={emprendimiento.fotoPerfil} alt="Foto perfil" className="h-24 rounded border" /></div>
+            )}
+          </div>
           <label className="block"><span className="text-sm font-medium">Denominación</span><input name="denominacion" defaultValue={emprendimiento.denominacion || ""} className="input w-full" /></label>
           <label className="block"><span className="text-sm font-medium">Fecha Inicio</span><input type="date" name="fechaInicio" defaultValue={emprendimiento.fechaInicio ? new Date(emprendimiento.fechaInicio).toISOString().split('T')[0] : ""} className="input w-full" /></label>
           <label className="block"><span className="text-sm font-medium">Inscripción Arca</span><input type="checkbox" name="inscripcionArca" defaultChecked={emprendimiento.inscripcionArca || false} /></label>

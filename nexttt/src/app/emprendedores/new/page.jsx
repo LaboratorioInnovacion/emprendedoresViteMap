@@ -46,8 +46,9 @@ export default function CrearEmprendedorPage() {
       ciudadOrigen: "",
       cantidadEmprendimientos: 1,
       ubicacion: { lat: -28.6037, lng: -65.3816 },
-      // fotoDni: "", // Added field for photo DNI
+      fotoDni: "", // URL de la imagen subida
     });
+    const [file, setFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -72,10 +73,15 @@ export default function CrearEmprendedorPage() {
   };
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
     if (name === "tiposSustento") {
       setForm((prev) => ({ ...prev, tiposSustento: value.split(",").map((s) => s.trim()).filter(Boolean) }));
       setFieldErrors((prev) => ({ ...prev, tiposSustento: undefined }));
+      return;
+    }
+    if (name === "fotoDni" && files && files[0]) {
+      setFile(files[0]);
+      setFieldErrors((prev) => ({ ...prev, fotoDni: undefined }));
       return;
     }
     setForm((prev) => ({
@@ -93,9 +99,34 @@ export default function CrearEmprendedorPage() {
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0) return;
     setLoading(true);
+    let fotoDniUrl = "";
+    if (file) {
+      // Subir imagen primero
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadRes.ok && uploadData.url) {
+          fotoDniUrl = uploadData.url;
+        } else {
+          setError(uploadData.error || "Error al subir la imagen");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        setError("Error de red al subir imagen: " + err.message);
+        setLoading(false);
+        return;
+      }
+    }
     // Adaptar la ubicación y cantidadEmprendimientos
     const adaptedForm = {
       ...form,
+      fotoDni: fotoDniUrl,
       cantidadEmprendimientos: form.cantidadEmprendimientos !== undefined && form.cantidadEmprendimientos !== null && form.cantidadEmprendimientos !== ""
         ? Number(form.cantidadEmprendimientos)
         : null,
@@ -106,7 +137,7 @@ export default function CrearEmprendedorPage() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(adaptedForm),
-        credentials: "include", // Esto asegura que la cookie de sesión viaje
+        credentials: "include",
       });
       const data = await res.json();
       setLoading(false);
@@ -281,6 +312,12 @@ export default function CrearEmprendedorPage() {
                 showPopup={true}
               />
             </div>
+          </div>
+          {/* Imagen DNI */}
+          <div className="flex flex-col gap-1 col-span-1 sm:col-span-2">
+            <label htmlFor="fotoDni" className="text-xs text-gray-500">Foto DNI (opcional)</label>
+            <input id="fotoDni" name="fotoDni" type="file" accept="image/*" onChange={handleChange} className="w-full p-2 text-sm border border-gray-300 rounded dark:bg-gray-900 dark:border-gray-700" />
+            {fieldErrors.fotoDni && <span className="text-xs text-red-600">{fieldErrors.fotoDni}</span>}
           </div>
           <button type="submit" className="w-full py-2 px-4 bg-primary-600 text-white rounded hover:bg-primary-700 transition-all duration-200 flex items-center justify-center shadow text-base font-semibold mt-2">
             {loading ? <span className="animate-spin h-5 w-5 mr-2 border-2 border-white border-t-transparent rounded-full"></span> : null}

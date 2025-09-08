@@ -51,7 +51,9 @@ function NuevoEmprendimientoPage() {
     cantidadSucursales: '',
     ubicacionSucursales: '',
     planeaAbrirSucursal: false,
+    fotoPerfil: '', // URL de la imagen subida
   });
+  const [file, setFile] = useState(null);
   const [emprendedores, setEmprendedores] = useState([]);
 
     const [busquedaEmp, setBusquedaEmp] = useState("");
@@ -84,7 +86,11 @@ function NuevoEmprendimientoPage() {
   const [error, setError] = useState("");
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    const { name, value, type, checked, files } = e.target;
+    if (name === "fotoPerfil" && files && files[0]) {
+      setFile(files[0]);
+      return;
+    }
     setForm((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
@@ -96,9 +102,32 @@ function NuevoEmprendimientoPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
+    let fotoPerfilUrl = "";
+    if (file) {
+      const formData = new FormData();
+      formData.append("file", file);
+      try {
+        const uploadRes = await fetch("/api/upload", {
+          method: "POST",
+          body: formData,
+        });
+        const uploadData = await uploadRes.json();
+        if (uploadRes.ok && uploadData.url) {
+          fotoPerfilUrl = uploadData.url;
+        } else {
+          setError(uploadData.error || "Error al subir la imagen");
+          setLoading(false);
+          return;
+        }
+      } catch (err) {
+        setError("Error de red al subir imagen: " + err.message);
+        setLoading(false);
+        return;
+      }
+    }
     try {
       // Procesar arrays separando por coma
-      const body = { ...form };
+      const body = { ...form, fotoPerfil: fotoPerfilUrl };
       const arrayFields = [
         "modoIncorporacionPersonal",
         "tiposCapacitacion",
@@ -329,6 +358,11 @@ function NuevoEmprendimientoPage() {
             ? <>Lat: {ubicacion.lat.toFixed(6)}, Lng: {ubicacion.lng.toFixed(6)}</>
             : <>No hay ubicación seleccionada</>}
         </div>
+      </div>
+      {/* Imagen de perfil */}
+      <div className="flex flex-col gap-1 mb-2">
+        <label htmlFor="fotoPerfil" className="text-xs text-gray-500">Foto de perfil (opcional)</label>
+        <input id="fotoPerfil" name="fotoPerfil" type="file" accept="image/*" onChange={handleChange} className="w-full p-2 text-sm border border-gray-300 rounded" />
       </div>
       <button type="submit" className="btn-primary w-full" disabled={loading}>
         {loading ? "Creando..." : "Crear"}

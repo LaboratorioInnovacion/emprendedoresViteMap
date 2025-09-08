@@ -58,7 +58,7 @@ export async function PUT(req, context) {
       "nombre", "apellido", "dni", "cuil", "fechaNacimiento", "ubicacion",
       "paisOrigen", "ciudadOrigen", "departamento", "direccion", "telefono",
       "cantidadEmprendimientos", "poseeOtrosSustentos", "tiposSustento",
-      "tieneDependientesEconomicos", "nivelEstudios", "motivacionEmprender", "fotoPerfil"
+      "tieneDependientesEconomicos", "nivelEstudios", "motivacionEmprender", "fotoPerfil", "fotoDni"
     ];
     const updateData = {};
     for (const key of allowedFields) {
