@@ -13,6 +13,7 @@ const Page = () => {
   const [loadingAsignaciones, setLoadingAsignaciones] = useState(false);
   const [emprendedores, setEmprendedores] = useState([]);
   const [emprendimientos, setEmprendimientos] = useState([]);
+  const [emprendedoresOtros, setEmprendedoresOtros] = useState([]);
   const [loadingBenef, setLoadingBenef] = useState(false);
   const [searchBenef, setSearchBenef] = useState('');
 
@@ -33,14 +34,17 @@ const Page = () => {
   // Cargar emprendedores y emprendimientos
   const fetchBeneficiarios = async () => {
     setLoadingBenef(true);
-    const [resEmpre, resEmprend] = await Promise.all([
+    const [resEmpre, resEmprend, resEmpreOtros] = await Promise.all([
       fetch('/api/emprendedores'),
-      fetch('/api/emprendimientos')
+      fetch('/api/emprendimientos'),
+      fetch('/api/emprendedoresotros')
     ]);
     const emprendedores = await resEmpre.json();
     const emprendimientos = await resEmprend.json();
+    const emprendedoresOtros = await resEmpreOtros.json();
     setEmprendedores(emprendedores);
     setEmprendimientos(emprendimientos);
+    setEmprendedoresOtros(emprendedoresOtros);
     setLoadingBenef(false);
   };
   const fetchAsignaciones = async () => {
@@ -79,6 +83,7 @@ const Page = () => {
       a.herramientaId == form.herramientaId &&
       a.beneficiarioTipo === form.beneficiarioTipo &&
       ((form.beneficiarioTipo === 'Emprendedor' && a.emprendedorId == form.beneficiarioId) ||
+       (form.beneficiarioTipo === 'EmprendedorOtros' && a.emprendedorOtrosId == form.beneficiarioId) ||
        (form.beneficiarioTipo === 'Emprendimiento' && a.emprendimientoId == form.beneficiarioId))
     );
     if (yaAsignado) {
@@ -87,13 +92,17 @@ const Page = () => {
       return;
     }
     // Construir el body según el tipo de beneficiario
-    const body = {
+    let body = {
       herramientaId: Number(form.herramientaId),
       beneficiarioTipo: form.beneficiarioTipo,
-      ...(form.beneficiarioTipo === 'Emprendedor'
-        ? { emprendedorId: Number(form.beneficiarioId) }
-        : { emprendimientoId: Number(form.beneficiarioId) })
     };
+    if (form.beneficiarioTipo === 'Emprendedor') {
+      body.emprendedorId = Number(form.beneficiarioId);
+    } else if (form.beneficiarioTipo === 'EmprendedorOtros') {
+      body.emprendedorOtrosId = Number(form.beneficiarioId);
+    } else if (form.beneficiarioTipo === 'Emprendimiento') {
+      body.emprendimientoId = Number(form.beneficiarioId);
+    }
     try {
       const res = await fetch('/api/asignacion', {
         method: 'POST',
@@ -141,73 +150,95 @@ const Page = () => {
               required
             >
               <option value="Emprendedor">Emprendedor</option>
+              <option value="EmprendedorOtros">EmprendedorOtros</option>
               <option value="Emprendimiento">Emprendimiento</option>
             </select>
           </div>
           <div className="flex flex-col gap-1">
             <label className="text-sm font-medium">
-              {form.beneficiarioTipo === 'Emprendedor' ? 'Emprendedor' : 'Emprendimiento'}
+              {form.beneficiarioTipo === 'Emprendedor'
+                ? 'Emprendedor'
+                : form.beneficiarioTipo === 'EmprendedorOtros'
+                ? 'EmprendedorOtros'
+                : 'Emprendimiento'}
             </label>
-              {/* Search input y dropdown para seleccionar beneficiario */}
-              <div className="relative">
-                <input
-                  type="text"
-                  className="input input-bordered w-full text-sm"
-                  placeholder={form.beneficiarioTipo === 'Emprendedor' ? 'Buscar emprendedor...' : 'Buscar emprendimiento...'}
-                  value={searchBenef !== ''
-                    ? searchBenef
-                    : (form.beneficiarioTipo === 'Emprendedor'
+            {/* Search input y dropdown para seleccionar beneficiario */}
+            <div className="relative">
+              <input
+                type="text"
+                className="input input-bordered w-full text-sm"
+                placeholder={
+                  form.beneficiarioTipo === 'Emprendedor'
+                    ? 'Buscar emprendedor...'
+                    : form.beneficiarioTipo === 'EmprendedorOtros'
+                    ? 'Buscar emprendedor otros...'
+                    : 'Buscar emprendimiento...'
+                }
+                value={searchBenef !== ''
+                  ? searchBenef
+                  : (
+                      form.beneficiarioTipo === 'Emprendedor'
                         ? (emprendedores.find(e => e.id == form.beneficiarioId) ? `${emprendedores.find(e => e.id == form.beneficiarioId).nombre} ${emprendedores.find(e => e.id == form.beneficiarioId).apellido}` : '')
+                        : form.beneficiarioTipo === 'EmprendedorOtros'
+                        ? (emprendedoresOtros.find(e => e.id == form.beneficiarioId) ? `${emprendedoresOtros.find(e => e.id == form.beneficiarioId).nombre} ${emprendedoresOtros.find(e => e.id == form.beneficiarioId).apellido}` : '')
                         : (emprendimientos.find(e => e.id == form.beneficiarioId)?.denominacion || '')
+                    )
+                }
+                onChange={e => {
+                  setSearchBenef(e.target.value);
+                  setForm({ ...form, beneficiarioId: '' });
+                }}
+                disabled={loadingBenef}
+                required
+                autoComplete="off"
+              />
+              {/* Dropdown de resultados filtrados */}
+              {searchBenef && !form.beneficiarioId && (
+                <div className="absolute z-10 w-full bg-slate-700 border border-gray-200 rounded shadow max-h-56 overflow-y-auto">
+                  {(form.beneficiarioTipo === 'Emprendedor'
+                    ? emprendedores.filter(e =>
+                        (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
                       )
-                  }
-                  onChange={e => {
-                    setSearchBenef(e.target.value);
-                    setForm({ ...form, beneficiarioId: '' });
-                  }}
-                  disabled={loadingBenef}
-                  required
-                  autoComplete="off"
-                />
-                {/* Dropdown de resultados filtrados */}
-                {searchBenef && !form.beneficiarioId && (
-                  <div className="absolute z-10 w-full bg-slate-700 border border-gray-200 rounded shadow max-h-56 overflow-y-auto">
-                    {(form.beneficiarioTipo === 'Emprendedor'
-                      ? emprendedores.filter(e =>
-                          (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
-                        )
-                      : emprendimientos.filter(e =>
-                          (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
-                        )
-                    ).map(e => (
-                      <div
-                        key={e.id}
-                        className="px-3 py-2 cursor-pointer hover:bg-gray-500 text-sm"
-                        onClick={() => {
-                          setForm({ ...form, beneficiarioId: e.id });
-                          setSearchBenef('');
-                        }}
-                      >
-                        {form.beneficiarioTipo === 'Emprendedor'
-                          ? `${e.nombre} ${e.apellido} (ID: ${e.id})`
-                          : `${e.denominacion} (ID: ${e.id})`}
-                      </div>
-                    ))}
-                    {((form.beneficiarioTipo === 'Emprendedor'
-                      ? emprendedores.filter(e =>
-                          (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
-                        )
-                      : emprendimientos.filter(e =>
-                          (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
-                        )
-                    ).length === 0) && (
-                      <div className="px-3 py-2 text-gray-400 text-sm">Sin resultados</div>
-                    )}
-                  </div>
-                )}
-              </div>
-              {/* Oculto el input real para enviar el id seleccionado */}
-              <input type="hidden" name="beneficiarioId" value={form.beneficiarioId} required />
+                    : form.beneficiarioTipo === 'EmprendedorOtros'
+                    ? emprendedoresOtros.filter(e =>
+                        (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                      )
+                    : emprendimientos.filter(e =>
+                        (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                      )
+                  ).map(e => (
+                    <div
+                      key={e.id}
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-500 text-sm"
+                      onClick={() => {
+                        setForm({ ...form, beneficiarioId: e.id });
+                        setSearchBenef('');
+                      }}
+                    >
+                      {form.beneficiarioTipo === 'Emprendedor' || form.beneficiarioTipo === 'EmprendedorOtros'
+                        ? `${e.nombre} ${e.apellido} (ID: ${e.id})`
+                        : `${e.denominacion} (ID: ${e.id})`}
+                    </div>
+                  ))}
+                  {((form.beneficiarioTipo === 'Emprendedor'
+                    ? emprendedores.filter(e =>
+                        (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                      )
+                    : form.beneficiarioTipo === 'EmprendedorOtros'
+                    ? emprendedoresOtros.filter(e =>
+                        (`${e.nombre} ${e.apellido} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                      )
+                    : emprendimientos.filter(e =>
+                        (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
+                      )
+                  ).length === 0) && (
+                    <div className="px-3 py-2 text-gray-400 text-sm">Sin resultados</div>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* Oculto el input real para enviar el id seleccionado */}
+            <input type="hidden" name="beneficiarioId" value={form.beneficiarioId} required />
           </div>
           <button type="submit" className="btn btn-primary w-full text-base sm:text-lg" disabled={asignando}>
             {asignando ? 'Asignando...' : 'Asignar herramienta'}
@@ -270,6 +301,8 @@ const Page = () => {
                     <td className="px-1 py-2 sm:px-2">
                       {a.beneficiarioTipo === 'Emprendedor'
                         ? (a.emprendedor?.nombre ? `${a.emprendedor.nombre} ${a.emprendedor.apellido}` : a.emprendedorId)
+                        : a.beneficiarioTipo === 'EmprendedorOtros'
+                        ? (a.emprendedorOtros?.nombre ? `${a.emprendedorOtros.nombre} ${a.emprendedorOtros.apellido}` : a.emprendedorOtrosId)
                         : (a.emprendimiento?.denominacion ?? a.emprendimientoId)}
                     </td>
                     <td className="px-1 py-2 sm:px-2">{a.createdAt ? new Date(a.createdAt).toLocaleDateString() : '-'}</td>

@@ -8,7 +8,8 @@ export async function GET() {
     include: {
       herramienta: true,
       emprendedor: true,
-      emprendimiento: true
+      emprendimiento: true,
+      emprendedorOtros: true
     }
   });
   return NextResponse.json(asignaciones);
@@ -27,7 +28,8 @@ export async function POST(req) {
       include: {
         herramienta: true,
         emprendedor: true,
-        emprendimiento: true
+        emprendimiento: true,
+        emprendedorOtros: true
       }
     });
 

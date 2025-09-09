@@ -11,6 +11,7 @@ export async function GET() {
         capacitacion: true,
         emprendedor: true,
         emprendimiento: true,
+        emprendedorOtros: true
       },
       orderBy: { createdAt: 'desc' },
     });
@@ -27,8 +28,8 @@ export async function GET() {
 export async function POST(request) {
   try {
     const data = await request.json();
-    const { capacitacionId, beneficiarioTipo, emprendedorId, emprendimientoId } = data;
-    if (!capacitacionId || !beneficiarioTipo || (!emprendedorId && !emprendimientoId)) {
+    const { capacitacionId, beneficiarioTipo, emprendedorId, emprendimientoId, emprendedorOtrosId } = data;
+    if (!capacitacionId || !beneficiarioTipo || (!emprendedorId && !emprendimientoId && !emprendedorOtrosId)) {
       return new Response(JSON.stringify({ error: 'Datos incompletos' }), { status: 400 });
     }
     const nueva = await prisma.asignacionCapacitacion.create({
@@ -37,8 +38,15 @@ export async function POST(request) {
         beneficiarioTipo,
         emprendedorId: emprendedorId ? Number(emprendedorId) : null,
         emprendimientoId: emprendimientoId ? Number(emprendimientoId) : null,
+        emprendedorOtrosId: emprendedorOtrosId ? Number(emprendedorOtrosId) : null,
         fechaAsignacion: new Date(),
       },
+      include: {
+        capacitacion: true,
+        emprendedor: true,
+        emprendimiento: true,
+        emprendedorOtros: true
+      }
     });
 
     // Registrar log de creación

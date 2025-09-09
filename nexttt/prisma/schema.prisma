@@ -162,6 +162,8 @@ model Emprendimiento {
   id                           Int                 @id @default(autoincrement())
   emprendedorId                Int
   emprendedor                  Emprendedor         @relation(fields: [emprendedorId], references: [id])
+  emprendedorOtrosId           Int?
+  emprendedorOtros             EmprendedorOtros?   @relation(fields: [emprendedorOtrosId], references: [id], name: "EmprendedorOtrosEmprendimientos")
   etapa                        EtapaEmprendimiento
   denominacion                 String?
   fechaInicio                  DateTime?
@@ -241,6 +243,8 @@ model Asignacion {
   observaciones    String?
   createdAt        DateTime          @default(now())
   updatedAt        DateTime          @updatedAt
+  emprendedorOtrosId Int?
+  emprendedorOtros EmprendedorOtros? @relation("EmprendedorOtrosAsignaciones", fields: [emprendedorOtrosId], references: [id])
 }
 
 enum Rol {
@@ -259,6 +263,8 @@ model Usuario {
   updatedAt DateTime @updatedAt
   emprendedorId Int?         @unique
   emprendedor   Emprendedor? @relation("UsuarioEmprendedor", fields: [emprendedorId], references: [id])
+  emprendedorOtrosId Int? @unique
+  emprendedorOtros EmprendedorOtros? @relation("UsuarioEmprendedorOtros", fields: [emprendedorOtrosId], references: [id])
   logsAccion    LogAccion[]
 }
 
@@ -292,6 +298,8 @@ model AsignacionCapacitacion {
   observaciones     String?
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
+  emprendedorOtrosId Int?
+  emprendedorOtros EmprendedorOtros? @relation("EmprendedorOtrosAsignacionesCapacitacion", fields: [emprendedorOtrosId], references: [id])
 }
 
 
@@ -304,5 +312,36 @@ model LogAccion {
   accion       String    // "CREAR", "ACTUALIZAR", etc.
   descripcion  String?
   fecha        DateTime  @default(now())
+}
+
+
+model EmprendedorOtros {
+  id                          Int                 @id @default(autoincrement())
+  nombre                      String?
+  apellido                    String?
+  genero                      Genero?
+  dni                         String?              
+  cuil                        String?              
+  fotoDni                     String?
+  fechaNacimiento             DateTime
+  paisOrigen                  String?
+  ciudadOrigen                String?
+  departamento                String?
+  direccion                   String?
+  ubicacion                   Bytes?
+  nivelEstudios               NivelEstudios?
+  motivacionEmprender         MotivacionEmprender?
+  cantidadEmprendimientos     Int?
+  poseeOtrosSustentos         Boolean?
+  tiposSustento               String[]
+  tieneDependientesEconomicos Boolean?
+  telefono                    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  usuario Usuario? @relation("UsuarioEmprendedorOtros")
+  emprendimientos Emprendimiento[] @relation("EmprendedorOtrosEmprendimientos")
+  asignaciones    Asignacion[] @relation("EmprendedorOtrosAsignaciones")
+  asignacionesCapacitacion AsignacionCapacitacion[] @relation("EmprendedorOtrosAsignacionesCapacitacion")
+  fotoPerfil String? 
 }
 

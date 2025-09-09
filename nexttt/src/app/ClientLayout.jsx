@@ -9,6 +9,7 @@ import React, { useState, useEffect } from "react";
 import { SessionProvider } from "next-auth/react";
 import { EmpreProvider } from "../context/EmpreContext";
 import { EmprendimientosProvider } from "../context/EmprendimientosContext";
+import { EmpreOtrosProvider } from "../context/EmpreOtrosContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -58,8 +59,9 @@ export default function ClientLayout({ children }) {
             <EmprendimientosProvider>
               <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
                 <EmprendedoresProvider>
-                  <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
-                    {!isMobile && (
+                  <EmpreOtrosProvider>
+                    <div className="flex min-h-screen bg-gray-50 dark:bg-gray-900 w-full">
+                      {!isMobile && (
                       <Sidebar isMobile={false} toggleMobileSidebar={toggleMobileSidebar} />
                     )}
                     {isMobile && isMobileSidebarOpen && (
@@ -70,6 +72,7 @@ export default function ClientLayout({ children }) {
                       <main className="flex-1 p-2 sm:p-4 md:p-6 overflow-y-auto min-w-0 w-full">{children}</main>
                     </div>
                   </div>
+                  </EmpreOtrosProvider>
                 </EmprendedoresProvider>
               </body>
             </EmprendimientosProvider>

@@ -16,6 +16,7 @@ const Page = () => {
   const [loadingAsignaciones, setLoadingAsignaciones] = useState(false);
   const [emprendedores, setEmprendedores] = useState([]);
   const [emprendimientos, setEmprendimientos] = useState([]);
+  const [emprendedoresOtros, setEmprendedoresOtros] = useState([]);
   const [loadingBenef, setLoadingBenef] = useState(false);
   const [busquedaBenef, setBusquedaBenef] = useState("");
   const [showListaBenef, setShowListaBenef] = useState(false);
@@ -38,14 +39,17 @@ const Page = () => {
   // Cargar emprendedores y emprendimientos
   const fetchBeneficiarios = async () => {
     setLoadingBenef(true);
-    const [resEmpre, resEmprend] = await Promise.all([
+    const [resEmpre, resEmprend, resEmpreOtros] = await Promise.all([
       fetch("/api/emprendedores"),
       fetch("/api/emprendimientos"),
+      fetch("/api/emprendedoresotros"),
     ]);
     const emprendedores = await resEmpre.json();
     const emprendimientos = await resEmprend.json();
+    const emprendedoresOtros = await resEmpreOtros.json();
     setEmprendedores(emprendedores);
     setEmprendimientos(emprendimientos);
+    setEmprendedoresOtros(emprendedoresOtros);
     setLoadingBenef(false);
   };
 
@@ -82,13 +86,17 @@ const Page = () => {
     setAsignando(true);
     setMensaje("");
     // Construir el body según el tipo de beneficiario
-    const body = {
+    let body = {
       capacitacionId: Number(form.capacitacionId),
       beneficiarioTipo: form.beneficiarioTipo,
-      ...(form.beneficiarioTipo === "Emprendedor"
-        ? { emprendedorId: Number(form.beneficiarioId) }
-        : { emprendimientoId: Number(form.beneficiarioId) }),
     };
+    if (form.beneficiarioTipo === "Emprendedor") {
+      body.emprendedorId = Number(form.beneficiarioId);
+    } else if (form.beneficiarioTipo === "EmprendedorOtros") {
+      body.emprendedorOtrosId = Number(form.beneficiarioId);
+    } else if (form.beneficiarioTipo === "Emprendimiento") {
+      body.emprendimientoId = Number(form.beneficiarioId);
+    }
     try {
       const res = await fetch("/api/asignacionCapacitacion", {
         method: "POST",
@@ -114,6 +122,14 @@ const Page = () => {
       ? busquedaBenef.trim() === ""
         ? emprendedores
         : emprendedores.filter((e) =>
+            `${e.nombre} ${e.apellido}`
+              .toLowerCase()
+              .includes(busquedaBenef.toLowerCase())
+          )
+      : form.beneficiarioTipo === "EmprendedorOtros"
+      ? busquedaBenef.trim() === ""
+        ? emprendedoresOtros
+        : emprendedoresOtros.filter((e) =>
             `${e.nombre} ${e.apellido}`
               .toLowerCase()
               .includes(busquedaBenef.toLowerCase())
@@ -161,6 +177,7 @@ const Page = () => {
               required
             >
               <option value="Emprendedor">Emprendedor</option>
+              <option value="EmprendedorOtros">EmprendedorOtros</option>
               <option value="Emprendimiento">Emprendimiento</option>
             </select>
           </div>
@@ -168,133 +185,131 @@ const Page = () => {
             <label className="text-sm font-medium">
               {form.beneficiarioTipo === "Emprendedor"
                 ? "Emprendedor"
+                : form.beneficiarioTipo === "EmprendedorOtros"
+                ? "EmprendedorOtros"
                 : "Emprendimiento"}
             </label>
-            {form.beneficiarioTipo === "Emprendedor" ? (
-              <div className="relative">
-                <input
-                  type="text"
-                  value={busquedaBenef}
-                  onFocus={() => setShowListaBenef(true)}
-                  onChange={(e) => {
-                    setBusquedaBenef(e.target.value);
-                    setShowListaBenef(true);
-                  }}
-                  placeholder="Buscar emprendedor..."
-                  className={`input input-bordered w-full text-sm mb-2 ${
-                    form.beneficiarioId
-                      ? "border-green-500 ring-2 ring-green-400"
-                      : ""
-                  }`}
-                  disabled={loadingBenef}
-                  autoComplete="off"
-                />
-                {form.beneficiarioId && (
-                  <div className="mb-2 text-xs text-green-700 font-semibold flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
-                    Seleccionado:{" "}
-                    {(() => {
+            <div className="relative">
+              <input
+                type="text"
+                value={busquedaBenef}
+                onFocus={() => setShowListaBenef(true)}
+                onChange={(e) => {
+                  setBusquedaBenef(e.target.value);
+                  setShowListaBenef(true);
+                }}
+                placeholder={
+                  form.beneficiarioTipo === "Emprendedor"
+                    ? "Buscar emprendedor..."
+                    : form.beneficiarioTipo === "EmprendedorOtros"
+                    ? "Buscar emprendedor otros..."
+                    : "Buscar emprendimiento..."
+                }
+                className={`input input-bordered w-full text-sm mb-2 ${
+                  form.beneficiarioId
+                    ? "border-green-500 ring-2 ring-green-400"
+                    : ""
+                }`}
+                disabled={loadingBenef}
+                autoComplete="off"
+              />
+              {form.beneficiarioId && (
+                <div className="mb-2 text-xs text-green-700 font-semibold flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
+                  Seleccionado: {(() => {
+                    if (form.beneficiarioTipo === "Emprendedor") {
                       const emp = emprendedores.find(
                         (e) => e.id === form.beneficiarioId
                       );
                       return emp
                         ? `${emp.nombre} ${emp.apellido} (ID: ${emp.id})`
                         : form.beneficiarioId;
-                    })()}
-                  </div>
-                )}
-                {showListaBenef && (
-                  <ul className="absolute left-0 right-0 rounded bg-slate-700 max-h-48 overflow-y-auto mb-2 z-10">
-                    {beneficiariosFiltrados.map((e) => (
-                      <li
-                        key={e.id}
-                        className={`px-3 py-2 cursor-pointer hover:bg-blue-700 ${
-                          form.beneficiarioId === e.id
-                            ? "bg-green-700 text-white font-bold"
-                            : ""
-                        }`}
-                        onMouseDown={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            beneficiarioId: e.id,
-                          }));
-                          setShowListaBenef(false);
-                        }}
-                      >
-                        {e.nombre} {e.apellido} (ID: {e.id})
-                      </li>
-                    ))}
-                    {beneficiariosFiltrados.length === 0 && (
-                      <li className="px-3 py-2 text-gray-400">
-                        No se encontraron emprendedores
-                      </li>
-                    )}
-                  </ul>
-                )}
-              </div>
-            ) : (
-              <div className="relative">
-                <input
-                  type="text"
-                  value={busquedaBenef}
-                  onFocus={() => setShowListaBenef(true)}
-                  onChange={(e) => {
-                    setBusquedaBenef(e.target.value);
-                    setShowListaBenef(true);
-                  }}
-                  placeholder="Buscar emprendimiento..."
-                  className={`input input-bordered w-full text-sm mb-2 ${
-                    form.beneficiarioId
-                      ? "border-green-500 ring-2 ring-green-400"
-                      : ""
-                  }`}
-                  disabled={loadingBenef}
-                  autoComplete="off"
-                />
-                {form.beneficiarioId && (
-                  <div className="mb-2 text-xs text-green-700 font-semibold flex items-center gap-2">
-                    <span className="inline-block w-2 h-2 rounded-full bg-green-500"></span>
-                    Seleccionado:{" "}
-                    {(() => {
+                    } else if (form.beneficiarioTipo === "EmprendedorOtros") {
+                      const emp = emprendedoresOtros.find(
+                        (e) => e.id === form.beneficiarioId
+                      );
+                      return emp
+                        ? `${emp.nombre} ${emp.apellido} (ID: ${emp.id})`
+                        : form.beneficiarioId;
+                    } else {
                       const emp = emprendimientos.find(
                         (e) => e.id === form.beneficiarioId
                       );
                       return emp
                         ? `${emp.denominacion} (ID: ${emp.id})`
                         : form.beneficiarioId;
-                    })()}
-                  </div>
-                )}
-                {showListaBenef && (
-                  <ul className="absolute left-0 right-0 rounded bg-slate-700 max-h-48 overflow-y-auto mb-2 z-10">
-                    {beneficiariosFiltrados.map((e) => (
-                      <li
-                        key={e.id}
-                        className={`px-3 py-2 cursor-pointer hover:bg-blue-700 ${
-                          form.beneficiarioId === e.id
-                            ? "bg-green-700 text-white font-bold"
-                            : ""
-                        }`}
-                        onMouseDown={() => {
-                          setForm((prev) => ({
-                            ...prev,
-                            beneficiarioId: e.id,
-                          }));
-                          setShowListaBenef(false);
-                        }}
-                      >
-                        {e.denominacion} (ID: {e.id})
-                      </li>
-                    ))}
-                    {beneficiariosFiltrados.length === 0 && (
+                    }
+                  })()}
+                </div>
+              )}
+              {showListaBenef && (
+                <ul className="absolute left-0 right-0 rounded bg-slate-700 max-h-48 overflow-y-auto mb-2 z-10">
+                  {(() => {
+                    let lista = [];
+                    if (form.beneficiarioTipo === "Emprendedor") {
+                      lista =
+                        busquedaBenef.trim() === ""
+                          ? emprendedores
+                          : emprendedores.filter((e) =>
+                              `${e.nombre} ${e.apellido}`
+                                .toLowerCase()
+                                .includes(busquedaBenef.toLowerCase())
+                            );
+                    } else if (form.beneficiarioTipo === "EmprendedorOtros") {
+                      lista =
+                        busquedaBenef.trim() === ""
+                          ? emprendedoresOtros
+                          : emprendedoresOtros.filter((e) =>
+                              `${e.nombre} ${e.apellido}`
+                                .toLowerCase()
+                                .includes(busquedaBenef.toLowerCase())
+                            );
+                    } else {
+                      lista =
+                        busquedaBenef.trim() === ""
+                          ? emprendimientos
+                          : emprendimientos.filter((e) =>
+                              (e.denominacion || "")
+                                .toLowerCase()
+                                .includes(busquedaBenef.toLowerCase())
+                            );
+                    }
+                    return lista.length > 0 ? (
+                      lista.map((e) => (
+                        <li
+                          key={e.id}
+                          className={`px-3 py-2 cursor-pointer hover:bg-blue-700 ${
+                            form.beneficiarioId === e.id
+                              ? "bg-green-700 text-white font-bold"
+                              : ""
+                          }`}
+                          onMouseDown={() => {
+                            setForm((prev) => ({
+                              ...prev,
+                              beneficiarioId: e.id,
+                            }));
+                            setShowListaBenef(false);
+                          }}
+                        >
+                          {form.beneficiarioTipo === "Emprendedor" ||
+                          form.beneficiarioTipo === "EmprendedorOtros"
+                            ? `${e.nombre} ${e.apellido} (ID: ${e.id})`
+                            : `${e.denominacion} (ID: ${e.id})`}
+                        </li>
+                      ))
+                    ) : (
                       <li className="px-3 py-2 text-gray-400">
-                        No se encontraron emprendimientos
+                        {form.beneficiarioTipo === "Emprendedor"
+                          ? "No se encontraron emprendedores"
+                          : form.beneficiarioTipo === "EmprendedorOtros"
+                          ? "No se encontraron emprendedores otros"
+                          : "No se encontraron emprendimientos"}
                       </li>
-                    )}
-                  </ul>
-                )}
-              </div>
-            )}
+                    );
+                  })()}
+                </ul>
+              )}
+            </div>
           </div>
           <button
             type="submit"
@@ -381,6 +396,10 @@ const Page = () => {
                         ? a.emprendedor?.nombre
                           ? `${a.emprendedor.nombre} ${a.emprendedor.apellido}`
                           : a.emprendedorId
+                        : a.beneficiarioTipo === "EmprendedorOtros"
+                        ? a.emprendedorOtros?.nombre
+                          ? `${a.emprendedorOtros.nombre} ${a.emprendedorOtros.apellido}`
+                          : a.emprendedorOtrosId
                         : a.emprendimiento?.denominacion ?? a.emprendimientoId}
                     </td>
                     <td className="px-1 py-2 sm:px-2">
