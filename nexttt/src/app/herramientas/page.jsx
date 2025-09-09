@@ -2,11 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { FaTrash, FaEdit, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
+import { jwtDecode } from 'jwt-decode';
+import { useSession } from 'next-auth/react';
 
 
 const Page = () => {
+  const { data: session, status } = useSession();
   const [herramientas, setHerramientas] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [checkingAuth, setCheckingAuth] = useState(true);
+  const [authError, setAuthError] = useState('');
   const router = useRouter();
 
   const fetchHerramientas = async () => {
@@ -18,8 +23,23 @@ const Page = () => {
   };
 
   useEffect(() => {
-    fetchHerramientas();
-  }, []);
+    if (status === 'loading') return;
+    if (!session || session.user?.rol !== 'SUPERUSUARIO') {
+      router.replace('/403');
+    }
+  }, [session, status, router]);
+
+  useEffect(() => {
+    if (!checkingAuth && authError) {
+      router.replace('/403');
+    }
+  }, [checkingAuth, authError, router]);
+
+  useEffect(() => {
+    if (!checkingAuth) {
+      fetchHerramientas();
+    }
+  }, [checkingAuth]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('¿Eliminar herramienta?')) return;
@@ -35,6 +55,13 @@ const Page = () => {
       alert(err.message);
     }
   };
+
+  if (status === 'loading') {
+    return <div className="text-center mt-10 text-lg">Verificando acceso...</div>;
+  }
+  if (!session || session.user?.rol !== 'SUPERUSUARIO') {
+    return null;
+  }
 
   return (
     <div className="max-w-8xl mx-auto p-4 animate-fadeIn">

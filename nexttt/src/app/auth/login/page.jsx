@@ -62,6 +62,10 @@ export default function LoginPage() {
       <p className="mt-6">
         User: administrador@administrador.com <br />
         Pass: administrador <br />
+        User: admin@admin <br />
+        Pass: admin <br />
+        User: emprendedor@emprendedor.com <br />
+        Pass: emprendedor <br />
         {/* ADMIN : asd@asd.com contra: asdasd <br />
         SUPERUSER: zxc@zxc.com contra: zxc <br />
         EMPRENDEDOR :qwerty@qwerty.com contra: qwerty */}
