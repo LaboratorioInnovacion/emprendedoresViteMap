@@ -2,7 +2,6 @@
 import React, { useEffect, useState } from 'react';
 import { FaTrash, FaEdit, FaPlus, FaUserPlus } from 'react-icons/fa';
 import { useRouter } from 'next/navigation';
-import { jwtDecode } from 'jwt-decode';
 import { useSession } from 'next-auth/react';
 
 
@@ -10,8 +9,6 @@ const Page = () => {
   const { data: session, status } = useSession();
   const [herramientas, setHerramientas] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [checkingAuth, setCheckingAuth] = useState(true);
-  const [authError, setAuthError] = useState('');
   const router = useRouter();
 
   const fetchHerramientas = async () => {
@@ -26,20 +23,10 @@ const Page = () => {
     if (status === 'loading') return;
     if (!session || session.user?.rol !== 'SUPERUSUARIO') {
       router.replace('/403');
+      return;
     }
+    fetchHerramientas();
   }, [session, status, router]);
-
-  useEffect(() => {
-    if (!checkingAuth && authError) {
-      router.replace('/403');
-    }
-  }, [checkingAuth, authError, router]);
-
-  useEffect(() => {
-    if (!checkingAuth) {
-      fetchHerramientas();
-    }
-  }, [checkingAuth]);
 
   const handleDelete = async (id) => {
     if (!window.confirm('¿Eliminar herramienta?')) return;
