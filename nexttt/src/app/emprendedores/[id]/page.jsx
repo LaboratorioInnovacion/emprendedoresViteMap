@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
+import Link from "next/link";
 const MapContainer = dynamic(
   () => import("react-leaflet").then((mod) => mod.MapContainer),
   { ssr: false }
@@ -559,13 +560,13 @@ const EmprendedorPage = ({ params }) => {
                 <Mail size={18} className="mr-2" />
                 Contactar
               </button>
-              <a
+              <Link
                 href={`/emprendedores/${emprendedor.id}/edit`}
                 className="btn-outline w-full justify-center flex items-center text-gray-800 dark:text-gray-200"
               >
                 <Pencil size={18} className="mr-2" />
                 Editar Perfil
-              </a>
+              </Link>
               <button
                 className="btn-outline w-full justify-center text-gray-800 dark:text-gray-200"
                 onClick={() => exportPDF(emprendedor)}
