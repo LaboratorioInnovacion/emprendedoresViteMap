@@ -9,6 +9,7 @@ export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  // Redirección automática eliminada para evitar molestias en desarrollo
 
   const quickUsers = [
     {

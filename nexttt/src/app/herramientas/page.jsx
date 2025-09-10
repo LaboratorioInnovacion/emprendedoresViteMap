@@ -74,22 +74,22 @@ const Page = () => {
               <table className="w-full rounded-lg text-sm border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                 <thead className="bg-gray-100 dark:bg-gray-800">
                   <tr>
-                    <th className="dark:text-white px-2 py-2">ID</th>
-                    <th className="dark:text-white px-2 py-2">Nombre</th>
-                    <th className="dark:text-white px-2 py-2">Origen Tipo</th>
-                    <th className="dark:text-white px-2 py-2">Organismo</th>
-                    <th className="dark:text-white px-2 py-2">Tipo Beneficiario</th>
-                    <th className="dark:text-white px-2 py-2">Tipo Herr. Emprendimiento</th>
-                    <th className="dark:text-white px-2 py-2">Tipo Herr. Emprendedor</th>
-                    <th className="dark:text-white px-2 py-2">Monto Total</th>
-                    <th className="dark:text-white px-2 py-2">Monto x Beneficiario</th>
-                    <th className="dark:text-white px-2 py-2">Vencimiento</th>
-                    <th className="dark:text-white px-2 py-2">Inicio Vigencia</th>
-                    <th className="dark:text-white px-2 py-2">Fin Vigencia</th>
-                    <th className="dark:text-white px-2 py-2">Cupo</th>
-                    <th className="dark:text-white px-2 py-2">Observaciones</th>
-                    <th className="dark:text-white px-2 py-2">Eliminar</th>
-                    <th className="dark:text-white px-2 py-2">Editar</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">ID</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Nombre</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Origen Tipo</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Organismo</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Tipo Beneficiario</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Tipo Herr. Emprendimiento</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Tipo Herr. Emprendedor</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Monto Total</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Monto x Beneficiario</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Vencimiento</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Inicio Vigencia</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Fin Vigencia</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Cupo</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Observaciones</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Eliminar</th>
+                    <th className="text-gray-600 dark:text-white px-2 py-2">Editar</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -98,26 +98,26 @@ const Page = () => {
                       <td className="px-2 py-2 font-mono text-xs text-gray-500">{h.id}</td>
                       <td className="px-2 py-2">
                         <button
-                          className="dark:text-slate-200 text-base underline hover:text-primary-900 font-semibold"
+                          className="text-gray-700 dark:text-slate-200 text-base underline hover:text-primary-900 font-semibold"
                           style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer' }}
                           onClick={() => router.push(`/herramientas/${h.id}`)}
                         >
                           {h.nombre}
                         </button>
                       </td>
-                      <td className="dark:text-white px-2 py-2">{Array.isArray(h.origenTipo) ? h.origenTipo.join(', ') : h.origenTipo}</td>
-                      <td className="dark:text-white px-2 py-2">{h.origenOrganismo}</td>
-                      <td className="dark:text-white px-2 py-2">{h.tipoBeneficiario}</td>
-                      <td className="dark:text-white px-2 py-2">{Array.isArray(h.tipoHerramientaEmprendimiento) ? h.tipoHerramientaEmprendimiento.join(', ') : h.tipoHerramientaEmprendimiento}</td>
-                      <td className="dark:text-white px-2 py-2">{Array.isArray(h.tipoHerramientaEmprendedor) ? h.tipoHerramientaEmprendedor.join(', ') : h.tipoHerramientaEmprendedor}</td>
-                      <td className="dark:text-white px-2 py-2">{h.montoTotal ?? '-'}</td>
-                      <td className="dark:text-white px-2 py-2">{h.montoPorBeneficiario ?? '-'}</td>
-                      <td className="dark:text-white px-2 py-2">{h.poseeVencimiento ? 'Sí' : 'No'}</td>
-                      <td className="dark:text-white px-2 py-2">{h.fechaInicioVigencia ? new Date(h.fechaInicioVigencia).toLocaleDateString() : '-'}</td>
-                      <td className="dark:text-white px-2 py-2">{h.fechaFinVigencia ? new Date(h.fechaFinVigencia).toLocaleDateString() : '-'}</td>
-                      <td className="dark:text-white px-2 py-2">{h.cupo}</td>
-                      <td className="dark:text-white px-2 py-2">{h.observaciones ?? '-'}</td>
-                      <td className="dark:text-white px-2 py-2">
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{Array.isArray(h.origenTipo) ? h.origenTipo.join(', ') : h.origenTipo}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.origenOrganismo}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.tipoBeneficiario}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{Array.isArray(h.tipoHerramientaEmprendimiento) ? h.tipoHerramientaEmprendimiento.join(', ') : h.tipoHerramientaEmprendimiento}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{Array.isArray(h.tipoHerramientaEmprendedor) ? h.tipoHerramientaEmprendedor.join(', ') : h.tipoHerramientaEmprendedor}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.montoTotal ?? '-'}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.montoPorBeneficiario ?? '-'}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.poseeVencimiento ? 'Sí' : 'No'}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.fechaInicioVigencia ? new Date(h.fechaInicioVigencia).toLocaleDateString() : '-'}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.fechaFinVigencia ? new Date(h.fechaFinVigencia).toLocaleDateString() : '-'}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.cupo}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">{h.observaciones ?? '-'}</td>
+                      <td className="text-gray-600 dark:text-white px-2 py-2">
                         <button onClick={() => handleDelete(h.id)} className="btn btn-error btn-xs flex items-center gap-1" title="Eliminar">
                           <FaTrash />
                         </button>

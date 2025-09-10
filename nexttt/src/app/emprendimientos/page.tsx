@@ -98,7 +98,7 @@ const EmprendimientosPage = () => {
       {/* Header Section */}
       <div className="flex flex-col gap-4 ">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-md">
-          <h2 className="dark:text-white text-2xl font-bold">Emprendimientos</h2>
+          <h2 className="text-gray-700 dark:text-white text-2xl font-bold">Emprendimientos</h2>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1 sm:flex-none">
               <input
@@ -119,7 +119,7 @@ const EmprendimientosPage = () => {
                 className="btn-outline px-3 flex-1 sm:flex-none justify-center"
                 title="Filtros"
               >
-                <Filter size={18} className="dark:text-white" />
+                <Filter size={18} className="text-gray-600 dark:text-white" />
                 <span className="ml-2 sm:hidden">Filtros</span>
               </button>
               <button
@@ -138,7 +138,7 @@ const EmprendimientosPage = () => {
       {showFilters && (
         <div className="card animate-fadeIn">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Filtros</h3>
+            <h3 className="text-lg font-medium text-gray-700 dark:text-white">Filtros</h3>
             <button
               onClick={resetFilters}
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
@@ -149,7 +149,7 @@ const EmprendimientosPage = () => {
           <div className="space-y-6">
 
             <div>
-              <h4 className="font-medium mb-2">Estado</h4>
+              <h4 className="font-medium mb-2 text-gray-700 dark:text-white">Estado</h4>
               <div className="flex flex-wrap gap-2">
                 {estados.map((estado) => (
                   <button
@@ -198,10 +198,10 @@ const EmprendimientosPage = () => {
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start">
                     <div>
-                      <h3 className="dark:text-white text-base font-medium truncate">
+                      <h3 className="text-gray-700 dark:text-white text-base font-medium truncate">
                         {emp.denominacion}
                       </h3>
-                      <span className="dark:text-white badge badge-secondary text-xs capitalize mt-1">
+                      <span className="text-gray-700 dark:text-white badge badge-secondary text-xs capitalize mt-1">
                         {emp.rubro || "Otro"}
                       </span>
                     </div>
@@ -212,7 +212,7 @@ const EmprendimientosPage = () => {
                       {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
                     </span>
                   </div>
-                  <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="mt-2 text-sm text-gray-700 dark:text-gray-400">
                     <div className="flex items-center">
                       <MapPin size={14} className="mr-1 flex-shrink-0" />
                       <span className="truncate">{emp.direccion}</span>
@@ -256,13 +256,13 @@ const EmprendimientosPage = () => {
             ) : filtered.length > 0 ? (
               filtered.map((emp) => (
                 <tr key={emp.id} className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">{emp.denominacion}</td>
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">{emp.denominacion}</td>
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     <span className="badge badge-secondary capitalize">{emp.rubro || "Otro"}</span>
                   </td>
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">{emp.emprendedor?.nombre} {emp.emprendedor?.apellido}</td>
-                  <td className=" dark:text-white px-6 py-4 whitespace-nowrap">{emp.emprendedor?.departamento}</td>
-                  <td className=" dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">{emp.emprendedor?.nombre} {emp.emprendedor?.apellido}</td>
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">{emp.emprendedor?.departamento}</td>
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <MapPin size={14} className="mr-1 flex-shrink-0" />
                       <span className="truncate max-w-[200px]">{emp.direccion}</span>
@@ -274,7 +274,7 @@ const EmprendimientosPage = () => {
                       {(emp.estado || "Activo").charAt(0).toUpperCase() + (emp.estado || "Activo").slice(1)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-400">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 dark:text-gray-400">
                     {emp.fechaInicio ? new Date(emp.fechaInicio).toLocaleDateString() : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">

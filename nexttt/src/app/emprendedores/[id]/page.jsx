@@ -143,8 +143,8 @@ const EmprendedorPage = ({ params }) => {
     return (
       <div className="flex flex-col items-center justify-center py-12">
         <User size={48} className="text-gray-400 mb-4" />
-        <h2 className="text-2xl font-bold mb-2">No se encontró Emprendedor</h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-6">
+  <h2 className="text-2xl font-bold mb-2 text-gray-600 dark:text-gray-300">No se encontró Emprendedor</h2>
+  <p className="text-gray-600 dark:text-gray-400 mb-6">  
           El emprendedor que estás buscando no existe o ha sido eliminado.
         </p>
         <button onClick={() => window.history.back()} className="btn-primary">
@@ -212,7 +212,7 @@ const EmprendedorPage = ({ params }) => {
               )}
             </div>
             <div className="min-w-0">
-              <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2 flex-wrap">
+              <h1 className="text-lg sm:text-2xl font-bold flex items-center gap-2 flex-wrap text-gray-600 dark:text-gray-300">
                 <User className="w-6 h-6 sm:w-7 sm:h-7 text-primary" />
                 <span className="truncate max-w-[160px] sm:max-w-none block">
                   {emprendedor.nombre} {emprendedor.apellido}
@@ -221,7 +221,7 @@ const EmprendedorPage = ({ params }) => {
                   <BadgeCheck className="ml-2 w-5 h-5 text-green-500" />
                 )}
               </h1>
-              <div className="flex items-center mt-1 flex-wrap">
+              <div className="flex items-center mt-1 flex-wrap text-gray-600 dark:text-gray-300">
                 <span className="badge badge-secondary capitalize mr-2 mb-1">
                   {emprendedor.genero}
                 </span>
@@ -268,7 +268,7 @@ const EmprendedorPage = ({ params }) => {
         <div className="xl:col-span-2 space-y-4 xl:space-y-6 min-w-0">
           {/* Info card */}
           <div className="card p-3 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-600 dark:text-gray-300">
               Información del Emprendedor
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
@@ -374,7 +374,7 @@ const EmprendedorPage = ({ params }) => {
           </div>
           {/* Emprendimientos */}
           <div className="card p-3 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-gray-600 dark:text-gray-300">
               <Rocket className="w-6 h-6 text-primary" /> Emprendimientos
             </h2>
             {emprendedor.emprendimientos &&
@@ -413,14 +413,14 @@ const EmprendedorPage = ({ params }) => {
                 ))}
               </div>
             ) : (
-              <p className="text-gray-500">
+              <p className="text-gray-500 dark:text-gray-400">
                 No tiene emprendimientos registrados.
               </p>
             )}
           </div>
           {/* Asignaciones */}
           <div className="card p-3 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-gray-600 dark:text-gray-300">
               <Landmark className="w-6 h-6 text-primary" /> Asignaciones
             </h2>
             {emprendedor.asignaciones && emprendedor.asignaciones.length > 0 ? (
@@ -431,7 +431,7 @@ const EmprendedorPage = ({ params }) => {
                     className="border rounded-lg p-3 bg-gray-50 dark:bg-gray-900/40 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-primary text-base flex items-center gap-2">
+                      <div className="font-semibold text-primary text-base flex items-center gap-2 text-gray-600 dark:text-gray-300">
                         {asig.herramienta?.nombre || "Herramienta"}
                         <span className="ml-2 px-2 py-0.5 rounded bg-blue-100 text-blue-700 text-xs font-semibold">
                           {asig.herramienta?.tipoHerramientaEmprendedor?.join(
@@ -439,7 +439,7 @@ const EmprendedorPage = ({ params }) => {
                           ) || "-"}
                         </span>
                       </div>
-                      <div className="text-sm text-gray-700 dark:text-gray-300 mt-1">
+                      <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                         <span className="font-medium">Fecha asignación:</span>{" "}
                         {asig.fechaAsignacion
                           ? new Date(asig.fechaAsignacion).toLocaleDateString()
@@ -466,7 +466,7 @@ const EmprendedorPage = ({ params }) => {
           <div className="card p-3 sm:p-6">
                         {/* Capacitaciones asignadas */}
             <div className="card p-3 sm:p-6">
-              <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2">
+              <h2 className="text-lg sm:text-xl font-semibold mb-4 flex items-center gap-2 text-gray-800 dark:text-gray-200">
                 <GraduationCap className="w-6 h-6 text-primary" /> Capacitaciones
               </h2>
               {emprendedor.asignacionesCapacitacion && emprendedor.asignacionesCapacitacion.length > 0 ? (
@@ -506,7 +506,7 @@ const EmprendedorPage = ({ params }) => {
                   ))}
                 </div>
               ) : (
-                <p className="text-gray-500">
+                <p className="text-gray-500 dark:text-gray-400">
                   No tiene capacitaciones registradas.
                 </p>
               )}
@@ -518,7 +518,7 @@ const EmprendedorPage = ({ params }) => {
         <div className="space-y-4 xl:space-y-6 min-w-0">
           {/* Mapa */}
           <div className="card p-3 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">Ubicación</h2>
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-600 dark:text-gray-300">Ubicación</h2>
             <div className="h-48 sm:h-64 rounded-lg overflow-hidden">
               {L && markerIcon && ubicacion && (
                 <MapContainer
@@ -551,7 +551,7 @@ const EmprendedorPage = ({ params }) => {
           </div>
           {/* Acciones rápidas */}
           <div className="card p-4 sm:p-6">
-            <h2 className="text-lg sm:text-xl font-semibold mb-4">
+            <h2 className="text-lg sm:text-xl font-semibold mb-4 text-gray-600 dark:text-gray-300">
               Acciones Rápidas
             </h2>
             <div className="space-y-2 sm:space-y-3">
@@ -561,13 +561,13 @@ const EmprendedorPage = ({ params }) => {
               </button>
               <a
                 href={`/emprendedores/${emprendedor.id}/edit`}
-                className="btn-outline w-full justify-center flex items-center"
+                className="btn-outline w-full justify-center flex items-center text-gray-800 dark:text-gray-200"
               >
                 <Pencil size={18} className="mr-2" />
                 Editar Perfil
               </a>
               <button
-                className="btn-outline w-full justify-center"
+                className="btn-outline w-full justify-center text-gray-800 dark:text-gray-200"
                 onClick={() => exportPDF(emprendedor)}
               >
                 Exportar PDF

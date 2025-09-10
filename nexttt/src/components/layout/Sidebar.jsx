@@ -19,6 +19,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import  logoempre  from "../../../public/logoempre.png";
 
 function Sidebar({ isMobile, toggleMobileSidebar }) {
   const [collapsed, setCollapsed] = useState(false);
@@ -29,6 +30,7 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
   const navItemsByRole = {
     EMPRENDEDOR: [
       { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
+      // { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} /> },
       { path: '/profile', label: 'Perfil', icon: <User size={20} /> },
       { path: '/emprendedores', label: 'Emprendedores', icon: <UsersRound size={20} /> },
       // { path: '/otros', label: 'Otros', icon: <Users size={20} /> },
@@ -74,8 +76,9 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
         >
           <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700" style={{ padding: '18px' }}>
             <div className="flex items-center space-x-2">
-              <Map className="text-primary-600" />
-              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">EmpreMap</h1>
+              {/* <Map className="text-primary-600" /> */}
+              <img src={logoempre.src || logoempre} alt="Logo EmpreMap" width={32} height={32} />
+              <h1 className="text-lg font-semibold text-gray-900 dark:text-white">RUEMPRE</h1>
             </div>
             <button onClick={toggleMobileSidebar} className="p-1">
               <ChevronLeft size={20} className="text-gray-500 dark:text-gray-400" />
@@ -120,8 +123,10 @@ function Sidebar({ isMobile, toggleMobileSidebar }) {
       <div className="flex h-full flex-col">
         <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-700" style={{ padding: '18px' }}>
           <div className={`flex items-center ${collapsed ? 'justify-center w-full' : 'space-x-2'}`}>
-            <Map className="text-primary-600" />
-            {!collapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">EmpreMap</h1>}
+            {/* <Map className="text-primary-600" /> */}
+              <img src={logoempre.src || logoempre} alt="Logo EmpreMap" width={30} height={30} />
+
+            {!collapsed && <h1 className="text-lg font-semibold text-gray-900 dark:text-white">RUEMPRE</h1>}
           </div>
           {/* <button 
             onClick={toggleCollapse} 

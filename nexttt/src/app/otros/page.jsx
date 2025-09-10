@@ -97,7 +97,7 @@ const EmprendedoresOtrosPage = () => {
       {/* Header Section */}
       <div className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <h2 className="text-2xl font-bold dark:text-white">Emprendedores Otros</h2>
+          <h2 className="text-2xl font-bold text-gray-600 dark:text-white">Emprendedores Otros</h2>
           <div className="flex flex-col sm:flex-row gap-2">
             <div className="relative flex-1 sm:flex-none">
               <input
@@ -137,7 +137,7 @@ const EmprendedoresOtrosPage = () => {
       {showFilters && (
         <div className="card animate-fadeIn">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-medium">Filtros</h3>
+            <h3 className="text-lg font-medium text-gray-800 dark:text-gray-200">Filtros</h3>
             <button
               onClick={resetFilters}
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
@@ -147,7 +147,7 @@ const EmprendedoresOtrosPage = () => {
           </div>
           <div className="space-y-6">
             <div>
-              <h4 className="font-medium mb-2">Nivel de estudios</h4>
+              <h4 className="font-medium mb-2 text-gray-800 dark:text-gray-200">Nivel de estudios</h4>
               <div className="flex flex-wrap gap-2">
                 {niveles.map((nivel) => {
                   const count = emprendedoresOtros.filter(
@@ -179,7 +179,7 @@ const EmprendedoresOtrosPage = () => {
               </div>
             </div>
             <div>
-              <h4 className="font-medium mb-2">Estado</h4>
+              <h4 className="font-medium mb-2 text-gray-700 dark:text-white">Estado</h4>
               <div className="flex flex-wrap gap-2">
                 {estados.map((estado) => (
                   <button
@@ -323,23 +323,23 @@ const EmprendedoresOtrosPage = () => {
               filtered.map((emp) => (
                 <tr
                   key={emp.id}
-                  className="hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="hover:bg-gray-50 text-gray-700 dark:hover:bg-gray-700 transition-colors"
                 >
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.nombre} {emp.apellido}
                   </td>
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     <span className="badge badge-secondary capitalize">
                       {emp.nivelEstudios}
                     </span>
                   </td>
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.departamento}
                   </td>
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.direccion}
                   </td>
-                  <td className="dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-700 dark:text-white px-6 py-4 whitespace-nowrap">
                     <span
                       className={`badge ${getStatusBadgeClass(
                         emp.estado || "active"

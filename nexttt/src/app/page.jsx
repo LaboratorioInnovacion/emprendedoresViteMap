@@ -77,12 +77,16 @@ const Page = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold mb-2 dark:text-gray-100">Dashboard</h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Bienvenido al Sistema de Emprendimientos
+          <h1 className="text-2xl font-bold mb-2 text-gray-800 dark:text-gray-200">Registro Unico de Emprendedores</h1>
+          {/* <h1 className="text-2xl font-bold mb-2 dark:text-gray-100">Dashboard</h1> */}
+          <p className="text-gray-700 dark:text-white">
+            Bienvenido al Sistema de Emprendedores
           </p>
+                    {/* <p className="text-gray-600 dark:text-gray-400">
+            Registro Unico de Emprendedores
+          </p> */}
         </div>
-        <div className="flex gap-2">
+        <div className="flex gap-2 text-black dark:text-white">
           <Link href="/emprendedores" className="btn-outline">
             <Building2 size={18} className="mr-1" />
             Emprendedores
@@ -123,14 +127,14 @@ const Page = () => {
                 defaultViewport={defaultViewport}
               />
             ) : (
-              <div className="flex items-center justify-center h-full text-gray-400">
+              <div className="flex items-center justify-center h-full text-gray-800 dark:text-gray-400">
                 No hay emprendimientos para mostrar en el mapa.
               </div>
             )}
           </div>
           {/* Filtros visuales de sector principal y estado (ahora debajo del mapa) */}
           <div className="mt-2 p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
-            <h3 className="text-sm font-medium mb-2">Sector</h3>
+            <h3 className="text-lg font-medium mb-2 text-gray-800 dark:text-gray-200">Rubro</h3>
             <div className="grid grid-cols-3 gap-2">
               {filtrosSectoriales.map(({ key, label, color }) => {
                 const isSelected = selectedRubros.includes(key);
@@ -164,7 +168,7 @@ const Page = () => {
                 size={20}
                 className="text-primary-600 dark:text-primary-400 mr-2"
               />
-              <h2 className="text-xl dark:text-white font-semibold">
+              <h2 className="text-xl text-gray-800 dark:text-gray-200 font-semibold">
                 Emprendimientos Recientes
               </h2>
             </div>

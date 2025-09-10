@@ -158,7 +158,7 @@ const BusinessMap: React.FC<BusinessMapProps> = ({
 
         {selectionMode && (
           <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-            Click on the map to select a location for your business.
+            Haga clic en el mapa para seleccionar una ubicación para su negocio.
           </div>
         )}
       </div>

@@ -123,15 +123,15 @@ const Page = () => {
     <div className="max-w-6xl mx-auto p-2 sm:p-4 animate-fadeIn">
       {/* Formulario de asignación */}
       <div className="card mb-6 sm:mb-8 p-3 sm:p-6 shadow-lg">
-        <h1 className="text-center mb-4 text-lg sm:text-2xl font-semibold">Asignar Herramienta</h1>
+  <h1 className="text-center mb-4 text-lg sm:text-2xl font-semibold text-gray-600 dark:text-gray-300">Asignar Herramienta</h1>
         <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Herramienta</label>
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Herramienta</label>
             <select
               name="herramientaId"
               value={form.herramientaId}
               onChange={handleChange}
-              className="input input-bordered w-full text-sm"
+              className="input input-bordered w-full text-sm text-gray-600 dark:text-gray-300"
               required
             >
               <option value="">Seleccione una herramienta</option>
@@ -141,12 +141,12 @@ const Page = () => {
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">Tipo de beneficiario</label>
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-300">Tipo de beneficiario</label>
             <select
               name="beneficiarioTipo"
               value={form.beneficiarioTipo}
               onChange={handleChange}
-              className="input input-bordered w-full text-sm"
+              className="input input-bordered w-full text-sm text-gray-600 dark:text-gray-300"
               required
             >
               <option value="Emprendedor">Emprendedor</option>
@@ -155,7 +155,7 @@ const Page = () => {
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-sm font-medium">
+            <label className="text-sm font-medium text-gray-600 dark:text-gray-300">
               {form.beneficiarioTipo === 'Emprendedor'
                 ? 'Emprendedor'
                 : form.beneficiarioTipo === 'EmprendedorOtros'
@@ -166,7 +166,7 @@ const Page = () => {
             <div className="relative">
               <input
                 type="text"
-                className="input input-bordered w-full text-sm"
+                className="input input-bordered w-full text-sm text-gray-600 dark:text-gray-300"
                 placeholder={
                   form.beneficiarioTipo === 'Emprendedor'
                     ? 'Buscar emprendedor...'
@@ -209,7 +209,7 @@ const Page = () => {
                   ).map(e => (
                     <div
                       key={e.id}
-                      className="px-3 py-2 cursor-pointer hover:bg-gray-500 text-sm"
+                      className="px-3 py-2 cursor-pointer hover:bg-gray-500 text-sm text-gray-600 dark:text-gray-300"
                       onClick={() => {
                         setForm({ ...form, beneficiarioId: e.id });
                         setSearchBenef('');
@@ -232,7 +232,7 @@ const Page = () => {
                         (`${e.denominacion} ${e.id}`.toLowerCase().includes(searchBenef.toLowerCase()))
                       )
                   ).length === 0) && (
-                    <div className="px-3 py-2 text-gray-400 text-sm">Sin resultados</div>
+                    <div className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300">Sin resultados</div>
                   )}
                 </div>
               )}
@@ -240,19 +240,19 @@ const Page = () => {
             {/* Oculto el input real para enviar el id seleccionado */}
             <input type="hidden" name="beneficiarioId" value={form.beneficiarioId} required />
           </div>
-          <button type="submit" className="btn btn-primary w-full text-base sm:text-lg" disabled={asignando}>
+          <button type="submit" className="btn btn-primary w-full text-base sm:text-lg " disabled={asignando}>
             {asignando ? 'Asignando...' : 'Asignar herramienta'}
           </button>
-          {mensaje && <div className="text-center mt-2 text-info text-sm">{mensaje}</div>}
+          {mensaje && <div className="text-center mt-2 text-info text-sm text-gray-600 dark:text-gray-300">{mensaje}</div>}
         </form>
       </div>
 
       {/* Tabla de herramientas */}
       <div className="card mb-6 sm:mb-8 p-2 sm:p-4 shadow-lg">
-        <h2 className="mb-3 sm:mb-4 text-center text-white text-base sm:text-xl font-semibold">Listado de herramientas</h2>
-        {loading ? <p className="text-center">Cargando...</p> : (
+  <h2 className="mb-3 sm:mb-4 text-center text-base sm:text-xl font-semibold text-gray-600 dark:text-gray-300">Listado de herramientas</h2>
+  {loading ? <p className="text-center text-gray-600 dark:text-gray-300">Cargando...</p> : (
           <div className="overflow-x-auto">
-            <table className="min-w-full text-xs sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full text-xs sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300">
               <thead className="bg-gray-100 dark:bg-gray-800">
                 <tr>
                   <th className="px-1 py-2 sm:px-2">ID</th>
@@ -278,10 +278,10 @@ const Page = () => {
 
       {/* Tabla de asignaciones */}
       <div className="card p-2 sm:p-4 shadow-lg">
-        <h2 className="mb-3 sm:mb-4 text-center text-white text-base sm:text-xl font-semibold">Asignaciones recientes</h2>
-        {loadingAsignaciones ? <p className="text-center">Cargando...</p> : (
+  <h2 className="mb-3 sm:mb-4 text-center text-base sm:text-xl font-semibold text-gray-600 dark:text-gray-300">Asignaciones recientes</h2>
+  {loadingAsignaciones ? <p className="text-center text-gray-600 dark:text-gray-300">Cargando...</p> : (
           <div className="overflow-x-auto">
-            <table className="min-w-full text-xs sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700">
+            <table className="min-w-full text-xs sm:text-sm rounded-lg border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300">
               <thead className="bg-gray-100 dark:bg-gray-800">
                 <tr>
                   <th className="px-1 py-2 sm:px-2">ID</th>
