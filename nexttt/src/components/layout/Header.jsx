@@ -106,6 +106,7 @@ function Header({ toggleMobileSidebar }) {
       (emp.actividadPrincipal || "").toLowerCase().includes(term)
     );
     setSearchResults(results);
+    console.log("results", data);
   }, [searchTerm, allemprendimientos]);
 
   return (
@@ -119,18 +120,20 @@ function Header({ toggleMobileSidebar }) {
             <Menu size={24} />
           </button>
           <div className="hidden md:flex items-center relative">
-            <form onSubmit={handleSearch} className="w-full">
-              <input
-                type="text"
-                placeholder="Buscar Negocio..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="input pl-10 w-64 lg:w-80"
-                autoComplete="off"
-              />
-              <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-            </form>
-            {searchTerm && searchResults.length > 0 && (
+            {isAuthenticated && (
+              <form onSubmit={handleSearch} className="w-full">
+                <input
+                  type="text"
+                  placeholder="Buscar Negocio..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="input pl-10 w-64 lg:w-80"
+                  autoComplete="off"
+                />
+                <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+              </form>
+            )}
+            {isAuthenticated && searchTerm && searchResults.length > 0 && (
               <div className="absolute top-12 left-0 w-64 lg:w-80 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-20 animate-fadeIn max-h-72 overflow-y-auto">
                 {searchResults.map((emp) => (
                   <a
@@ -245,21 +248,23 @@ function Header({ toggleMobileSidebar }) {
       </div>
 
       <div className="mt-3 flex md:hidden relative w-full">
-        <form onSubmit={handleSearch} className="w-full">
-          <input
-            type="text"
-            placeholder="Buscar Negocio..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="input pl-10 w-full"
-            autoComplete="off"
-          />
-          <Search
-            size={18}
-            className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
-          />
-        </form>
-        {searchTerm && searchResults.length > 0 && (
+        {isAuthenticated && (
+          <form onSubmit={handleSearch} className="w-full">
+            <input
+              type="text"
+              placeholder="Buscar Negocio..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input pl-10 w-full"
+              autoComplete="off"
+            />
+            <Search
+              size={18}
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"
+            />
+          </form>
+        )}
+        {isAuthenticated && searchTerm && searchResults.length > 0 && (
           <div className="absolute top-12 left-0 w-full bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded shadow-lg z-20 animate-fadeIn max-h-72 overflow-y-auto">
             {searchResults.map((emp) => (
               <a
