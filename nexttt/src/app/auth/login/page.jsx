@@ -10,6 +10,24 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
+  const quickUsers = [
+    {
+      label: "Superusuario",
+      email: "superusuario@superusuario.com",
+      password: "superusuario10",
+    },
+    {
+      label: "Admin",
+      email: "admin10@admin10.com",
+      password: "admin10",
+    },
+    {
+      label: "Emprendedor",
+      email: "emprendedor@emprendedor.com",
+      password: "emprendedor",
+    },
+  ];
+
   const handleLogin = async () => {
     setError("");
 
@@ -29,6 +47,24 @@ export default function LoginPage() {
   return (
     <div style={{ maxWidth: 400, margin: "auto", padding: "2rem" }}>
       <h2>Iniciar sesión</h2>
+      <div className="mb-4">
+        <label className="block mb-1 font-semibold">Acceso rápido:</label>
+        <div className="flex gap-2 flex-wrap">
+          {quickUsers.map((user) => (
+            <button
+              key={user.label}
+              type="button"
+              className="px-2 py-1 bg-gray-700 hover:bg-blue-600 rounded text-xs font-medium"
+              onClick={() => {
+                setEmail(user.email);
+                setPassword(user.password);
+              }}
+            >
+              {user.label}
+            </button>
+          ))}
+        </div>
+      </div>
       <div style={{ marginBottom: "1rem" }}>
         <label>Email</label>
         <input
@@ -50,22 +86,23 @@ export default function LoginPage() {
         />
       </div>
       {error && <p style={{ color: "red" }}>{error}</p>}
-      <button onClick={handleLogin} style={{ padding: "0.5rem 1rem" }} className="bg-blue-600 text-white rounded">
+      <button
+        onClick={handleLogin}
+        style={{ padding: "0.5rem 1rem" }}
+        className="bg-blue-600 text-white rounded"
+      >
         Entrar
       </button>
       <p className="mt-4 text-sm text-gray-500">
         ¿No tienes cuenta?{" "}
-        <a href="/auth/register" className="text-blue-600 hover:underline">
+        <a
+          href="/auth/register"
+          className="text-blue-600 hover:underline"
+        >
           Regístrate aquí
         </a>
       </p>
       <p className="mt-6">
-        User: administrador@administrador.com <br />
-        Pass: administrador <br />
-        User: admin@admin <br />
-        Pass: admin <br />
-        User: emprendedor@emprendedor.com <br />
-        Pass: emprendedor <br />
         {/* ADMIN : asd@asd.com contra: asdasd <br />
         SUPERUSER: zxc@zxc.com contra: zxc <br />
         EMPRENDEDOR :qwerty@qwerty.com contra: qwerty */}

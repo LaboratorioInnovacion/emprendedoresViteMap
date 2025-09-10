@@ -46,7 +46,7 @@ const Page = () => {
   if (status === 'loading') {
     return <div className="text-center mt-10 text-lg">Verificando acceso...</div>;
   }
-  if (!session || session.user?.rol !== 'SUPERUSUARIO' || session.user?.rol !== 'ADMIN') {
+  if (!session || (session.user?.rol !== 'SUPERUSUARIO' && session.user?.rol !== 'ADMIN')) {
     return null;
   }
 
