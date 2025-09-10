@@ -1,5 +1,6 @@
 'use client';
 import { MapPin, Phone, Mail, Globe, Activity } from 'lucide-react';
+import Link from 'next/link';
 import { useEmprendedores } from "./../../context/EmprendedoresContext.jsx";
 
 function RecentBusinessCard({ business }) {
@@ -57,12 +58,12 @@ function RecentBusinessCard({ business }) {
 
             <div className="flex justify-between items-center mt-3">
               <span className="badge badge-secondary">{business.type}</span>
-              <a 
+              <Link 
                 href={`/emprendimientos/${business.id}`}
                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
                 Ver Detalles
-              </a>
+              </Link>
             </div>
           </div>
         </div>
