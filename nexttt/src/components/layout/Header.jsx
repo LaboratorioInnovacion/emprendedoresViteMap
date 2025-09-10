@@ -197,30 +197,31 @@ function Header({ toggleMobileSidebar }) {
                     {session.user.name}
                   </p>
                 </div>
-                <a
+                <Link
                   href="/profile"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Perfil
-                </a>
+                </Link>
                 {/* <a
                   href="#settings"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Ajustes
                 </a> */}
-                {/* <a
+                {/* <Link
                   href="/emprendimientos/new"
                   className="cursor-pointer block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                 >
                   Crear emprendimiento
-                </a> */}
-                <button
+                </Link> */}
+                <Link
+                  href="#"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
                   onClick={() => signOut({ callbackUrl: "/auth/login" })}
                 >
                   Cerrar sesión
-                </button>
+                </Link>
               </div>
             )}
             {!isAuthenticated && dropdownOpen && (
@@ -235,12 +236,12 @@ function Header({ toggleMobileSidebar }) {
                 >
                   Iniciar sesión
                 </Link>
-                <a
+                <Link
                   href="/auth/register"
                   className="block px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
                 >
                   Registrarse
-                </a>
+                </Link>
               </div>
             )}
           </div>

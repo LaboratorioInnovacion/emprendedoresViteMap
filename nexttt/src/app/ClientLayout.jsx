@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "../context/AuthContext";
 import Header from "../components/layout/Header";
 import Sidebar from "../components/layout/Sidebar";
 import React, { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import { SessionProvider } from "next-auth/react";
 import { EmpreProvider } from "../context/EmpreContext";
 import { EmprendimientosProvider } from "../context/EmprendimientosContext";
@@ -21,11 +22,13 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+
 export default function ClientLayout({ children }) {
   const { isAuthenticated, role } = useAuth();
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const router = useRouter();
 
   const toggleMobileSidebar = () => {
     setIsMobileSidebarOpen((prev) => !prev);
@@ -43,6 +46,12 @@ export default function ClientLayout({ children }) {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (isMounted && !isAuthenticated) {
+      router.replace("/auth/login");
+    }
+  }, [isMounted, isAuthenticated, router]);
 
   if (!isMounted)
     return (
