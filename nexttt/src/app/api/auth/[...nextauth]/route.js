@@ -60,6 +60,10 @@ const authOptions = {
   },
   session: {
     strategy: "jwt",
+    maxAge: 60 * 60, // 1 hora (en segundos)
+  },
+  jwt: {
+    maxAge: 60 * 60, // 1 hora (en segundos)
   },
   secret: process.env.NEXTAUTH_SECRET,
 };

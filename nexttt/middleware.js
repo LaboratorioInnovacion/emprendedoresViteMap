@@ -10,6 +10,19 @@ export async function middleware(req) {
   });
   const { pathname } = req.nextUrl;
 
+  // 0) Proteger rutas de API también
+  if (pathname.startsWith('/api/')) {
+    // Si no está logueado, redirige a login
+    if (!token) {
+      return NextResponse.redirect(new URL('/auth/login', req.url));
+    }
+    // Si el token está expirado, redirige a login
+    if (token.exp && Date.now() / 1000 > token.exp) {
+      return NextResponse.redirect(new URL('/auth/login', req.url));
+    }
+    // Puedes agregar aquí reglas de rol para endpoints de API si lo deseas
+  }
+
   // 1) Si va a /auth o es estático, no lo bloquea:
   if (pathname.startsWith('/_next') || pathname.startsWith('/auth')) {
     return NextResponse.next();
@@ -17,6 +30,10 @@ export async function middleware(req) {
 
   // 2) Si no está logueado, lo manda al login:
   if (!token) {
+    return NextResponse.redirect(new URL('/auth/login', req.url));
+  }
+  // 2b) Si el token está expirado, lo manda al login:
+  if (token.exp && Date.now() / 1000 > token.exp) {
     return NextResponse.redirect(new URL('/auth/login', req.url));
   }
 
@@ -30,7 +47,12 @@ export async function middleware(req) {
     return NextResponse.redirect(new URL('/403', req.url));
   }
 
-  // 5) Deja pasar al resto
+  // 5) Rutas /herramientas y /capacitaciones → solo ADMIN y SUPERUSUARIO
+  if ((pathname.startsWith('/herramientas') || pathname.startsWith('/capacitaciones')) && !(token.rol === 'ADMIN' || token.rol === 'SUPERUSUARIO')) {
+    return NextResponse.redirect(new URL('/403', req.url));
+  }
+
+  // 6) Deja pasar al resto
   return NextResponse.next();
 }
 
