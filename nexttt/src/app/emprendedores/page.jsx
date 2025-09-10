@@ -338,7 +338,7 @@ const EmprendedoresPage = () => {
                       {emp.nivelEstudios}
                     </span>
                   </td>
-                  <td className="text-gray-800dark:text-white px-6 py-4 whitespace-nowrap">
+                  <td className="text-gray-800 dark:text-white px-6 py-4 whitespace-nowrap">
                     {emp.departamento}
                   </td>
                   <td className="text-gray-800 dark:text-white px-6 py-4 whitespace-nowrap">
