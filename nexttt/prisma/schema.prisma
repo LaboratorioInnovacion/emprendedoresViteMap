@@ -161,7 +161,7 @@ model Emprendedor {
 model Emprendimiento {
   id                           Int                 @id @default(autoincrement())
   emprendedorId                Int
-  emprendedor                  Emprendedor         @relation(fields: [emprendedorId], references: [id])
+  emprendedor                  Emprendedor         @relation(fields: [emprendedorId], references: [id], onDelete: Cascade)
   emprendedorOtrosId           Int?
   emprendedorOtros             EmprendedorOtros?   @relation(fields: [emprendedorOtrosId], references: [id], name: "EmprendedorOtrosEmprendimientos")
   etapa                        EtapaEmprendimiento
@@ -232,7 +232,7 @@ model Herramienta {
 model Asignacion {
   id               Int               @id @default(autoincrement())
   herramientaId    Int
-  herramienta      Herramienta       @relation(fields: [herramientaId], references: [id])
+  herramienta      Herramienta       @relation(fields: [herramientaId], references: [id], onDelete: Cascade)
   beneficiarioTipo TipoBeneficiario
   emprendedorId    Int?
   emprendedor      Emprendedor?      @relation(fields: [emprendedorId], references: [id])
@@ -288,7 +288,7 @@ model Capacitacion {
 model AsignacionCapacitacion {
   id                Int      @id @default(autoincrement())
   capacitacionId    Int
-  capacitacion      Capacitacion @relation(fields: [capacitacionId], references: [id])
+  capacitacion      Capacitacion @relation(fields: [capacitacionId], references: [id], onDelete: Cascade)
   beneficiarioTipo  TipoBeneficiario
   emprendedorId     Int?
   emprendedor       Emprendedor? @relation(fields: [emprendedorId], references: [id])
