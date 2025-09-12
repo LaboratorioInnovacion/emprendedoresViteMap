@@ -4,26 +4,37 @@ import { getToken } from "next-auth/jwt";
 
 /**
  * Registra un log de acción obteniendo el token desde el request y usando el objeto creado.
+ * Si se pasa usuarioId, lo prioriza sobre el id del token.
  * @param {Request} req - El request recibido en el endpoint
  * @param {Object} nuevo - El objeto creado (por ejemplo, el emprendedor)
  * @param {string} entidad - Nombre de la entidad
  * @param {string} accion - Acción realizada
  * @param {string} descripcion - Descripción del log
+ * @param {number} [usuarioId] - ID de usuario (opcional, prioriza sobre el token)
  */
-export async function registrarLogAccionDesdeRequest(req, nuevo, entidad, accion, descripcion) {
+export async function registrarLogAccionDesdeRequest(req, nuevo, entidad, accion, descripcion, usuarioId) {
   try {
     const token = await getToken({
       req,
       secret: process.env.NEXTAUTH_SECRET,
       cookieName: "next-auth.session-token",
     });
+    // Obtener la fecha actual en horario de Argentina y convertir a UTC
+    const { zonedTimeToUtc } = await import('date-fns-tz');
+    const zonaArgentina = 'America/Argentina/Buenos_Aires';
+    const ahoraArgentina = new Date();
+    const fechaArgentinaUTC = zonedTimeToUtc(ahoraArgentina, zonaArgentina);
+    const usuarioIdFinal = (typeof usuarioId === 'number' && !isNaN(usuarioId))
+      ? usuarioId
+      : (token && token.id ? Number(token.id) : null);
     await prisma.logAccion.create({
       data: {
-        usuarioId: token && token.id ? Number(token.id) : null,
+        usuarioId: usuarioIdFinal,
         entidad,
         entidadId: nuevo.id,
         accion,
         descripcion,
+        fecha: fechaArgentinaUTC,
       },
     });
   } catch (logErr) {
@@ -45,14 +56,19 @@ export async function registrarLogAccionDesdeRequest(req, nuevo, entidad, accion
  */
 export async function registrarLog({ token, nuevo, usuarioId, entidad, entidadId, accion, descripcion }) {
   try {
-    // Si se pasa token y nuevo, usar sus ids, ignorando usuarioId y entidadId directos
-    const usuarioIdFinal = token && token.id ? Number(token.id) : null;
-    const entidadIdFinal = nuevo && nuevo.id ? nuevo.id : null;
+    // Prioriza usuarioId explícito si se pasa, luego token.id, luego null
+    let usuarioIdFinal = null;
+    if (typeof usuarioId === 'number' && !isNaN(usuarioId)) {
+      usuarioIdFinal = usuarioId;
+    } else if (token && token.id) {
+      usuarioIdFinal = Number(token.id);
+    }
+    const entidadIdFinal = nuevo && nuevo.id ? nuevo.id : (entidadId ?? null);
     await prisma.logAccion.create({
       data: {
-        usuarioId: usuarioIdFinal !== null ? usuarioIdFinal : (usuarioId ?? null),
+        usuarioId: usuarioIdFinal,
         entidad,
-        entidadId: entidadIdFinal !== null ? entidadIdFinal : (entidadId ?? null),
+        entidadId: entidadIdFinal,
         accion,
         descripcion,
       },
