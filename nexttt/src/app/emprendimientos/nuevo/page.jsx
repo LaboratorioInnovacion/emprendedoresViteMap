@@ -260,39 +260,39 @@ function NuevoEmprendimientoPage() {
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <p>Denominación (obligatorio)</p>
+      <p>Denominación</p>
       <input name="denominacion" value={form.denominacion} onChange={handleChange} placeholder="Denominación" className="input w-full" />
-      <p>Fecha Inicio (obligatorio)</p>
+      <p>Fecha Inicio </p>
       <input type="date" name="fechaInicio" value={form.fechaInicio} onChange={handleChange} className="input w-full" />
-      <label><input type="checkbox" name="inscripcionArca" checked={form.inscripcionArca} onChange={handleChange} className="mt-4" /> ¿Inscripto en Arca? (obligatorio)</label>
-      <p>CUIT (obligatorio)</p>
+      <label><input type="checkbox" name="inscripcionArca" checked={form.inscripcionArca} onChange={handleChange} className="mt-4" /> ¿Inscripto en Arca? </label>
+      <p>CUIT</p>
       <input name="cuit" value={form.cuit} onChange={handleChange} placeholder="CUIT" className="input w-full" />
-      <p>Sector (obligatorio)</p>
+      <p>Sector </p>
       <select name="sector" value={form.sector} onChange={handleChange} className="input w-full">
-        <option value="">Selecciona sector (obligatorio)</option>
+        <option value="">Selecciona sector </option>
         {sectorOptions.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <p>Actividad Principal (obligatorio)</p>
+      <p>Actividad Principal </p>
       <select name="actividadPrincipal" value={form.actividadPrincipal} onChange={handleChange} className="input w-full">
         <option value="">Selecciona actividad</option>
         {actividadPrincipalOptions.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <p>Tipo Emprendimiento (obligatorio)</p>
+      <p>Tipo Emprendimiento</p>
       <select name="tipoEmprendimiento" value={form.tipoEmprendimiento} onChange={handleChange} className="input w-full">
         <option value="">Selecciona tipo</option>
         {tipoEmprendimientoOptions.map((opt) => (
           <option key={opt} value={opt}>{opt}</option>
         ))}
       </select>
-      <p>Dirección (obligatorio)</p>
+      <p>Dirección</p>
       <input name="direccion" value={form.direccion} onChange={handleChange} placeholder="Dirección" className="input w-full" />
-      <p>Teléfono (obligatorio)</p>
+      <p>Teléfono</p>
       <input name="telefono" value={form.telefono} onChange={handleChange} placeholder="Teléfono" className="input w-full" />
-      <p>Email (obligatorio)</p>
+      <p>Email</p>
       <input name="email" value={form.email} onChange={handleChange} placeholder="Email" className="input w-full" />
       <p>Web (opcional)</p>
       <input name="web" value={form.web} onChange={handleChange} placeholder="Web" className="input w-full" />
