@@ -164,14 +164,14 @@ model Emprendimiento {
   emprendedor                  Emprendedor         @relation(fields: [emprendedorId], references: [id], onDelete: Cascade)
   emprendedorOtrosId           Int?
   emprendedorOtros             EmprendedorOtros?   @relation(fields: [emprendedorOtrosId], references: [id], name: "EmprendedorOtrosEmprendimientos")
-  etapa                        EtapaEmprendimiento
+  etapa                        EtapaEmprendimiento?
   denominacion                 String?
   fechaInicio                  DateTime?
   inscripcionArca              Boolean
   cuit                         String?
-  sector                       Sector
-  actividadPrincipal           ActividadSectorial
-  tipoEmprendimiento           TipoEmprendimiento
+  sector                       Sector?
+  actividadPrincipal           ActividadSectorial?
+  tipoEmprendimiento           TipoEmprendimiento?
   direccion                    String?
   ubicacion                    Bytes?
   telefono                     String?
