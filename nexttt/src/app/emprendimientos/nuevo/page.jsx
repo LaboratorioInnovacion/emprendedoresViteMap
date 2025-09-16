@@ -78,7 +78,7 @@ function NuevoEmprendimientoPage() {
       : emprendedores.filter(emp =>
           (emp.nombre + " " + emp.apellido).toLowerCase().includes(busquedaEmp.toLowerCase())
         );
-  const [ubicacion, setUbicacion] = useState({ lat: -34.61, lng: -58.38 });
+  const [ubicacion, setUbicacion] = useState({ lat: -28.47, lng: -65.77 });
   // Importar MapSelector dinámicamente para SSR
   const MapSelector = dynamic(() => import("../../../components/MapSelector"), { ssr: false });
   const [mapMsg, setMapMsg] = useState("");
